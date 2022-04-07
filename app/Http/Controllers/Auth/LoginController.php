@@ -49,7 +49,7 @@ class LoginController extends Controller
         $fieldType = filter_var($request->email, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
         if (auth()->attempt(array($fieldType => $input['email'], 'password' => $input['password']))) {
             $this->log($request);
-            return redirect()->route('dashboard');
+            return redirect()->route('pre-analytic');
         } else {
             return redirect()->route('login')
                 ->with('error', "The credentials doesn't match our records.");

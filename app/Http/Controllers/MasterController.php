@@ -39,8 +39,9 @@ class MasterController extends Controller
             $data['title'] = $this->titles[$masterData]; // the title of the table
             $data['tableId'] = $this->tableIds[$masterData]; // the table id
             $data['masterData'] = $masterData; // the master model in string
+            $data['page'] = "Master ".ucwords($masterData);
         
-            return view('masters.'.$masterData, $data);
+            return view('dashboard.masters.'.$masterData, $data);
         } catch (\Exception $e) {
             abort(404);
         }
@@ -48,14 +49,31 @@ class MasterController extends Controller
 
     public function create($masterData, Request $request)
     {
-        // return $request->name;
         try {
-            $this->masters[$masterData]::create($request->all());
+            $this->masters[$masterData]::create($this->mapInputs($masterData, $request));
 
             return response()->json(['status' => true, 'message' => 'Patient added successfully']);
         } catch (\Exception $e) {
-            return response()->json(['status' => false, 'message' => $e->getMessage()]);
+            return response()->json(['status' => false, 'message' => $e->getMessage()], 400);
         }
+    }
+
+    private function mapInputs($masterData, $request)
+    {
+        $data = array();
+        switch($masterData){
+            case 'patient':
+                $data['name'] = $request->name;
+                $data['email'] = $request->email;
+                $data['phone'] = $request->phone;
+                $data['medrec'] = $request->medrec;
+                $data['birthdate'] = $request->birthdate_submit;
+                $data['gender'] = $request->gender;
+                $data['address'] = $request->address;
+                break;
+        }
+
+        return $data;
     }
 
     /**
@@ -94,5 +112,4 @@ class MasterController extends Controller
         ->make(true);
     }
 
-    
 }

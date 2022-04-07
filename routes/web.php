@@ -24,11 +24,17 @@ Auth::routes();
 Route::get('home', 'HomeController@index')->name('home');
 Route::get('check-email', function (Request $request) {
     $user = User::where('email', $request->email)->exists();
-    return response()->json(['valid' => !$user]);
+    if ($user) {
+        return response()->json('Email has already been taken');
+    }
+    return response()->json('true');
 });
 Route::get('check-username', function (Request $request) {
     $user = User::where('username', $request->username)->exists();
-    return response()->json(['valid' => !$user]);
+    if ($user) {
+        return response()->json('Username has already been taken');
+    }
+    return response()->json('true');
 });
 
 Route::get('send', 'MailController@send');
@@ -36,7 +42,7 @@ Route::get('send', 'MailController@send');
 
 // Dashboard
 Route::middleware(['auth'])->group(function () {
-    Route::get('dashboard', 'DashboardController@index')->name('dashboard');
+    Route::get('pre-analytics', 'PreAnalyticController@index')->name('pre-analytics');
 
     Route::get('master/{masterData}', 'MasterController@index');
     Route::post('master/{masterData}/create', 'MasterController@create');

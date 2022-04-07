@@ -1,91 +1,157 @@
-const form = document.getElementById('sign-up-form');
+/* ------------------------------------------------------------------------------
+ *
+ *  # Form validation
+ *
+ *  Demo JS code for form_validation.html page
+ *
+ * ---------------------------------------------------------------------------- */
 
-var validator = FormValidation.formValidation(form, {
-    fields: {
-        'name': {
-            validators: {
-                notEmpty: {
-                    message: 'Name is required'
-                }
-            }
-        },
-        'email': {
-            validators: {
-                notEmpty: {
-                    message: 'Email is required'
-                },
-                emailAddress: {
-                    message: 'Email is invalid'
-                },
-                remote: {
-                    message: 'Email is not available or has been used by other',
-                    method: 'GET',
-                    url: '/check-email',
-                }
-            }
-        },
-        'username': {
-            validators: {
-                notEmpty: {
-                    message: 'Username is required'
-                },
-                remote: {
-                    message: 'Username is not available or has been used by other',
-                    data: function () {
-                        return {
-                            username: form.querySelector('[name="username"]').value,
-                        };
-                    },
-                    method: 'GET',
-                    url: '/check-username'
-                },
-                regexp: {
-                    message: 'Username is invalid',
-                    regexp: '^(?=[a-zA-Z0-9._]{4,20}$)(?!.*[_.]{2})[^_.].*[^_.]$'
-                }
-            }
-        },
-        'password': {
-            validators: {
-                notEmpty: {
-                    message: 'Password is required'
-                }
-            }
-        },
-        'password_confirmation': {
-            validators: {
-                identical: {
-                    compare: function() {
-                        return form.querySelector('[name="password"]').value;
-                    },
-                    message: 'The password and its confirm are not the same'
-                }
-            }
+
+// Setup module
+// ------------------------------
+
+var FormValidation = function() {
+    //
+    // Setup module components
+    //
+
+    // Validation config
+    var _componentValidation = function() {
+        if (!$().validate) {
+            console.warn('Warning - validate.min.js is not loaded.');
+            return;
         }
-    },
-    plugins: {
-        trigger: new FormValidation.plugins.Trigger(),
-        bootstrap: new FormValidation.plugins.Bootstrap5({
-            rowSelector: '.fv-row',
-            eleInvalidClass: '',
-            eleValidClass: ''
-        })
-    }
-});
 
-const submitButton = document.getElementById('sign-up-submit');
-submitButton.addEventListener('click', function (e) {
-    e.preventDefault();
+        // Initialize
+        var validator = $('.form-validate-jquery').validate({
+            ignore: 'input[type=hidden], .select2-search__field', // ignore hidden fields
+            errorClass: 'validation-invalid-label',
+            successClass: 'validation-valid-label',
+            validClass: 'validation-valid-label',
+            highlight: function(element, errorClass) {
+                $(element).removeClass(errorClass);
+            },
+            unhighlight: function(element, errorClass) {
+                $(element).removeClass(errorClass);
+            },
+            // success: function(label) {
+            //     label.addClass('validation-valid-label').text('Valid'); // remove to hide Success message
+            // },
 
-    // validate form before submit
-    if (validator) {
-        validator.validate().then(function (status){
-            // console.log('validated!');
-            // console.log(status);
-            if (status == 'Valid') {
-                submitButton.disabled = true;
-                form.submit();
+            // Different components require proper error label placement
+            errorPlacement: function(error, element) {
+
+                // Unstyled checkboxes, radios
+                if (element.parents().hasClass('form-check')) {
+                    error.appendTo( element.parents('.form-check').parent() );
+                }
+
+                // Input with icons and Select2
+                else if (element.parents().hasClass('form-group-feedback') || element.hasClass('select2-hidden-accessible')) {
+                    error.appendTo( element.parent() );
+                }
+
+                // Input group, styled file input
+                else if (element.parent().is('.uniform-uploader, .uniform-select') || element.parents().hasClass('input-group')) {
+                    error.appendTo( element.parent().parent() );
+                }
+
+                // Other elements
+                else {
+                    error.insertAfter(element);
+                }
+            },
+            rules: {
+                name: {
+                    required: true
+                },
+                username: {
+                    minlength: 5,
+                    remote: {
+                        url: '/check-username',
+                        type: 'GET',
+                        data: {
+                            username: function() {
+                                return document.querySelector('[name="username"]').value;
+                            }
+                        }
+
+                    },
+                    required: true,
+                },
+                password: {
+                    minlength: 8,
+                    required: true
+                },
+                password_confirmation: {
+                    equalTo: '#password'
+                },
+                email: {
+                    minlength: 8,
+                    required: true,
+                    email: true,
+                    remote: {
+                        url: '/check-email',
+                        type: 'GET',
+                        data: {
+                            email: function() {
+                                return document.querySelector('[name="email"]').value;
+                            }
+                        }
+
+                    },
+                }
+
+            },
+            messages: {
+                email: {
+                    required: 'Email is required',
+                    minlength: 'Please input at least {0} characters'
+                },
+                password_confirmation: {
+                    equalTo: "The password doesn't match"
+                },
+                custom: {
+                    required: 'This is a custom error message'
+                },
+                basic_checkbox: {
+                    minlength: 'Please select at least {0} checkboxes'
+                },
+                styled_checkbox: {
+                    minlength: 'Please select at least {0} checkboxes'
+                },
+                switchery_group: {
+                    minlength: 'Please select at least {0} switches'
+                },
+                switch_group: {
+                    minlength: 'Please select at least {0} switches'
+                },
+                agree: 'Please accept our policy'
             }
         });
+
+        // Reset form
+        $('#reset').on('click', function() {
+            validator.resetForm();
+        });
+    };
+
+
+    //
+    // Return objects assigned to module
+    //
+
+    return {
+        init: function() {
+            _componentValidation();
+        }
     }
+}();
+
+
+// Initialize module
+// ------------------------------
+
+document.addEventListener('DOMContentLoaded', function() {
+    FormValidation.init();
 });
