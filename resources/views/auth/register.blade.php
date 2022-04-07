@@ -75,8 +75,7 @@ License: For each use you must have a valid license purchased only from above li
                             <!--begin::Input group-->
 							<div class="fv-row mb-7">
 								<label class="form-label fw-bolder text-dark fs-6">Username</label>
-								{{-- <input class="form-control form-control-lg form-control-solid" type="text" placeholder="" name="username" autocomplete="off" /> --}}
-                                {{ Form::text('username', null, ['class' => 'form-control form-control-lg form-control-solid', 'placeholder' => 'E.g. johnpeter '])}}
+                                {{ Form::text('username', null, ['class' => 'form-control form-control-lg form-control-solid', 'placeholder' => 'E.g. johnpeter', 'autocomplete' => 'off'])}}
 							</div>
 							<!--end::Input group-->
 							<!--begin::Input group-->
@@ -133,7 +132,7 @@ License: For each use you must have a valid license purchased only from above li
 		{{-- <script src="{{asset('metronic_assets/js/custom/authentication/sign-up/general.js')}}"></script> --}}
 		<!--end::Page Custom Javascript-->
 		<!--end::Javascript-->
-        <script src="{{asset('metronic_assets/js/sign-up.js')}}"></script>
+        <script src="{{asset('js/auth/sign-up.js')}}"></script>
 	</body>
 	<!--end::Body-->
 </html>

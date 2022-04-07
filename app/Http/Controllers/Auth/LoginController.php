@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\Request;
+use App\LoginLog;
+use Auth;
 
 class LoginController extends Controller
 {
@@ -26,7 +29,8 @@ class LoginController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = RouteServiceProvider::HOME;
+    protected $redirectTo = RouteServiceProvider::DASHBOARD;
+    protected $loginRoute = 'login';
 
     /**
      * Create a new controller instance.
@@ -36,5 +40,36 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
+    }
+
+    public function login(Request $request)
+    {
+        $input = $request->all();
+
+        $fieldType = filter_var($request->email, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+        if (auth()->attempt(array($fieldType => $input['email'], 'password' => $input['password']))) {
+            $this->log($request);
+            return redirect()->route('dashboard');
+        } else {
+            return redirect()->route('login')
+                ->with('error', "The credentials doesn't match our records.");
+        }
+    }
+
+    private function log($request)
+    {
+        $userId = Auth::user()->id;
+        $username = Auth::user()->username;
+        // delete the login log for all previous log
+        LoginLog::where('user_id', $userId)->delete();
+
+        // record the login
+        LoginLog::create([
+            'user_id' => $userId,
+            'username' => $username,
+            'last_login' => now(),
+            'ip_address' => $request->ip(),
+            'browser' => $request->header('User-Agent')
+        ]);
     }
 }
