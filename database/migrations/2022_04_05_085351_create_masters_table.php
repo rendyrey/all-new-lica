@@ -18,7 +18,7 @@ class CreateMastersTable extends Migration
             $table->id();
             $table->string('medrec');
             $table->string('name');
-            $table->enum('gender', ['L', 'P']);
+            $table->enum('gender', ['M', 'F']);
             $table->date('birthdate');
             $table->text('address');
             $table->string('phone', 17);
