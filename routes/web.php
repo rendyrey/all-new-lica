@@ -46,5 +46,9 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('master/{masterData}', 'MasterController@index');
     Route::post('master/{masterData}/create', 'MasterController@create');
+    Route::get('master/{masterData}/edit/{id}', 'MasterController@edit');
+    Route::put('master/{masterData}/update', 'MasterController@update');
+    Route::delete('master/{masterData}/delete/{id}', 'MasterController@delete');
+
     Route::get('master/datatable/{masterData}', 'MasterController@datatable');
 });

@@ -15,7 +15,7 @@
             </div> --}}
             <!-- /card body -->
             
-            <table class="table datatable-ajax">
+            <table class="table datatable-ajax datatable-responsive">
                 <thead>
                     <th>No</th>
                     <th>Name</th>
@@ -23,6 +23,10 @@
                     <th>Gender</th>
                     <th>Birthdate</th>
                     <th>Phone</th>
+                    <th>Email</th>
+                    <th>Address</th>
+                    <th>Action</th>
+                    <th></th>
                 </thead>
             </table>
 
@@ -43,7 +47,7 @@
             <!-- /card header -->
             <!-- card body -->
             <div class="card-body">
-                {!! Form::open(['class'=>'form form-horizontal form-validate-jquery']) !!}
+                {!! Form::open(['class'=>'form form-horizontal form-validate-jquery', 'id' => 'form-create']) !!}
                 <div class="form-group row">
                     <label class="col-form-label col-lg-3">
                         Patient Name <span class="text-danger">*</span>
@@ -118,8 +122,6 @@
                 <div class="row">
                     {{ Form::button('Add patient', ['class' => 'form-control btn-success', 'id' => 'submit-btn','type' => 'submit']) }}
                 </div>
-
-
                 
                 {!! Form::close() !!}
             </div>
@@ -127,10 +129,104 @@
         </div>
     </div>
 </diV>
+
+<!-- Horizontal form modal -->
+<div id="modal_form_horizontal" class="modal fade" tabindex="-1">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Horizontal form</h5>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+            {!! Form::open(['class'=>'form form-horizontal form-validate-jquery', 'id' => 'form-edit', 'method' => 'put']) !!}
+            {{ Form::hidden('id') }}
+            <div class="form-group row">
+                <label class="col-form-label col-lg-3">
+                    Patient Name <span class="text-danger">*</span>
+                </label>
+                <div class="col-lg-9">
+                    {{ Form::text('name', null, ['class' => 'form-control']) }}
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-form-label col-lg-3">
+                    Email <span class="text-danger">*</span>
+                </label>
+                <div class="col-lg-9">
+                    {{ Form::email('email', null, ['class' => 'form-control']) }}
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-form-label col-lg-3">
+                    Phone Number <span class="text-danger">*</span>
+                </label>
+                <div class="col-lg-9">
+                    {{ Form::text('phone', null, ['class' => 'form-control']) }}
+                </div>
+            </div>
+            
+            <div class="form-group row">
+                <label class="col-form-label col-lg-3">
+                    Medical Record <span class="text-danger">*</span>
+                </label>
+                <div class="col-lg-9">
+                    {{ Form::text('medrec', null, ['class' => 'form-control']) }}
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-form-label col-lg-3">
+                    Birthdate <span class="text-danger">*</span>
+                </label>
+                <div class="col-lg-9">
+                    {{ Form::text('birthdate', null, ['class' => 'form-control pickadate-selectors']) }}
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-form-label col-lg-3">
+                    Gender <span class="text-danger">*</span>
+                </label>
+                <div class="form-check form-check-inline">
+                    <label class="form-check-label">
+                        {{ Form::radio('gender','M', null, ['class' => 'form-check-input-styled', 'data-fouc']) }}
+                        Male
+                    </label>
+                </div>
+
+                <div class="form-check form-check-inline">
+                    <label class="form-check-label">
+                        {{ Form::radio('gender','F', null, ['class' => 'form-check-input-styled', 'data-fouc']) }}
+                        Female
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-form-label col-lg-3">Adress</label>
+                <div class="col-lg-9">
+                    {{ Form::textarea('address', null, ['class' => 'form-control', 'cols' => 3, 'rows' => 3]) }}
+                </div>
+            </div>
+
+            <div class="row">
+                {{ Form::button('Add patient', ['class' => 'form-control btn-success', 'id' => 'submit-btn','type' => 'submit']) }}
+            </div>
+            
+            {!! Form::close() !!}
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /horizontal form modal -->
 @endsection
 
 @section('additional-script')
 <script src="{{asset('limitless_assets/js/plugins/tables/datatables/datatables.min.js')}}"></script>
+<script src="{{asset('limitless_assets/js/plugins/tables/datatables/extensions/responsive.min.js')}}"></script>
 <script src="{{asset('limitless_assets/js/plugins/forms/selects/select2.min.js')}}"></script>
 {{-- <script src="{{asset('js/vue.js')}}"></script> --}}
 
@@ -150,5 +246,10 @@
 <!-- JGROWL (like toast) -->
 <script src="{{asset('limitless_assets/js/plugins/notifications/jgrowl.min.js')}}"></script>
 <!-- /JGROWL -->
+
+<!-- sweetAlert -->
+<script src="{{asset('limitless_assets/js/plugins/notifications/sweet_alert.min.js')}}"></script>
+<!-- /sweetAlert -->
 <script src="{{asset('js/master/master-'.$masterData.'-page.js')}}"></script>
+<script src="{{asset('js/master/global.js')}}"></script>
 @endsection

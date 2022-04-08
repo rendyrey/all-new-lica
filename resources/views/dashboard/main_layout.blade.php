@@ -28,8 +28,6 @@
 	<script src="{{asset('limitless_assets/js/app.js')}}"></script>
 	<!-- /theme JS files -->
 
-    @yield('additional-script')
-
 </head>
 
 <body>
@@ -207,6 +205,6 @@
 		</div>
 	</div>
 	<!-- /footer -->
-		
+	@yield('additional-script')
 </body>
 </html>

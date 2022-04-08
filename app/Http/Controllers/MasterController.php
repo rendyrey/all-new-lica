@@ -25,17 +25,18 @@ class MasterController extends Controller
 
     /**
      * The index function for all master pages, route: '/master/*'
-     * 
+     *
      * @param string $masterData The model of the master
      * @return view
      */
     public function index($masterData)
     {
-        try{
+        try {
             // if the param of masterData is not listed in $masters, thrown 404 exception
             if (!isset($this->masters[$masterData])) {
                 throw new \Exception("Not Found");
             }
+
             $data['title'] = $this->titles[$masterData]; // the title of the table
             $data['tableId'] = $this->tableIds[$masterData]; // the table id
             $data['masterData'] = $masterData; // the master model in string
@@ -52,16 +53,63 @@ class MasterController extends Controller
         try {
             $this->masters[$masterData]::create($this->mapInputs($masterData, $request));
 
-            return response()->json(['status' => true, 'message' => 'Patient added successfully']);
+            return response()->json(['message' => ucwords($masterData) . ' added successfully']);
         } catch (\Exception $e) {
-            return response()->json(['status' => false, 'message' => $e->getMessage()], 400);
+            return response()->json(['message' => $e->getMessage()], 400);
         }
+    }
+    
+    public function edit($masterData, $id)
+    {
+        try {
+            $data = $this->masters[$masterData]::findOrFail($id);
+            
+            return $data;
+        } catch (\Exception $e) {
+            return response()->json($e->getMessage(), 400);
+        }
+    }
+
+    public function update($masterData, Request $request)
+    {
+        try {
+            $this->masters[$masterData]::findOrFail($request->id)
+                ->update($this->mapInputs($masterData, $request));
+            return response()->json(['message' => ucwords($masterData) . ' updated successfully']);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
+        }
+    }
+
+    public function delete($masterData, $id)
+    {
+        try {
+            $this->masters[$masterData]::findOrFail($id)->delete();
+
+            return response()->json(['message' => ucwords($masterData) . ' deleted successfully']);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
+        }
+    }
+
+    /**
+     * Preparing the data for the DataTables
+     *
+     * @param string $masterData The model of the master
+     * @return json of DataTables
+     */
+    public function datatable($masterData)
+    {
+        return DataTables::of($this->masters[$masterData]::query())
+        ->addIndexColumn()
+        ->escapeColumns([])
+        ->make(true);
     }
 
     private function mapInputs($masterData, $request)
     {
         $data = array();
-        switch($masterData){
+        switch ($masterData) {
             case 'patient':
                 $data['name'] = $request->name;
                 $data['email'] = $request->email;
@@ -71,45 +119,10 @@ class MasterController extends Controller
                 $data['gender'] = $request->gender;
                 $data['address'] = $request->address;
                 break;
+            case 'test':
+                break;
         }
 
         return $data;
     }
-
-    /**
-     * Preparing the data for the DataTables
-     * 
-     * @param string $masterData The model of the master
-     * @return json of DataTables
-     */
-    public function datatable($masterData)
-    {
-        return $this->{$masterData}();
-    }
-
-    /**
-     * DataTable query for patient model, will call on '/master/patient' route
-     * 
-     * @return DataTables
-     */
-    private function patient()
-    {
-        return DataTables::of(\App\Patient::query())
-        ->addIndexColumn()
-        ->escapeColumns([])
-        ->make(true);
-    }
-
-    /**
-     * DataTable query for test model, will call on '/master/test' route
-     * 
-     * @return DataTables
-     */
-    private function test()
-    {
-        return DataTables::of(\App\Test::query())
-        ->addIndexColumn()
-        ->make(true);
-    }
-
 }
