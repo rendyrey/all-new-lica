@@ -40,7 +40,7 @@ var DatatableDataSources = function() {
             serverSide: true,
             order: [[1, 'desc']],
             ajax: {
-                url: baseUrl+'/master/datatable/'+masterData
+                url: baseUrl('master/datatable/'+masterData)
             },
             columns: [
                 { data: 'DT_RowIndex', orderable: false, searchable: false },

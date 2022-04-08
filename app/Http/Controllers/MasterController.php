@@ -101,6 +101,8 @@ class MasterController extends Controller
     public function datatable($masterData)
     {
         return DataTables::of($this->masters[$masterData]::query())
+        // ->setTotalRecords(1000)
+        // ->skipTotalRecords()
         ->addIndexColumn()
         ->escapeColumns([])
         ->make(true);

@@ -1,5 +1,11 @@
 
-var baseUrl = '/all-new-lica/public';
+// var baseUrl = '';
+
+var base = '/all-new-lica/public/';
+var baseUrl = function(url) {
+    return base + url;
+}
+
 var jGrowlSuccess = function (message) {
     $.jGrowl(message, {
         header: 'Well done!',
@@ -20,7 +26,7 @@ var createData = function () {
     let formData = $("#form-create").serialize();
     let theForm = $("#form-create");
     $.ajax({
-        url: baseUrl+'/master/'+masterData+'/create',
+        url: baseUrl('master/'+masterData+'/create'),
         method: 'POST',
         data: formData,
         success: function(res) {
@@ -56,7 +62,7 @@ var theFullDate = function(date) {
 
 var editData = function (id) {
     $.ajax({
-        url: baseUrl+'/master/'+masterData+'/edit/'+id,
+        url: baseUrl('master/'+masterData+'/edit/'+id),
         method: 'GET',
         success: function(res){
             $("#modal_form_horizontal").modal('show');
@@ -81,7 +87,7 @@ var updateData = function () {
     let formData = $("#form-edit").serialize();
     console.log(formData);
     $.ajax({
-        url: baseUrl+'/master/'+masterData+'/update/',
+        url: baseUrl('master/'+masterData+'/update'),
         data: formData,
         method: 'PUT',
         success: function(res) {
@@ -115,7 +121,7 @@ var deleteData = function (id) {
         
         if(isConfirm.value) {
             $.ajax({
-                url: baseUrl+'/master/'+masterData+'/delete/'+id,
+                url: baseUrl('master/'+masterData+'/delete/'+id),
                 method: 'DELETE',
                 success: function(res) {
                     DatatableDataSources.refreshTable();
