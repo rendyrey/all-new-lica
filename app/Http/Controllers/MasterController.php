@@ -5,24 +5,24 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Auth;
 use DataTables;
+use DB;
 
 class MasterController extends Controller
 {
     protected $masters = [
-        'test' => 'App\Test',
-        'patient' => 'App\Patient'
+        'patient' => 'App\Patient',
+        'group' => 'App\Group',
+        'analyzer' => 'App\Analyzer',
+        'specimen' => 'App\Specimen'
     ];
 
     protected $titles = [
-        'test' => 'Master Test',
-        'patient' => 'Master Patient'
+        'patient' => 'Master Patient',
+        'group' => 'Master Group',
+        'analyzer' => 'Master Analyzer',
+        'specimen' => 'Master Specimen'
     ];
-
-    protected $tableIds = [
-        'test' => 'master-test-table',
-        'patient' => 'master-patient-table'
-    ];
-
+    
     /**
      * The index function for all master pages, route: '/master/*'
      *
@@ -36,21 +36,24 @@ class MasterController extends Controller
             if (!isset($this->masters[$masterData])) {
                 throw new \Exception("Not Found");
             }
-
+            
             $data['title'] = $this->titles[$masterData]; // the title of the table
-            $data['tableId'] = $this->tableIds[$masterData]; // the table id
             $data['masterData'] = $masterData; // the master model in string
-            $data['page'] = "Master ".ucwords($masterData);
-        
+            // dd($data);
             return view('dashboard.masters.'.$masterData, $data);
         } catch (\Exception $e) {
-            abort(404);
+            return response()->json(['message' => $e->getMessage()], 404);
         }
     }
 
     public function create($masterData, Request $request)
     {
         try {
+            $validator = $this->masters[$masterData]::validate($request);
+            if ($validator->fails()) {
+                throw new \Exception($validator->errors());
+            }
+
             $this->masters[$masterData]::create($this->mapInputs($masterData, $request));
 
             return response()->json(['message' => ucwords($masterData) . ' added successfully']);
@@ -73,8 +76,14 @@ class MasterController extends Controller
     public function update($masterData, Request $request)
     {
         try {
+            $validator = $this->masters[$masterData]::validate($request);
+            if ($validator->fails()) {
+                throw new \Exception($validator->errors());
+            }
+
             $this->masters[$masterData]::findOrFail($request->id)
                 ->update($this->mapInputs($masterData, $request));
+
             return response()->json(['message' => ucwords($masterData) . ' updated successfully']);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], 400);
@@ -100,12 +109,27 @@ class MasterController extends Controller
      */
     public function datatable($masterData)
     {
+        // $count = $this->masters[$masterData]::count();
         return DataTables::of($this->masters[$masterData]::query())
-        // ->setTotalRecords(1000)
+        // ->setTotalRecords(10) 
         // ->skipTotalRecords()
         ->addIndexColumn()
         ->escapeColumns([])
         ->make(true);
+    }
+
+    public function selectOptions($masterData, $searchKey, Request $request)
+    {
+        try {
+            $data = $this->masters[$masterData]::selectRaw('id, '.$searchKey.' as name')
+                ->where($searchKey, 'LIKE', '%' . $request->input('query') . '%')
+                ->take(150)->get();
+            
+            return response()->json($data);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
+        }
+        
     }
 
     private function mapInputs($masterData, $request)
@@ -121,10 +145,12 @@ class MasterController extends Controller
                 $data['gender'] = $request->gender;
                 $data['address'] = $request->address;
                 break;
-            case 'test':
-                break;
+            default:
+                return $request->all();
         }
 
         return $data;
     }
+
+
 }

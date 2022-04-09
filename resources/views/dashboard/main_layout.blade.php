@@ -80,8 +80,9 @@
 
                     <div class="dropdown-menu">
 						<div class="dropdown-header">Basic layouts</div>
-						<a href="../seed/layout_boxed.html" class="dropdown-item">Master Test</a>
-                        <a href="{{ url('master/patient')}}" class="dropdown-item">Master Patient</a>
+						@foreach(Helper::masterMenu() as $url => $title)
+                        	<a href="{{ $url }}" class="dropdown-item"> {{ $title }}</a>
+						@endforeach
 					</div>
                     
 				</li>
@@ -153,7 +154,7 @@
 			<div class="header-elements d-none py-0 mb-3 mb-md-0">
 				<div class="breadcrumb">
 					<a href="#" class="breadcrumb-item"><i class="icon-home2 mr-2"></i> Home</a>
-					<span class="breadcrumb-item active">{{ $page }}</span>
+					<span class="breadcrumb-item active">{{ $title }}</span>
 				</div>
 			</div>
 		</div>

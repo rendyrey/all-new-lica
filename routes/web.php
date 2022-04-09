@@ -44,11 +44,16 @@ Route::get('send', 'MailController@send');
 Route::middleware(['auth'])->group(function () {
     Route::get('pre-analytics', 'PreAnalyticController@index')->name('pre-analytics');
 
+    // BEGIN all route for master data
     Route::get('master/{masterData}', 'MasterController@index');
     Route::post('master/{masterData}/create', 'MasterController@create');
     Route::get('master/{masterData}/edit/{id}', 'MasterController@edit');
     Route::put('master/{masterData}/update', 'MasterController@update');
     Route::delete('master/{masterData}/delete/{id}', 'MasterController@delete');
-
+    // datatable route for master data
     Route::get('master/datatable/{masterData}', 'MasterController@datatable');
+    // END all route for master data
+
+    // for select option form
+    Route::get('master/select-options/{masterData}/{searchKey}', 'MasterController@selectOptions');
 });
