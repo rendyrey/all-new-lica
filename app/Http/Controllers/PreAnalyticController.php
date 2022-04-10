@@ -8,7 +8,7 @@ class PreAnalyticController extends Controller
 {
     public function index()
     {
-        $data['page'] = 'Pre Analytics';
+        $data['title'] = 'Pre Analytics';
         return view('dashboard.pre_analytic.index', $data);
     }
 }

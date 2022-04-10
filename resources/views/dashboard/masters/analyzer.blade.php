@@ -62,7 +62,7 @@
                 </div>
 
                 <div class="row">
-                    {{ Form::button('Add group', ['class' => 'form-control btn-success', 'id' => 'submit-btn','type' => 'submit']) }}
+                    {{ Form::button('Add ' . $masterData, ['class' => 'form-control btn-success', 'id' => 'submit-btn','type' => 'submit']) }}
                 </div>
                 
                 {!! Form::close() !!}
@@ -102,7 +102,7 @@
             </div>
 
             <div class="row">
-                {{ Form::button('Add patient', ['class' => 'form-control btn-success', 'id' => 'submit-btn','type' => 'submit']) }}
+                {{ Form::button('Update ' . $masterData, ['class' => 'form-control btn-success', 'id' => 'submit-btn','type' => 'submit']) }}
             </div>
             
             {!! Form::close() !!}

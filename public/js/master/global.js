@@ -3,7 +3,6 @@
  * set base value to '/' if you are using web server and proper DNS
  * set base value to '/all-new-lica/public' if you just use it from the directory path
  */
-var base = '/';
 
 var baseUrl = function(url) {
     return base + url;
@@ -152,8 +151,15 @@ var DatatableDataSources = function() {
                 searchPlaceholder: 'Type to filter...',
                 lengthMenu: '<span>Show:</span> _MENU_',
                 paginate: { 'first': 'First', 'last': 'Last', 'next': $('html').attr('dir') == 'rtl' ? '&larr;' : '&rarr;', 'previous': $('html').attr('dir') == 'rtl' ? '&rarr;' : '&larr;' },
-                processing: 'ANJIR'
-            }
+                // processing: 'ANJIR',
+            },
+            // infoCallback: function( settings, start, end, max, total, pre ) {
+            //     if (total > 1000) {
+            //         return 'Showing ' + start + ' to ' + end + ' of (more than 10.000)';
+            //     }
+            //     // return start +" to "+ end;
+            //     return 'Showing ' + start + ' to ' + end + ' of ' + total.toLocaleString('id-ID');
+            //   }
         });
 
         // AJAX sourced data

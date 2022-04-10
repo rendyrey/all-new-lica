@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Validator;
 class Analyzer extends Model
 {
     protected $with = ['Group']; // eager loding by default
-    protected $table = 'analyzers';
     protected $fillable = [
         'group_id',
         'name'
@@ -29,9 +28,10 @@ class Analyzer extends Model
     public static function validate($request)
     {
         return Validator::make($request->all(),
-        [
-            'name' => 'required',
-            'group_id' => 'required',
-        ]);
+            [
+                'name' => 'required',
+                'group_id' => 'required',
+            ]
+        );
     }
 }

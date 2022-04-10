@@ -1,13 +1,13 @@
 "use strict";
-var masterData = 'specimen'; // required for the url
+var masterData = 'doctor'; // required for the url
 
 // required for the datatable columns
 var responsiveButtonIndexColumn = 5;
 var columnsDataTable = [
     { data: 'DT_RowIndex', orderable: false, searchable: false },
     { data: 'name' },
-    { data: 'color' },
-    { data: 'code' },
+    { data: 'title' },
+    { data: 'general_code'},
     {
         render: function (data, type, row) {
             let editBtn = 
@@ -35,8 +35,8 @@ var setValueModalEditForm = function(data)
     $("#modal_form_horizontal").modal('show');
     $("#modal_form_horizontal input[name='id']").val(data.id);
     $("#modal_form_horizontal input[name='name']").val(data.name);
-    $("#modal_form_horizontal input[name='color']").val(data.color);
-    $("#modal_form_horizontal input[name='code']").val(data.code);
+    $("#modal_form_horizontal input[name='title']").val(data.title);
+    $("#modal_form_horizontal input[name='general_code']").val(data.general_code);
 }
 
 // required for the form validation rules
@@ -44,10 +44,7 @@ var rulesFormValidation = {
     name: {
         required: true
     },
-    color: {
-        required: true,
-    },
-    code: {
+    title: {
         required: true,
     },
 };

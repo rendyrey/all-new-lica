@@ -52,6 +52,7 @@
 					<a href="{{ url('pre-analytics') }}" class="navbar-nav-link dropdown-toggle caret-0">
                         <i class="icon-file-plus"></i>
 						Pre Analytics
+						<span class="badge badge-primary badge-pill" id="pre-analytics-badge">1</span>
 					</a>
 				</li>
 
@@ -59,7 +60,7 @@
 					<a href="#" class="navbar-nav-link dropdown-toggle caret-0">
 						<i class="icon-pulse2"></i>
                         Analytics
-						<span class="badge badge-mark border-orange-400 ml-auto ml-md-0"></span>
+						<span class="badge badge-warning badge-pill">2</span>
 					</a>
 				</li>
 
@@ -67,7 +68,7 @@
 					<a href="#" class="navbar-nav-link dropdown-toggle caret-0">
 						<i class="icon-file-check"></i>
                         Post Analytics
-						<span class="badge badge-mark border-orange-400 ml-auto ml-md-0"></span>
+						<span class="badge badge-success badge-pill">32</span>
 					</a>
 				</li>
 
@@ -75,13 +76,12 @@
 					<a href="#" class="navbar-nav-link dropdown-toggle" data-toggle="dropdown">
 						<i class="icon-database-menu"></i>
                         Masters
-						<span class="badge badge-mark border-orange-400 ml-auto ml-md-0"></span>
 					</a>
 
                     <div class="dropdown-menu">
 						<div class="dropdown-header">Basic layouts</div>
-						@foreach(Helper::masterMenu() as $url => $title)
-                        	<a href="{{ $url }}" class="dropdown-item"> {{ $title }}</a>
+						@foreach(Helper::masterMenu() as $url => $urlTitle)
+                        	<a href="{{ $url }}" class="dropdown-item"> {{ $urlTitle }}</a>
 						@endforeach
 					</div>
                     
@@ -154,7 +154,7 @@
 			<div class="header-elements d-none py-0 mb-3 mb-md-0">
 				<div class="breadcrumb">
 					<a href="#" class="breadcrumb-item"><i class="icon-home2 mr-2"></i> Home</a>
-					<span class="breadcrumb-item active">{{ $title }}</span>
+					<span class="breadcrumb-item active"> {{ $title }}</span>
 				</div>
 			</div>
 		</div>
@@ -206,6 +206,11 @@
 		</div>
 	</div>
 	<!-- /footer -->
+	<script>
+		
+		var base = '/';
+	
+	</script>
 	@yield('additional-script')
 </body>
 </html>

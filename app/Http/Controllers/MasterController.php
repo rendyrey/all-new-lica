@@ -6,21 +6,18 @@ use Illuminate\Http\Request;
 use Auth;
 use DataTables;
 use DB;
+use Illuminate\Support\Facades\Cache;
 
 class MasterController extends Controller
 {
+    protected const COUNT_LIMIT_FOR_DATATABLE = 20000;
     protected $masters = [
         'patient' => 'App\Patient',
         'group' => 'App\Group',
         'analyzer' => 'App\Analyzer',
-        'specimen' => 'App\Specimen'
-    ];
-
-    protected $titles = [
-        'patient' => 'Master Patient',
-        'group' => 'Master Group',
-        'analyzer' => 'Master Analyzer',
-        'specimen' => 'Master Specimen'
+        'specimen' => 'App\Specimen',
+        'doctor' => 'App\Doctor',
+        'insurance' => 'App\Insurance'
     ];
     
     /**
@@ -37,9 +34,9 @@ class MasterController extends Controller
                 throw new \Exception("Not Found");
             }
             
-            $data['title'] = $this->titles[$masterData]; // the title of the table
             $data['masterData'] = $masterData; // the master model in string
-            // dd($data);
+            $data['title'] = "Master " .ucwords($masterData);
+
             return view('dashboard.masters.'.$masterData, $data);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], 404);
@@ -54,8 +51,12 @@ class MasterController extends Controller
                 throw new \Exception($validator->errors());
             }
 
-            $this->masters[$masterData]::create($this->mapInputs($masterData, $request));
+            $data = $this->masters[$masterData]::create($this->mapInputs($masterData, $request));
 
+            $this->logActivity(
+                "Create $masterData with ID $data->id",
+                json_encode($data)
+            );
             return response()->json(['message' => ucwords($masterData) . ' added successfully']);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], 400);
@@ -66,7 +67,7 @@ class MasterController extends Controller
     {
         try {
             $data = $this->masters[$masterData]::findOrFail($id);
-            
+
             return $data;
         } catch (\Exception $e) {
             return response()->json($e->getMessage(), 400);
@@ -84,6 +85,11 @@ class MasterController extends Controller
             $this->masters[$masterData]::findOrFail($request->id)
                 ->update($this->mapInputs($masterData, $request));
 
+            $this->logActivity(
+                "Update $masterData with ID $request->id",
+                json_encode($request->except(['_method','_token']))
+            );
+
             return response()->json(['message' => ucwords($masterData) . ' updated successfully']);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], 400);
@@ -93,7 +99,13 @@ class MasterController extends Controller
     public function delete($masterData, $id)
     {
         try {
-            $this->masters[$masterData]::findOrFail($id)->delete();
+            $data = $this->masters[$masterData]::findOrFail($id);
+            $data->delete();
+
+            $this->logActivity(
+                "Delete $masterData with ID $id",
+                json_encode($data)
+            );
 
             return response()->json(['message' => ucwords($masterData) . ' deleted successfully']);
         } catch (\Exception $e) {
@@ -109,9 +121,19 @@ class MasterController extends Controller
      */
     public function datatable($masterData)
     {
+        // store count cache
+        if (Cache::has($masterData.'_count')) {
+            $count = Cache::get($masterData.'_count');
+        } else {
+            $count = $this->masters[$masterData]::count();
+            if ($count > MasterController::COUNT_LIMIT_FOR_DATATABLE) {
+                Cache::put($masterData.'_count', $count, 600);
+            }
+        }
+
         // $count = $this->masters[$masterData]::count();
         return DataTables::of($this->masters[$masterData]::query())
-        // ->setTotalRecords(10) 
+        ->setTotalRecords($count)
         // ->skipTotalRecords()
         ->addIndexColumn()
         ->escapeColumns([])
@@ -129,14 +151,13 @@ class MasterController extends Controller
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], 400);
         }
-        
     }
 
     private function mapInputs($masterData, $request)
     {
         $data = array();
         switch ($masterData) {
-            case 'patient':
+            case 'patient': // patient need custom mapping, so we must to add here
                 $data['name'] = $request->name;
                 $data['email'] = $request->email;
                 $data['phone'] = $request->phone;
@@ -151,6 +172,4 @@ class MasterController extends Controller
 
         return $data;
     }
-
-
 }

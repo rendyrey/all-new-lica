@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Validator;
 
 class Group extends Model
 {
-    protected $table = 'groups';
     protected $fillable = [
         'name',
         'early_limit',

@@ -11,7 +11,9 @@ Class Helper
             url('master/patient') => 'Master Patients',
             url('master/group') => 'Master Groups',
             url('master/analyzer') => 'Master Analyzer',
-            url('master/specimen') => 'Master Specimen'
+            url('master/specimen') => 'Master Specimen',
+            url('master/doctor') => 'Master Doctor',
+            url('master/insurance') => 'Master Insurance'
         ];
     }
 }

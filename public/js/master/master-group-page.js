@@ -69,8 +69,3 @@ document.addEventListener('DOMContentLoaded', function () {
         trigger: 'hover'
     });
 });
-
-
-
-
-

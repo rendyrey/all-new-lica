@@ -6,7 +6,7 @@
         <div class="card">
             <!-- card header -->
             <div class="card-header header-elements-sm-inline">
-                <h4 class="card-title">{{ $title }}</h4>
+                <h4 class="card-title">{{ $title }}/h4>
             </div>
             <!-- /card header -->
 
@@ -120,7 +120,7 @@
                 </div>
 
                 <div class="row">
-                    {{ Form::button('Add patient', ['class' => 'form-control btn-success', 'id' => 'submit-btn','type' => 'submit']) }}
+                    {{ Form::button('Add ' . $masterData, ['class' => 'form-control btn-success', 'id' => 'submit-btn','type' => 'submit']) }}
                 </div>
                 
                 {!! Form::close() !!}
@@ -213,7 +213,7 @@
             </div>
 
             <div class="row">
-                {{ Form::button('Add patient', ['class' => 'form-control btn-success', 'id' => 'submit-btn','type' => 'submit']) }}
+                {{ Form::button('Add ' . $masterData, ['class' => 'form-control btn-success', 'id' => 'submit-btn','type' => 'submit']) }}
             </div>
             
             {!! Form::close() !!}

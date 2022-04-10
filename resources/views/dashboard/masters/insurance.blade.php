@@ -6,7 +6,7 @@
         <div class="card">
             <!-- card header -->
             <div class="card-header header-elements-sm-inline">
-                <h4 class="card-title">{{ $title }}</h4>
+                <h4 class="card-title"> {{ $title }}</h4>
             </div>
             <!-- /card header -->
 
@@ -18,9 +18,8 @@
             <table class="table datatable-ajax datatable-responsive">
                 <thead>
                     <th>No</th>
-                    <th>Name</th>
-                    <th>Early Limit</th>
-                    <th>Limit</th>
+                    <th>Insurance Name</th>
+                    <th>Discount</th>
                     <th>General Code</th>
                     <th>Action</th>
                     <th></th>
@@ -34,7 +33,7 @@
         <div class="card">
              <!-- card header -->
              <div class="card-header header-elements-sm-inline">
-                <h5 class="card-title">Add new Group</h5>
+                <h5 class="card-title">Add new Insurance</h5>
                 <div class="header-elements">
                     <div class="list-icons">
                         <a class="list-icons-item" data-action="collapse"></a>
@@ -47,7 +46,7 @@
                 {!! Form::open(['class'=>'form form-horizontal form-validate-jquery', 'id' => 'form-create']) !!}
                 <div class="form-group row">
                     <label class="col-form-label col-lg-3">
-                        Group Name <span class="text-danger">*</span>
+                        Insurance Name <span class="text-danger">*</span>
                     </label>
                     <div class="col-lg-9">
                         {{ Form::text('name', null, ['class' => 'form-control', 'id' => 'first-input']) }}
@@ -56,19 +55,15 @@
 
                 <div class="form-group row">
                     <label class="col-form-label col-lg-3">
-                        Early Limit <span class="text-danger">*</span>
+                        Discount <span class="text-danger">*</span>
                     </label>
                     <div class="col-lg-9">
-                        {{ Form::text('early_limit', null, ['class' => 'form-control']) }}
-                    </div>
-                </div>
-
-                <div class="form-group row">
-                    <label class="col-form-label col-lg-3">
-                        Limit <span class="text-danger">*</span>
-                    </label>
-                    <div class="col-lg-9">
-                        {{ Form::text('limit', null, ['class' => 'form-control']) }}
+                        <div class="input-group">
+                            {{ Form::text('discount', null, ['class' => 'form-control']) }}
+                            <span class="input-group-append">
+                                <span class="input-group-text">%</span>
+                            </span>
+                        </div>
                     </div>
                 </div>
 
@@ -105,7 +100,7 @@
             {{ Form::hidden('id') }}
             <div class="form-group row">
                 <label class="col-form-label col-lg-3">
-                    Group Name <span class="text-danger">*</span>
+                    Insurance Name <span class="text-danger">*</span>
                 </label>
                 <div class="col-lg-9">
                     {{ Form::text('name', null, ['class' => 'form-control']) }}
@@ -114,19 +109,15 @@
 
             <div class="form-group row">
                 <label class="col-form-label col-lg-3">
-                    Early Limit <span class="text-danger">*</span>
+                    Discount <span class="text-danger">*</span>
                 </label>
                 <div class="col-lg-9">
-                    {{ Form::text('early_limit', null, ['class' => 'form-control']) }}
-                </div>
-            </div>
-
-            <div class="form-group row">
-                <label class="col-form-label col-lg-3">
-                    Limit <span class="text-danger">*</span>
-                </label>
-                <div class="col-lg-9">
-                    {{ Form::text('limit', null, ['class' => 'form-control']) }}
+                    <div class="input-group">
+                        {{ Form::text('discount', null, ['class' => 'form-control']) }}
+                        <span class="input-group-append">
+                            <span class="input-group-text">%</span>
+                        </span>
+                    </div>
                 </div>
             </div>
 
@@ -140,7 +131,7 @@
             </div>
 
             <div class="row">
-                {{ Form::button('Add patient', ['class' => 'form-control btn-success', 'id' => 'submit-btn','type' => 'submit']) }}
+                {{ Form::button('Update ' . $masterData, ['class' => 'form-control btn-success', 'id' => 'submit-btn','type' => 'submit']) }}
             </div>
             
             {!! Form::close() !!}

@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Validator;
 
 class Patient extends Model
 {
-    protected $table = 'patients';
     protected $fillable = [
         'medrec',
         'name',
