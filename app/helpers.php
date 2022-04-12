@@ -1,5 +1,8 @@
 <?php
 
+use App\Specimen;
+use App\Test;
+
 Class Helper 
 {
     /**
@@ -8,12 +11,24 @@ Class Helper
      */
     public static function masterMenu(){
         return [
+            url('master/test') => 'Master Test',
             url('master/patient') => 'Master Patients',
             url('master/group') => 'Master Groups',
             url('master/analyzer') => 'Master Analyzer',
             url('master/specimen') => 'Master Specimen',
             url('master/doctor') => 'Master Doctor',
-            url('master/insurance') => 'Master Insurance'
+            url('master/insurance') => 'Master Insurance',
+            url('master/package') => 'Master Package'
         ];
+    }
+
+    public static function specimenColor()
+    {
+        return Specimen::COLOR;
+    }
+
+    public static function testRangeType()
+    {
+        return Test::RANGE_TYPE;
     }
 }

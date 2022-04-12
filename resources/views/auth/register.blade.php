@@ -91,7 +91,7 @@
 							</div>
 
 							<div class="form-group form-group-feedback form-group-feedback-left">
-                                {{ Form::password('password', ['class' => 'form-control', 'placeholder' => 'Password'])}}
+                                {{ Form::password('password', ['class' => 'form-control', 'placeholder' => 'Password', 'id' => 'password'])}}
 								<div class="form-control-feedback">
 									<i class="icon-user-lock text-muted"></i>
 								</div>

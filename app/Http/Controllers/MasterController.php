@@ -12,6 +12,7 @@ class MasterController extends Controller
 {
     protected const COUNT_LIMIT_FOR_DATATABLE = 20000;
     protected $masters = [
+        'test' => 'App\Test',
         'patient' => 'App\Patient',
         'group' => 'App\Group',
         'analyzer' => 'App\Analyzer',
@@ -117,10 +118,12 @@ class MasterController extends Controller
      * Preparing the data for the DataTables
      *
      * @param string $masterData The model of the master
+     * @param string $with The relation model of the masterData, e.g. "group,specimen" or just "group"
      * @return json of DataTables
      */
-    public function datatable($masterData)
+    public function datatable($masterData, $with = null)
     {
+        
         // store count cache
         if (Cache::has($masterData.'_count')) {
             $count = Cache::get($masterData.'_count');
@@ -132,7 +135,13 @@ class MasterController extends Controller
         }
 
         // $count = $this->masters[$masterData]::count();
-        return DataTables::of($this->masters[$masterData]::query())
+        $model = $this->masters[$masterData]::query();
+        if ($with) {
+            $withModel = explode(',', $with);
+            $model = $model->with($withModel);
+        }
+
+        return DataTables::of($model)
         ->setTotalRecords($count)
         // ->skipTotalRecords()
         ->addIndexColumn()

@@ -1,5 +1,6 @@
 "use strict";
 var masterData = 'analyzer'; // required for the url
+var withModel = []; // required for the datatable if the model of the datatable has eager load or relationship, set to empty array if not.
 
 // required for the datatable columns
 var responsiveButtonIndexColumn = 4;
@@ -58,7 +59,7 @@ var rulesFormValidation = {
 // On document ready
 document.addEventListener('DOMContentLoaded', function () {
     DatatableDataSources.init();
-    Select2Selects('group', 'name').init();
+    Select2Data('group', 'name').init();
     FormValidation.init();
 
     $('body').tooltip({

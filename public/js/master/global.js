@@ -3,7 +3,7 @@
  * set base value to '/' if you are using web server and proper DNS
  * set base value to '/all-new-lica/public' if you just use it from the directory path
  */
-
+console.log(withModel.toString());
 var baseUrl = function(url) {
     return base + url;
 }
@@ -24,6 +24,12 @@ var jGrowlError = function () {
 
 var createData = function () {
     $("#submit-btn").prop('disabled', true); // disabled button
+    
+    // it is needed because CKEditor need double submit to work if using jquery post
+    // REF: https://stackoverflow.com/questions/47756773/why-in-my-ckeditor-need-to-double-click-the-submit-button-to-work
+    for ( instance in CKEDITOR.instances ){
+        CKEDITOR.instances[instance].updateElement();
+    }
 
     let formData = $("#form-create").serialize();
     let theForm = $("#form-create");
@@ -41,6 +47,7 @@ var createData = function () {
             $(".uniform-choice span").removeClass('checked'); // uncheck all the radio buttons
             $(".select2").val(null).trigger("change"); // unselect all the select form
             $("#form-create input:visible:enabled:first").trigger('focus'); // set focus to first element of input
+            $("#form-create textarea").val('');
         },
         error: function (request, status, error) {
             jGrowlError();
@@ -80,7 +87,9 @@ var editData = function (id) {
 var updateData = function () {
     let theForm = $("#form-edit");
     let formData = $("#form-edit").serialize();
-    console.log(formData);
+
+    
+
     $.ajax({
         url: baseUrl('master/'+masterData+'/update'),
         data: formData,
@@ -178,7 +187,7 @@ var DatatableDataSources = function() {
             serverSide: true,
             // order: [[1, 'desc']],
             ajax: {
-                url: baseUrl('master/datatable/'+masterData)
+                url: baseUrl('master/datatable/'+masterData+'/'+withModel.toString())
             },
             columns: columnsDataTable,
             columnDefs: [
@@ -275,7 +284,7 @@ var InputsCheckboxesRadios = function () {
     }
 }();
 
-var Select2Selects = function(theData, searchKey = 'name') {
+var Select2Data = function(theData, searchKey = 'name') {
     // Select2 examples
     var _componentSelect2 = function() {
         if (!$().select2) {
@@ -349,6 +358,79 @@ var Select2Selects = function(theData, searchKey = 'name') {
         }
     }
 };
+
+var Select2Component = function () {
+        // Select2 examples
+        var _componentSelect2 = function() {
+            if (!$().select2) {
+                console.warn('Warning - select2.min.js is not loaded.');
+                return;
+            }
+    
+            // Initialize
+            $('.form-select2').select2({
+                minimumResultsForSearch: Infinity,
+                allowClear: true        
+            });
+    
+        }
+        //
+        // Return objects assigned to module
+        //
+    
+        return {
+            init: function() {
+                _componentSelect2();
+    
+                // steal focus during close - only capture once and stop propogation
+                $('select.select2').on('select2:closing', function (e) {
+                    $(e.target).data("select2").$selection.one('focus focusin', function (e) {
+                    e.stopPropagation();
+                    });
+                });
+            }
+        }
+}();
+
+var CKEditor = function(id) {
+    // CKEditor
+    var _componentCKEditor = function() {
+        if (typeof CKEDITOR == 'undefined') {
+            console.warn('Warning - ckeditor.js is not loaded.');
+            return;
+        }
+
+        // CKEDITOR.editorConfig = function (config) {
+            
+        // }
+        
+
+        // Full featured editor
+        // ------------------------------
+
+        // Setup
+        CKEDITOR.replace(id, {
+            height: 100,
+            extraPlugins: 'forms',
+            toolbarGroups: [
+                {
+                    'name':'paragrap',
+                    'groups':['list']
+                },
+                {
+                    'name':'basicstyles',
+                    'group':['basicstyles']
+                }
+            ]
+        });
+    };
+    //
+    // Return objects assigned to module
+    //
+    _componentCKEditor();
+}
+
+
 
 // this is for open select2 when pressing tab in keyboard
 $(document).on('focus', '.select2-selection.select2-selection--single', function (e) {
@@ -479,6 +561,11 @@ var FormValidation = function() {
         $("#form-edit").on('submit', function(e) {
             e.preventDefault();
             if ($(this).valid()) {
+                // it is needed because CKEditor need double submit to work if using jquery post
+                // REF: https://stackoverflow.com/questions/47756773/why-in-my-ckeditor-need-to-double-click-the-submit-button-to-work
+                for ( instance in CKEDITOR.instances ){
+                    CKEDITOR.instances[instance].updateElement();
+                }
                 updateData();
             }
             // editData(e);

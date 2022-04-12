@@ -22,4 +22,16 @@ class Specimen extends Model
             'code' => 'required',
         ]);
     }
+
+    const COLOR = [
+        'Red' => 'Red',
+        'Blue' => 'Blue',
+        'Green' => 'Green',
+        'Yellow' => 'Yellow',
+        'Orange' => 'Orange',
+        'Brown' => 'Brown',
+        'Black' => 'Black',
+        'White' => 'White',
+        'Gray' => 'Gray'
+    ];
 }

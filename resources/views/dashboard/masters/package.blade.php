@@ -18,9 +18,8 @@
             <table class="table datatable-ajax datatable-responsive">
                 <thead>
                     <th>No</th>
-                    <th>Specimen Name</th>
-                    <th>Color</th>
-                    <th>Code</th>
+                    <th>Package Name</th>
+                    <th>General Code</th>
                     <th>Action</th>
                     <th></th>
                 </thead>
@@ -33,7 +32,7 @@
         <div class="card">
              <!-- card header -->
              <div class="card-header header-elements-sm-inline">
-                <h5 class="card-title">Add new Specimen</h5>
+                <h5 class="card-title">Add new {{ ucwords($masterData) }}</h5>
                 <div class="header-elements">
                     <div class="list-icons">
                         <a class="list-icons-item" data-action="collapse"></a>
@@ -46,7 +45,7 @@
                 {!! Form::open(['class'=>'form form-horizontal form-validate-jquery', 'id' => 'form-create']) !!}
                 <div class="form-group row">
                     <label class="col-form-label col-lg-3">
-                        Specimen Name <span class="text-danger">*</span>
+                        Package Name <span class="text-danger">*</span>
                     </label>
                     <div class="col-lg-9">
                         {{ Form::text('name', null, ['class' => 'form-control', 'id' => 'first-input']) }}
@@ -55,24 +54,15 @@
 
                 <div class="form-group row">
                     <label class="col-form-label col-lg-3">
-                        Color <span class="text-danger">*</span>
+                        Genereal Code <span class="text-danger">*</span>
                     </label>
                     <div class="col-lg-9">
-                        {{ Form::select('color', array_merge(Helper::specimenColor(),[''=>'']), null, ['class' => 'form-control form-select2', 'data-placeholder' => 'Select color']) }}
-                    </div>
-                </div>
-
-                <div class="form-group row">
-                    <label class="col-form-label col-lg-3">
-                        Code <span class="text-danger">*</span>
-                    </label>
-                    <div class="col-lg-9">
-                        {{ Form::text('code', null, ['class' => 'form-control']) }}
+                        {{ Form::text('general_code', null, ['class' => 'form-control']) }}
                     </div>
                 </div>
 
                 <div class="row">
-                    {{ Form::button('Add Specimen', ['class' => 'form-control btn-success', 'id' => 'submit-btn','type' => 'submit']) }}
+                    {{ Form::button('Add '. $masterData, ['class' => 'form-control btn-success', 'id' => 'submit-btn','type' => 'submit']) }}
                 </div>
                 
                 {!! Form::close() !!}
@@ -95,7 +85,7 @@
             {{ Form::hidden('id') }}
             <div class="form-group row">
                 <label class="col-form-label col-lg-3">
-                    Specimen Name <span class="text-danger">*</span>
+                    Package Name <span class="text-danger">*</span>
                 </label>
                 <div class="col-lg-9">
                     {{ Form::text('name', null, ['class' => 'form-control']) }}
@@ -104,24 +94,24 @@
 
             <div class="form-group row">
                 <label class="col-form-label col-lg-3">
-                    Color <span class="text-danger">*</span>
+                    Doctor Title <span class="text-danger">*</span>
                 </label>
                 <div class="col-lg-9">
-                    {{ Form::select('color', array_merge(Helper::specimenColor(),[''=>'']), null, ['class' => 'form-control']) }}
+                    {{ Form::text('title', null, ['class' => 'form-control']) }}
                 </div>
             </div>
 
             <div class="form-group row">
                 <label class="col-form-label col-lg-3">
-                    Code <span class="text-danger">*</span>
+                    General Code <span class="text-danger">*</span>
                 </label>
                 <div class="col-lg-9">
-                    {{ Form::text('code', null, ['class' => 'form-control']) }}
+                    {{ Form::text('general_code', null, ['class' => 'form-control']) }}
                 </div>
             </div>
 
             <div class="row">
-                {{ Form::button('Add patient', ['class' => 'form-control btn-success', 'id' => 'submit-btn','type' => 'submit']) }}
+                {{ Form::button('Update ' . $masterData, ['class' => 'form-control btn-success', 'id' => 'submit-btn','type' => 'submit']) }}
             </div>
             
             {!! Form::close() !!}

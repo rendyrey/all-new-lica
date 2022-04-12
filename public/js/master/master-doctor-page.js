@@ -1,5 +1,6 @@
 "use strict";
 var masterData = 'doctor'; // required for the url
+var withModel = []; // required for the datatable if the model of the datatable has eager load or relationship, set to empty array if not.
 
 // required for the datatable columns
 var responsiveButtonIndexColumn = 5;

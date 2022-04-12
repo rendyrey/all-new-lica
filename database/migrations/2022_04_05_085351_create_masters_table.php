@@ -100,10 +100,10 @@ class CreateMastersTable extends Migration
             $table->string('unit');
             $table->decimal('volume', 12, 2);
             $table->integer('price');
-            $table->integer('range_type');
+            $table->enum('range_type',['number','label','description','free_formatted_text']);
             $table->integer('sequence');
             $table->string('sub_group');
-            $table->longText('normal_notes');
+            $table->longText('normal_notes')->default('');
             $table->string('general_code');
             $table->timestamps();
         });
