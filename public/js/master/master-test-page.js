@@ -25,14 +25,14 @@ var columnsDataTable = [
     {
         render: function (data, type, row) {
             let editBtn = 
-                `<button type="button" class="btn btn-sm btn-primary btn-icon rounded-round" data-popup="tooltip" title="Edit data" data-placement="left" onClick="editData(`+row.id+`)">
+                `<button style="margin:2px;" type="button" class="btn btn-sm btn-primary btn-icon rounded-round" data-popup="tooltip" title="Edit data" data-placement="left" onClick="editData(`+row.id+`)">
                     <i class="icon-pencil5"></i>
                 </button>`;
             let deleteBtn = 
-                `<button type="button" class="btn btn-sm btn-danger btn-icon rounded-round" data-popup="tooltip" title="Delete data" data-placement="left" onClick="deleteData(`+row.id+`)">
+                `<button style="margin:2px;" type="button" class="btn btn-sm btn-danger btn-icon rounded-round" data-popup="tooltip" title="Delete data" data-placement="left" onClick="deleteData(`+row.id+`)">
                     <i class="icon-trash"></i>
                 </button>`;
-            return editBtn+ '&nbsp;&nbsp;' +deleteBtn;
+            return editBtn+ '' +deleteBtn;
         },
         responsivePriority: 1,
     },

@@ -11,14 +11,14 @@ Class Helper
      */
     public static function masterMenu(){
         return [
-            url('master/test') => 'Master Test',
+            url('master/test') => 'Master Tests',
+            url('master/package') => 'Master Packages',
             url('master/patient') => 'Master Patients',
             url('master/group') => 'Master Groups',
-            url('master/analyzer') => 'Master Analyzer',
-            url('master/specimen') => 'Master Specimen',
-            url('master/doctor') => 'Master Doctor',
-            url('master/insurance') => 'Master Insurance',
-            url('master/package') => 'Master Package'
+            url('master/analyzer') => 'Master Analyzers',
+            url('master/specimen') => 'Master Specimens',
+            url('master/doctor') => 'Master Doctors',
+            url('master/insurance') => 'Master Insurances',
         ];
     }
 

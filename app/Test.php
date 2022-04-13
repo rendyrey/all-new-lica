@@ -44,12 +44,11 @@ class Test extends Model
 
     public function group()
     {
-        return $this->belongsTo('App\Group','group_id','id');
+        return $this->belongsTo('App\Group', 'group_id', 'id');
     }
 
     public function specimen()
     {
-        return $this->belongsTo('App\Specimen','specimen_id','id');
+        return $this->belongsTo('App\Specimen', 'specimen_id', 'id');
     }
-
 }

@@ -13,6 +13,7 @@ class MasterController extends Controller
     protected const COUNT_LIMIT_FOR_DATATABLE = 20000;
     protected $masters = [
         'test' => 'App\Test',
+        'package' => 'App\Package',
         'patient' => 'App\Patient',
         'group' => 'App\Group',
         'analyzer' => 'App\Analyzer',
@@ -20,6 +21,8 @@ class MasterController extends Controller
         'doctor' => 'App\Doctor',
         'insurance' => 'App\Insurance'
     ];
+
+    protected $masterId = null;
     
     /**
      * The index function for all master pages, route: '/master/*'
@@ -46,22 +49,48 @@ class MasterController extends Controller
 
     public function create($masterData, Request $request)
     {
+        DB::beginTransaction();
         try {
             $validator = $this->masters[$masterData]::validate($request);
             if ($validator->fails()) {
                 throw new \Exception($validator->errors());
             }
 
-            $data = $this->masters[$masterData]::create($this->mapInputs($masterData, $request));
+            $createdData = $this->masters[$masterData]::create($this->mapInputs($masterData, $request));
+
+            $this->createPackageTest($createdData, $masterData, $request); 
 
             $this->logActivity(
-                "Create $masterData with ID $data->id",
-                json_encode($data)
+                "Create $masterData with ID $createdData->id",
+                json_encode($createdData)
             );
+            DB::commit();
             return response()->json(['message' => ucwords($masterData) . ' added successfully']);
         } catch (\Exception $e) {
+            DB::rollback();
             return response()->json(['message' => $e->getMessage()], 400);
         }
+    }
+
+    private function createPackageTest($createdData, $masterData, $request)
+    {
+        if ($masterData != 'package') {
+            return;
+        }
+        $data = [];
+        if($request->test_ids != null) {
+            $currentTime = date('Y-m-d H:i:s');
+            foreach ($request->test_ids as $test_id) {
+                $data[] = [
+                    'test_id' => $test_id,
+                    'package_id' => $createdData->id,
+                    'created_at' => $currentTime,
+                    'updated_at' => $currentTime
+                ];
+            }
+        }
+
+        \App\PackageTest::insert($data);
     }
     
     public function edit($masterData, $id)
@@ -77,6 +106,7 @@ class MasterController extends Controller
 
     public function update($masterData, Request $request)
     {
+        DB::beginTransaction();
         try {
             $validator = $this->masters[$masterData]::validate($request);
             if ($validator->fails()) {
@@ -86,16 +116,45 @@ class MasterController extends Controller
             $this->masters[$masterData]::findOrFail($request->id)
                 ->update($this->mapInputs($masterData, $request));
 
+            $this->updatePackageTest($masterData, $request);
+
             $this->logActivity(
                 "Update $masterData with ID $request->id",
                 json_encode($request->except(['_method','_token']))
             );
 
+            DB::commit();
             return response()->json(['message' => ucwords($masterData) . ' updated successfully']);
         } catch (\Exception $e) {
+            DB::rollback();
             return response()->json(['message' => $e->getMessage()], 400);
         }
     }
+
+    private function updatePackageTest($masterData, $request)
+    {
+        if ($masterData != 'package') {
+            return;
+        }
+
+        $data = [];
+        if($request->test_ids != null) {
+            \App\PackageTest::where('package_id', $request->id)->delete(); // delete previous data
+
+            $currentTime = date('Y-m-d H:i:s');
+            foreach ($request->test_ids as $test_id) {
+                $data[] = [
+                    'test_id' => $test_id,
+                    'package_id' => $request->id,
+                    'created_at' => $currentTime,
+                    'updated_at' => $currentTime
+                ];
+            }
+        }
+
+        \App\PackageTest::insert($data);
+    }
+
 
     public function delete($masterData, $id)
     {
@@ -175,6 +234,11 @@ class MasterController extends Controller
                 $data['gender'] = $request->gender;
                 $data['address'] = $request->address;
                 break;
+            case 'test':
+                if (!$request->normal_notes || (!isset($request->normal_notes)) || $request->normal_notes == null) {
+                    return $request->except(['normal_notes']);
+                }
+                return $request->all();
             default:
                 return $request->all();
         }

@@ -27,12 +27,15 @@ var createData = function () {
     
     // it is needed because CKEditor need double submit to work if using jquery post
     // REF: https://stackoverflow.com/questions/47756773/why-in-my-ckeditor-need-to-double-click-the-submit-button-to-work
-    for ( instance in CKEDITOR.instances ){
-        CKEDITOR.instances[instance].updateElement();
+    if (typeof CKEDITOR != 'undefined') {
+        for ( instance in CKEDITOR.instances ){
+            CKEDITOR.instances[instance].updateElement();
+        }
     }
 
     let formData = $("#form-create").serialize();
     let theForm = $("#form-create");
+    console.log(formData);
     $.ajax({
         url: baseUrl('master/'+masterData+'/create'),
         method: 'POST',
@@ -45,7 +48,7 @@ var createData = function () {
             $("#submit-btn").prop('disabled', false); // re-enable submit button
             theForm.trigger('reset'); // reset form after successfully create data
             $(".uniform-choice span").removeClass('checked'); // uncheck all the radio buttons
-            $(".select2").val(null).trigger("change"); // unselect all the select form
+            $("select").val(null).trigger("change"); // unselect all the select form
             $("#form-create input:visible:enabled:first").trigger('focus'); // set focus to first element of input
             $("#form-create textarea").val('');
         },
@@ -392,6 +395,73 @@ var Select2Component = function () {
         }
 }();
 
+var Select2DataMultipleComponent = function(theData, searchKey = 'name') {
+    // Select2 examples
+    var _componentSelect2 = function() {
+        if (!$().select2) {
+            console.warn('Warning - select2.min.js is not loaded.');
+            return;
+        }
+
+        // Initialize
+        $('.select-' + theData + '-multiple').select2({
+            ajax: {
+                url: baseUrl('master/select-options/' + theData + '/' + searchKey),
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        query: params.term // search term
+                    };
+                },
+                processResults: function (data, params) {
+
+                    // parse the results into the format expected by Select2
+                    // since we are using custom formatting functions we do not need to
+                    // alter the remote JSON data, except to indicate that infinite
+                    // scrolling can be used
+                    // params.page = params.page || 1;
+
+                    return {
+                        results: $.map(data, function(item){
+                            return {
+                                text: item.name,
+                                id: item.id
+                            }
+                        })
+                    };
+                },
+                cache: true
+            },
+            // escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+            // minimumInputLength: 0,
+            // tags: true, // for create new tags
+            language: {
+                inputTooShort: function () {
+                    return 'Input is too short';
+                },
+                errorLoading: function () {
+                    return `There's error on our side`;
+                },
+                noResults: function () {
+                    return 'There are no result based on your search';
+                }
+            }
+            
+        });
+
+    }
+    //
+    // Return objects assigned to module
+    //
+
+    return {
+        init: function() {
+            _componentSelect2();
+        }
+    }
+};
+
 var CKEditor = function(id) {
     // CKEditor
     var _componentCKEditor = function() {
@@ -429,8 +499,6 @@ var CKEditor = function(id) {
     //
     _componentCKEditor();
 }
-
-
 
 // this is for open select2 when pressing tab in keyboard
 $(document).on('focus', '.select2-selection.select2-selection--single', function (e) {
@@ -563,8 +631,10 @@ var FormValidation = function() {
             if ($(this).valid()) {
                 // it is needed because CKEditor need double submit to work if using jquery post
                 // REF: https://stackoverflow.com/questions/47756773/why-in-my-ckeditor-need-to-double-click-the-submit-button-to-work
-                for ( instance in CKEDITOR.instances ){
-                    CKEDITOR.instances[instance].updateElement();
+                if (typeof CKEDITOR != 'undefined') {
+                    for ( instance in CKEDITOR.instances ){
+                        CKEDITOR.instances[instance].updateElement();
+                    }
                 }
                 updateData();
             }

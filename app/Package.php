@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Validator;
 
 class Package extends Model
 {
+    protected $with = ['package_tests'];
     protected $fillable = [
         'name',
         'price',
@@ -21,5 +22,10 @@ class Package extends Model
             'price' => 'required',
             'general_code' => 'required',
         ]);
+    }
+
+    public function package_tests()
+    {
+        return $this->hasMany('App\PackageTest', 'package_id', 'id');
     }
 }

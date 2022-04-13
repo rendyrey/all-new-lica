@@ -19,6 +19,7 @@
                 <thead>
                     <th>No</th>
                     <th>Package Name</th>
+                    <th>Price</th>
                     <th>General Code</th>
                     <th>Action</th>
                     <th></th>
@@ -49,6 +50,24 @@
                     </label>
                     <div class="col-lg-9">
                         {{ Form::text('name', null, ['class' => 'form-control', 'id' => 'first-input']) }}
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-form-label col-lg-3">
+                        Tests List <span class="text-danger">*</span>
+                    </label>
+                    <div class="col-lg-9">
+                        {{ Form::select('test_ids[]', [], null, ['class' => 'form-control select-test-multiple', 'multiple' => 'multiple', 'data-fouc', 'data-placeholder' => 'Select Tests']) }}
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-form-label col-lg-3">
+                        Price <span class="text-danger">*</span>
+                    </label>
+                    <div class="col-lg-9">
+                        {{ Form::text('price', null, ['class' => 'form-control']) }}
                     </div>
                 </div>
 
@@ -94,10 +113,19 @@
 
             <div class="form-group row">
                 <label class="col-form-label col-lg-3">
-                    Doctor Title <span class="text-danger">*</span>
+                    Price <span class="text-danger">*</span>
                 </label>
                 <div class="col-lg-9">
-                    {{ Form::text('title', null, ['class' => 'form-control']) }}
+                    {{ Form::text('price', null, ['class' => 'form-control']) }}
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-form-label col-lg-3">
+                    Tests List <span class="text-danger">*</span>
+                </label>
+                <div class="col-lg-9">
+                    {{ Form::select('test_ids[]', [], null, ['class' => 'form-control select-test-multiple', 'multiple' => 'multiple', 'data-fouc']) }}
                 </div>
             </div>
 
