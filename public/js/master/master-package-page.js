@@ -33,7 +33,6 @@ var columnsDataTable = [
 
 var setValueModalEditForm = function(data)
 {
-    console.log(data);
     $("#modal_form_horizontal").modal('show');
     $("#modal_form_horizontal input[name='id']").val(data.id);
     $("#modal_form_horizontal input[name='name']").val(data.name);

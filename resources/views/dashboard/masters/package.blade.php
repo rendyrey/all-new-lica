@@ -58,7 +58,7 @@
                         Tests List <span class="text-danger">*</span>
                     </label>
                     <div class="col-lg-9">
-                        {{ Form::select('test_ids[]', [], null, ['class' => 'form-control select-test-multiple', 'multiple' => 'multiple', 'data-fouc', 'data-placeholder' => 'Select Tests']) }}
+                        {{ Form::select('test_ids[]', [], null, ['class' => 'form-control select-test-multiple select2', 'multiple' => 'multiple', 'data-fouc', 'data-placeholder' => 'Select Tests']) }}
                     </div>
                 </div>
 
@@ -125,7 +125,7 @@
                     Tests List <span class="text-danger">*</span>
                 </label>
                 <div class="col-lg-9">
-                    {{ Form::select('test_ids[]', [], null, ['class' => 'form-control select-test-multiple', 'multiple' => 'multiple', 'data-fouc']) }}
+                    {{ Form::select('test_ids[]', [], null, ['class' => 'form-control select-test-multiple select2', 'multiple' => 'multiple', 'data-fouc']) }}
                 </div>
             </div>
 

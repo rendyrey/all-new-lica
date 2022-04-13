@@ -103,7 +103,7 @@ class CreateMastersTable extends Migration
             $table->enum('range_type',['number','label','description','free_formatted_text']);
             $table->integer('sequence');
             $table->string('sub_group');
-            $table->longText('normal_notes')->default('');
+            $table->longText('normal_notes')->nullable();
             $table->string('general_code');
             $table->timestamps();
         });

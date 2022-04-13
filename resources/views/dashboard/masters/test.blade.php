@@ -92,7 +92,7 @@
                         Group Test <span class="text-danger">*</span>
                     </label>
                     <div class="col-lg-9">
-                        {{ Form::select('group_id', [], null, ['class' => 'form-control select-group', 'data-placeholder' => 'Select Group']) }}
+                        {{ Form::select('group_id', [], null, ['class' => 'form-control select-group select2', 'data-placeholder' => 'Select Group']) }}
                     </div>
                 </div>
 
@@ -110,7 +110,7 @@
                         Specimen <span class="text-danger">*</span>
                     </label>
                     <div class="col-lg-9">
-                        {{ Form::select('specimen_id', [], null, ['class' => 'form-control select-specimen', 'data-placeholder' => 'Select Specimen']) }}
+                        {{ Form::select('specimen_id', [], null, ['class' => 'form-control select-specimen select2', 'data-placeholder' => 'Select Specimen']) }}
                     </div>
                 </div>
 
@@ -137,7 +137,7 @@
                         Ref. Range Type <span class="text-danger">*</span>
                     </label>
                     <div class="col-lg-9">
-                        {{ Form::select('range_type', array_merge(Helper::testRangeType(),[''=>'']), null, ['class' => 'form-control form-select2 range-type', 'data-placeholder' => 'Select Range Type']) }}
+                        {{ Form::select('range_type', array_merge(Helper::testRangeType(),[''=>'']), null, ['class' => 'form-control form-select2 range-type select2', 'data-placeholder' => 'Select Range Type']) }}
                     </div>
                 </div>
 
@@ -222,7 +222,7 @@
                     Group Test <span class="text-danger">*</span>
                 </label>
                 <div class="col-lg-9">
-                    {{ Form::select('group_id', [], null, ['class' => 'form-control select-group', 'data-placeholder' => 'Select Group']) }}
+                    {{ Form::select('group_id', [], null, ['class' => 'form-control select-group select2', 'data-placeholder' => 'Select Group']) }}
                 </div>
             </div>
 
@@ -240,7 +240,7 @@
                     Specimen <span class="text-danger">*</span>
                 </label>
                 <div class="col-lg-9">
-                    {{ Form::select('specimen_id', [], null, ['class' => 'form-control select-specimen', 'data-placeholder' => 'Select Specimen']) }}
+                    {{ Form::select('specimen_id', [], null, ['class' => 'form-control select-specimen select2', 'data-placeholder' => 'Select Specimen']) }}
                 </div>
             </div>
 
@@ -267,7 +267,7 @@
                     Ref. Range Type <span class="text-danger">*</span>
                 </label>
                 <div class="col-lg-9">
-                    {{ Form::select('range_type', array_merge(Helper::testRangeType(),[''=>'']), null, ['class' => 'form-control form-select2 range-type-edit', 'data-placeholder' => 'Select Range Type']) }}
+                    {{ Form::select('range_type', array_merge(Helper::testRangeType(),[''=>'']), null, ['class' => 'form-control form-select2 range-type-edit select2', 'data-placeholder' => 'Select Range Type']) }}
                 </div>
             </div>
 

@@ -7,8 +7,8 @@ var responsiveButtonIndexColumn = 6;
 var columnsDataTable = [
     { data: 'DT_RowIndex', orderable: false, searchable: false },
     { data: 'name' },
-    { data: 'early_limit' },
-    { data: 'limit' },
+    { data: 'early_limit', searchable: false },
+    { data: 'limit', searchable: false },
     { data: 'general_code' },
     {
         render: function (data, type, row) {

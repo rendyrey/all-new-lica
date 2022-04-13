@@ -159,6 +159,7 @@ class MasterController extends Controller
     public function delete($masterData, $id)
     {
         try {
+            $this->validateDelete($masterData, $id);
             $data = $this->masters[$masterData]::findOrFail($id);
             $data->delete();
 
@@ -170,6 +171,25 @@ class MasterController extends Controller
             return response()->json(['message' => ucwords($masterData) . ' deleted successfully']);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], 400);
+        }
+    }
+
+    private function validateDelete($masterData, $id)
+    {
+        $exists = false;
+        switch($masterData)
+        {
+            case 'test':
+                $exists = \App\PackageTest::where('test_id', $id)->exists();
+                break;
+            case 'group':
+                $exists = \App\Analyzer::where('group_id', $id)->exists();
+                break;
+            default:
+                $exists = false;
+        }
+        if ($exists) {
+            throw new \Exception("You can't delete this data, because this data has been used");
         }
     }
 

@@ -80,8 +80,6 @@ submitButton.addEventListener('click', function (e) {
     // validate form before submit
     if (validator) {
         validator.validate().then(function (status){
-            // console.log('validated!');
-            // console.log(status);
             if (status == 'Valid') {
                 submitButton.disabled = true;
                 form.submit();

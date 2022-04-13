@@ -3,7 +3,6 @@
  * set base value to '/' if you are using web server and proper DNS
  * set base value to '/all-new-lica/public' if you just use it from the directory path
  */
-console.log(withModel.toString());
 var baseUrl = function(url) {
     return base + url;
 }
@@ -15,8 +14,8 @@ var jGrowlSuccess = function (message) {
     });
 }
 
-var jGrowlError = function () {
-    $.jGrowl('Something error happen on our side. Data unsuccessfully saved', {
+var jGrowlError = function (message = 'Something error happen on our side. Data unsuccessfully saved') {
+    $.jGrowl(message, {
         header: 'Oh snap!',
         theme: 'bg-danger'
     });
@@ -35,7 +34,6 @@ var createData = function () {
 
     let formData = $("#form-create").serialize();
     let theForm = $("#form-create");
-    console.log(formData);
     $.ajax({
         url: baseUrl('master/'+masterData+'/create'),
         method: 'POST',
@@ -48,7 +46,7 @@ var createData = function () {
             $("#submit-btn").prop('disabled', false); // re-enable submit button
             theForm.trigger('reset'); // reset form after successfully create data
             $(".uniform-choice span").removeClass('checked'); // uncheck all the radio buttons
-            $("select").val(null).trigger("change"); // unselect all the select form
+            $(".select2").val(null).trigger("change"); // unselect all the select form
             $("#form-create input:visible:enabled:first").trigger('focus'); // set focus to first element of input
             $("#form-create textarea").val('');
         },
@@ -91,8 +89,6 @@ var updateData = function () {
     let theForm = $("#form-edit");
     let formData = $("#form-edit").serialize();
 
-    
-
     $.ajax({
         url: baseUrl('master/'+masterData+'/update'),
         data: formData,
@@ -101,7 +97,6 @@ var updateData = function () {
             $("#modal_form_horizontal").modal('hide');
             theForm.trigger('reset');
             $(".uniform-choice span").removeClass('checked'); // uncheck all the radio buttons
-
             DatatableDataSources.refreshTable();
             jGrowlSuccess(res.message);
         },
@@ -133,6 +128,9 @@ var deleteData = function (id) {
                 success: function(res) {
                     DatatableDataSources.refreshTable();
                     jGrowlSuccess(res.message);
+                },
+                error: function(request, status, error){
+                    jGrowlError(request.responseJSON.message);
                 }
             })
         }

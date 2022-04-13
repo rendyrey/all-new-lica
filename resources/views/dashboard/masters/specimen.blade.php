@@ -58,7 +58,7 @@
                         Color <span class="text-danger">*</span>
                     </label>
                     <div class="col-lg-9">
-                        {{ Form::select('color', array_merge(Helper::specimenColor(),[''=>'']), null, ['class' => 'form-control form-select2', 'data-placeholder' => 'Select color']) }}
+                        {{ Form::select('color', array_merge(Helper::specimenColor(),[''=>'']), null, ['class' => 'form-control form-select2 select2', 'data-placeholder' => 'Select color']) }}
                     </div>
                 </div>
 
@@ -107,7 +107,7 @@
                     Color <span class="text-danger">*</span>
                 </label>
                 <div class="col-lg-9">
-                    {{ Form::select('color', array_merge(Helper::specimenColor(),[''=>'']), null, ['class' => 'form-control']) }}
+                    {{ Form::select('color', array_merge(Helper::specimenColor(),[''=>'']), null, ['class' => 'form-control select2']) }}
                 </div>
             </div>
 
