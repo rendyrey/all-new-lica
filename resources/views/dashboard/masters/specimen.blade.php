@@ -33,7 +33,7 @@
         <div class="card">
              <!-- card header -->
              <div class="card-header header-elements-sm-inline">
-                <h5 class="card-title">Add new Specimen</h5>
+                <h5 class="card-title">Add new {{ $masterData }}</h5>
                 <div class="header-elements">
                     <div class="list-icons">
                         <a class="list-icons-item" data-action="collapse"></a>
@@ -58,7 +58,7 @@
                         Color <span class="text-danger">*</span>
                     </label>
                     <div class="col-lg-9">
-                        {{ Form::select('color', array_merge(Helper::specimenColor(),[''=>'']), null, ['class' => 'form-control form-select2 select2', 'data-placeholder' => 'Select color']) }}
+                        {{ Form::select('color', array_replace(Helper::specimenColor(),[''=>'']), null, ['class' => 'form-control form-select2 select2', 'data-placeholder' => 'Select color']) }}
                     </div>
                 </div>
 
@@ -72,7 +72,7 @@
                 </div>
 
                 <div class="row">
-                    {{ Form::button('Add Specimen', ['class' => 'form-control btn-success', 'id' => 'submit-btn','type' => 'submit']) }}
+                    {{ Form::button('Add ' . $masterData, ['class' => 'form-control btn-success', 'id' => 'submit-btn','type' => 'submit']) }}
                 </div>
                 
                 {!! Form::close() !!}
@@ -107,7 +107,7 @@
                     Color <span class="text-danger">*</span>
                 </label>
                 <div class="col-lg-9">
-                    {{ Form::select('color', array_merge(Helper::specimenColor(),[''=>'']), null, ['class' => 'form-control select2']) }}
+                    {{ Form::select('color', array_replace(Helper::specimenColor(),[''=>'']), null, ['class' => 'form-control select2']) }}
                 </div>
             </div>
 
@@ -121,7 +121,7 @@
             </div>
 
             <div class="row">
-                {{ Form::button('Add patient', ['class' => 'form-control btn-success', 'id' => 'submit-btn','type' => 'submit']) }}
+                {{ Form::button('Update ' . $masterData, ['class' => 'form-control btn-success', 'id' => 'submit-btn','type' => 'submit']) }}
             </div>
             
             {!! Form::close() !!}

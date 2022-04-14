@@ -19,7 +19,9 @@ class MasterController extends Controller
         'analyzer' => 'App\Analyzer',
         'specimen' => 'App\Specimen',
         'doctor' => 'App\Doctor',
-        'insurance' => 'App\Insurance'
+        'insurance' => 'App\Insurance',
+        'price' => 'App\Price',
+        'room' => 'App\Room'
     ];
 
     protected $masterId = null;
@@ -246,19 +248,19 @@ class MasterController extends Controller
         $data = array();
         switch ($masterData) {
             case 'patient': // patient need custom mapping, so we must to add here
-                $data['name'] = $request->name;
-                $data['email'] = $request->email;
-                $data['phone'] = $request->phone;
-                $data['medrec'] = $request->medrec;
+                $data = $request->all();
                 $data['birthdate'] = $request->birthdate_submit;
-                $data['gender'] = $request->gender;
-                $data['address'] = $request->address;
                 break;
             case 'test':
                 if (!$request->normal_notes || (!isset($request->normal_notes)) || $request->normal_notes == null) {
                     return $request->except(['normal_notes']);
                 }
                 return $request->all();
+            case 'room': // room need custom mapping for checkbox
+                $data = $request->all();
+                $data['auto_checkin'] = $request->auto_checkin == 1;
+                $data['auto_draw'] = $request->auto_draw == 1;
+                break;
             default:
                 return $request->all();
         }

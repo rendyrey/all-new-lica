@@ -5,7 +5,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="csrf-token" content="{{ csrf_token() }}" />
-	<title>Limitless - Responsive Web Application Kit by Eugene Kopyov</title>
+	<title>LICA Master @if(isset($masterData)) - {{ucwords($masterData) }} @endif</title>
 
 	<!-- Global stylesheets -->
 	<link href="https://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700,900" rel="stylesheet" type="text/css">
@@ -16,6 +16,10 @@
 	<link href="{{asset('limitless_assets/css/components.min.css')}}" rel="stylesheet" type="text/css">
 	<link href="{{asset('limitless_assets/css/colors.min.css')}}" rel="stylesheet" type="text/css">
 	<!-- /global stylesheets -->
+
+	<!-- font awesome -->
+	<link href="{{asset('limitless_assets/css/icons/fontawesome/styles.min.css')}}" rel="stylesheet" type="text/css">
+	<!-- /font awesome -->
 
 	<!-- Core JS files -->
 	<script src="{{asset('limitless_assets/js/main/jquery.min.js')}}"></script>

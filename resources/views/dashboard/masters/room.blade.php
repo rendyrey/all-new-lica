@@ -18,16 +18,16 @@
             <table class="table datatable-ajax datatable-responsive">
                 <thead>
                     <th>No</th>
-                    <th>Test Name</th>
-                    <th>Price</th>
-                    <th>Initial</th>
-                    <th>Unit</th>
-                    <th>Volume</th>
-                    <th>Ref. Range Type</th>
-                    <th>Test Group</th>
-                    <th>Sub Group</th>
-                    <th>Specimen</th>
-                    <th>Sequence</th>
+                    <th>Room</th>
+                    <th>Room Code</th>
+                    <th>Class</th>
+                    <th>Auto Checkin</th>
+                    <th>Auto Draw</th>
+                    <th>Type</th>
+                    <th>Referral Address</th>
+                    <th>Referral No Phone</th>
+                    <th>Referral Email</th>
+                    <th>General Code</th>
                     <th>Action</th>
                     <th></th>
                 </thead>
@@ -53,100 +53,88 @@
                 {!! Form::open(['class'=>'form form-horizontal form-validate-jquery', 'id' => 'form-create']) !!}
                 <div class="form-group row">
                     <label class="col-form-label col-lg-3">
-                        Test Name <span class="text-danger">*</span>
+                        Room <span class="text-danger">*</span>
                     </label>
                     <div class="col-lg-9">
-                        {{ Form::text('name', null, ['class' => 'form-control', 'id' => 'first-input']) }}
+                        {{ Form::text('room', null, ['class' => 'form-control', 'id' => 'first-input']) }}
                     </div>
                 </div>
 
                 <div class="form-group row">
                     <label class="col-form-label col-lg-3">
-                        Initial <span class="text-danger">*</span>
+                        Room Code <span class="text-danger">*</span>
                     </label>
                     <div class="col-lg-9">
-                        {{ Form::text('initial', '',  ['class' => 'form-control']) }}
+                        {{ Form::text('room_code', null, ['class' => 'form-control']) }}
                     </div>
                 </div>
 
                 <div class="form-group row">
                     <label class="col-form-label col-lg-3">
-                        Volume <span class="text-danger">*</span>
+                        Class <span class="text-danger">*</span>
                     </label>
                     <div class="col-lg-9">
-                        {{ Form::text('volume', null, ['class' => 'form-control']) }}
+                        {{ Form::text('class', null, ['class' => 'form-control']) }}
                     </div>
                 </div>
 
                 <div class="form-group row">
                     <label class="col-form-label col-lg-3">
-                        Unit <span class="text-danger">*</span>
+                        Auto Checkin
                     </label>
-                    <div class="col-lg-9">
-                        {{ Form::text('unit', null, ['class' => 'form-control']) }}
+                    <div class="col-lg-9 align-self-center">
+                        <div class="custom-control custom-checkbox">
+                            {{ Form::checkbox('auto_checkin', true, false, ['class' => 'custom-control-input', 'id' => 'auto-checkin'])}}
+                            <label class="custom-control-label" for="auto-checkin"></label>
+                        </div>
                     </div>
                 </div>
 
                 <div class="form-group row">
                     <label class="col-form-label col-lg-3">
-                        Group Test <span class="text-danger">*</span>
+                        Auto Draw
                     </label>
-                    <div class="col-lg-9">
-                        {{ Form::select('group_id', [], null, ['class' => 'form-control select-group select2', 'data-placeholder' => 'Select Group']) }}
+                    <div class="col-lg-9 align-self-center">
+                        <div class="custom-control custom-checkbox">
+                            {{ Form::checkbox('auto_draw', true, false, ['class' => 'custom-control-input', 'id' => 'auto-draw'])}}
+                            <label class="custom-control-label" for="auto-draw"></label>
+                        </div>
                     </div>
                 </div>
 
                 <div class="form-group row">
                     <label class="col-form-label col-lg-3">
-                        Sub Group <span class="text-danger">*</span>
+                        Type <span class="text-danger">*</span>
                     </label>
                     <div class="col-lg-9">
-                        {{ Form::text('sub_group', null, ['class' => 'form-control']) }}
+                        {{ Form::select('type', array_replace(Helper::roomType(),['' => '']), null, ['class' => 'form-select2 select2 form-control', 'data-placeholder' => 'Select Type']) }}
                     </div>
                 </div>
 
                 <div class="form-group row">
                     <label class="col-form-label col-lg-3">
-                        Specimen <span class="text-danger">*</span>
+                        Referral Address
                     </label>
                     <div class="col-lg-9">
-                        {{ Form::select('specimen_id', [], null, ['class' => 'form-control select-specimen select2', 'data-placeholder' => 'Select Specimen']) }}
+                        {{ Form::textarea('referral_address', null, ['class' => 'form-control', 'cols' => 3, 'rows' => 3]) }}
                     </div>
                 </div>
 
                 <div class="form-group row">
                     <label class="col-form-label col-lg-3">
-                        Sequence <span class="text-danger">*</span>
+                        Referral No. Phone <span class="text-danger">*</span>
                     </label>
                     <div class="col-lg-9">
-                        {{ Form::text('sequence', null, ['class' => 'form-control']) }}
+                        {{ Form::text('referral_no_phone', null, ['class' => 'form-control']) }}
                     </div>
                 </div>
 
                 <div class="form-group row">
                     <label class="col-form-label col-lg-3">
-                        Price <span class="text-danger">*</span>
+                        Referral Email <span class="text-danger">*</span>
                     </label>
                     <div class="col-lg-9">
-                        {{ Form::text('price', null, ['class' => 'form-control']) }}
-                    </div>
-                </div>
-
-                <div class="form-group row">
-                    <label class="col-form-label col-lg-3">
-                        Ref. Range Type <span class="text-danger">*</span>
-                    </label>
-                    <div class="col-lg-9">
-                        {{ Form::select('range_type', array_replace(Helper::testRangeType(),[''=>'']), null, ['class' => 'form-control form-select2 range-type select2', 'data-placeholder' => 'Select Range Type']) }}
-                    </div>
-                </div>
-
-                <div class="form-group row d-none" id="normal-notes">
-                    <label class="col-form-label col-lg-3">
-                        Normal Notes <span class="text-danger">*</span>
-                    </label>
-                    <div class="col-lg-9">
-                        {{ Form::textarea('normal_notes', '', ['class' => 'editor-full', 'id' => 'editor-full'])}}
+                        {{ Form::text('referral_email', null, ['class' => 'form-control']) }}
                     </div>
                 </div>
 
@@ -160,7 +148,7 @@
                 </div>
 
                 <div class="row">
-                    {{ Form::button('Add ' . $masterData, ['class' => 'form-control btn-success', 'id' => 'submit-btn','type' => 'submit']) }}
+                    {{ Form::button('Add Specimen', ['class' => 'form-control btn-success', 'id' => 'submit-btn','type' => 'submit']) }}
                 </div>
                 
                 {!! Form::close() !!}
@@ -183,100 +171,88 @@
             {{ Form::hidden('id') }}
             <div class="form-group row">
                 <label class="col-form-label col-lg-3">
-                    Test Name <span class="text-danger">*</span>
+                    Room <span class="text-danger">*</span>
                 </label>
                 <div class="col-lg-9">
-                    {{ Form::text('name', null, ['class' => 'form-control', 'id' => 'first-input']) }}
+                    {{ Form::text('room', null, ['class' => 'form-control']) }}
                 </div>
             </div>
 
             <div class="form-group row">
                 <label class="col-form-label col-lg-3">
-                    Initial <span class="text-danger">*</span>
+                    Room Code <span class="text-danger">*</span>
                 </label>
                 <div class="col-lg-9">
-                    {{ Form::text('initial', '',  ['class' => 'form-control']) }}
+                    {{ Form::text('room_code', null, ['class' => 'form-control']) }}
                 </div>
             </div>
 
             <div class="form-group row">
                 <label class="col-form-label col-lg-3">
-                    Volume <span class="text-danger">*</span>
+                    Class <span class="text-danger">*</span>
                 </label>
                 <div class="col-lg-9">
-                    {{ Form::text('volume', null, ['class' => 'form-control']) }}
+                    {{ Form::text('class', null, ['class' => 'form-control']) }}
                 </div>
             </div>
 
             <div class="form-group row">
                 <label class="col-form-label col-lg-3">
-                    Unit <span class="text-danger">*</span>
+                    Auto Checkin
                 </label>
-                <div class="col-lg-9">
-                    {{ Form::text('unit', null, ['class' => 'form-control']) }}
+                <div class="col-lg-9 align-self-center">
+                    <div class="custom-control custom-checkbox">
+                        {{ Form::checkbox('auto_checkin', true, false, ['class' => 'custom-control-input', 'id' => 'auto-checkin-edit'])}}
+                        <label class="custom-control-label" for="auto-checkin-edit"></label>
+                    </div>
                 </div>
             </div>
 
             <div class="form-group row">
                 <label class="col-form-label col-lg-3">
-                    Group Test <span class="text-danger">*</span>
+                    Auto Draw
                 </label>
-                <div class="col-lg-9">
-                    {{ Form::select('group_id', [], null, ['class' => 'form-control select-group select2', 'data-placeholder' => 'Select Group']) }}
+                <div class="col-lg-9 align-self-center">
+                    <div class="custom-control custom-checkbox">
+                        {{ Form::checkbox('auto_draw', true, false, ['class' => 'custom-control-input', 'id' => 'auto-draw-edit'])}}
+                        <label class="custom-control-label" for="auto-draw-edit"></label>
+                    </div>
                 </div>
             </div>
 
             <div class="form-group row">
                 <label class="col-form-label col-lg-3">
-                    Sub Group <span class="text-danger">*</span>
+                    Type <span class="text-danger">*</span>
                 </label>
                 <div class="col-lg-9">
-                    {{ Form::text('sub_group', null, ['class' => 'form-control']) }}
+                    {{ Form::select('type', array_replace(Helper::roomType(),['' => '']), null, ['class' => 'form-select2 select2 form-control', 'data-placeholder' => 'Select Type']) }}
                 </div>
             </div>
 
             <div class="form-group row">
                 <label class="col-form-label col-lg-3">
-                    Specimen <span class="text-danger">*</span>
+                    Referral Address
                 </label>
                 <div class="col-lg-9">
-                    {{ Form::select('specimen_id', [], null, ['class' => 'form-control select-specimen select2', 'data-placeholder' => 'Select Specimen']) }}
+                    {{ Form::textarea('referral_address', null, ['class' => 'form-control', 'cols' => 3, 'rows' => 3]) }}
                 </div>
             </div>
 
             <div class="form-group row">
                 <label class="col-form-label col-lg-3">
-                    Sequence <span class="text-danger">*</span>
+                    Referral No. Phone <span class="text-danger">*</span>
                 </label>
                 <div class="col-lg-9">
-                    {{ Form::text('sequence', null, ['class' => 'form-control']) }}
+                    {{ Form::text('referral_no_phone', null, ['class' => 'form-control']) }}
                 </div>
             </div>
 
             <div class="form-group row">
                 <label class="col-form-label col-lg-3">
-                    Price <span class="text-danger">*</span>
+                    Referral Email <span class="text-danger">*</span>
                 </label>
                 <div class="col-lg-9">
-                    {{ Form::text('price', null, ['class' => 'form-control']) }}
-                </div>
-            </div>
-
-            <div class="form-group row">
-                <label class="col-form-label col-lg-3">
-                    Ref. Range Type <span class="text-danger">*</span>
-                </label>
-                <div class="col-lg-9">
-                    {{ Form::select('range_type', array_replace(Helper::testRangeType(),[''=>'']), null, ['class' => 'form-control form-select2 range-type-edit select2', 'data-placeholder' => 'Select Range Type']) }}
-                </div>
-            </div>
-
-            <div class="form-group row d-none" id="normal-notes-edit">
-                <label class="col-form-label col-lg-3">
-                    Normal Notes <span class="text-danger">*</span>
-                </label>
-                <div class="col-lg-9">
-                    {{ Form::textarea('normal_notes', '', ['class' => 'editor-full-edit', 'id' => 'editor-full-edit'])}}
+                    {{ Form::text('referral_email', null, ['class' => 'form-control']) }}
                 </div>
             </div>
 
@@ -288,8 +264,9 @@
                     {{ Form::text('general_code', null, ['class' => 'form-control']) }}
                 </div>
             </div>
+
             <div class="row">
-                {{ Form::button('Update ' . $masterData, ['class' => 'form-control btn-success', 'id' => 'submit-btn','type' => 'submit']) }}
+                {{ Form::button('Update '. $masterData, ['class' => 'form-control btn-success', 'id' => 'submit-btn','type' => 'submit']) }}
             </div>
             
             {!! Form::close() !!}
@@ -326,10 +303,6 @@
 <!-- sweetAlert -->
 <script src="{{asset('limitless_assets/js/plugins/notifications/sweet_alert.min.js')}}"></script>
 <!-- /sweetAlert -->
-
-<!-- CKEditor -->
-<script src="{{asset('limitless_assets/js/plugins/editors/ckeditor/ckeditor.js')}}"></script>
-<!-- /CKEditor -->
 
 <!-- select2 -->
 <script src="{{asset('limitless_assets/js/plugins/forms/selects/select2.min.js')}}"></script>

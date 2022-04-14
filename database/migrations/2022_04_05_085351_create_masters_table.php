@@ -30,15 +30,15 @@ class CreateMastersTable extends Migration
         Schema::create('rooms', function (Blueprint $table) {
             $table->id();
             $table->string('room');
+            $table->string('room_code');
             $table->string('class');
-            $table->string('auto_checkin');
-            $table->string('auto_draw');
+            $table->boolean('auto_checkin')->default(false);
+            $table->boolean('auto_draw')->default(false);
             $table->string('type');
             $table->string('referral_address');
             $table->string('referral_no_phone');
             $table->string('referral_email');
             $table->string('general_code');
-            $table->string('room_code');
             $table->timestamps();
         });
 
@@ -138,7 +138,7 @@ class CreateMastersTable extends Migration
             $table->bigInteger('package_id')->unsigned();
             $table->integer('type'); // TODO: INI APA?
             $table->integer('price');
-            $table->string('price_class');
+            $table->string('class');
             $table->timestamps();
         });
 

@@ -2,6 +2,8 @@
 
 use App\Specimen;
 use App\Test;
+use App\Price;
+use App\Room;
 
 Class Helper 
 {
@@ -19,6 +21,8 @@ Class Helper
             url('master/specimen') => 'Master Specimens',
             url('master/doctor') => 'Master Doctors',
             url('master/insurance') => 'Master Insurances',
+            url('master/price') => 'Master Prices',
+            url('master/room') => 'Master Rooms'
         ];
     }
 
@@ -30,5 +34,15 @@ Class Helper
     public static function testRangeType()
     {
         return Test::RANGE_TYPE;
+    }
+
+    public static function priceType()
+    {
+        return Price::TYPE;
+    }
+
+    public static function roomType()
+    {
+        return Room::TYPE;
     }
 }
