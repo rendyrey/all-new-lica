@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Seeder;
 
-class PackageSeeder extends Seeder
+class InsuranceSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -11,6 +11,6 @@ class PackageSeeder extends Seeder
      */
     public function run()
     {
-       factory(\App\Package::class, 10)->create();
+        factory(\App\Insurance::class, 10)->create();
     }
 }

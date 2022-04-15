@@ -11,6 +11,6 @@ class SpecimenSeeder extends Seeder
      */
     public function run()
     {
-        //
+        factory(\App\Specimen::class, 10)->create();
     }
 }
