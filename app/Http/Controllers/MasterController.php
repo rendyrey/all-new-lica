@@ -21,7 +21,8 @@ class MasterController extends Controller
         'doctor' => 'App\Doctor',
         'insurance' => 'App\Insurance',
         'price' => 'App\Price',
-        'room' => 'App\Room'
+        'room' => 'App\Room',
+        'range' => 'App\Range'
     ];
 
     protected $masterId = null;
@@ -60,7 +61,7 @@ class MasterController extends Controller
 
             $createdData = $this->masters[$masterData]::create($this->mapInputs($masterData, $request));
 
-            $this->createPackageTest($createdData, $masterData, $request); 
+            $this->createPackageTest($createdData, $masterData, $request);
 
             $this->logActivity(
                 "Create $masterData with ID $createdData->id",
@@ -204,7 +205,6 @@ class MasterController extends Controller
      */
     public function datatable($masterData, $with = null)
     {
-        
         // store count cache
         if (Cache::has($masterData.'_count')) {
             $count = Cache::get($masterData.'_count');
@@ -225,6 +225,25 @@ class MasterController extends Controller
         return DataTables::of($model)
         ->setTotalRecords($count)
         // ->skipTotalRecords()
+        ->addIndexColumn()
+        ->escapeColumns([])
+        ->make(true);
+    }
+
+    public function rangeDatatable($testId)
+    {
+         if (Cache::has('range_count')) {
+            $count = Cache::get('range_count');
+        } else {
+            $count = \App\Range::where('test_id', $testId)->count();
+            if ($count > MasterController::COUNT_LIMIT_FOR_DATATABLE) {
+                Cache::put('range_count', $count, 600);
+            }
+        }
+
+        $model = \App\Range::where('test_id', $testId);
+        return DataTables::of($model)
+        ->setTotalRecords($count)
         ->addIndexColumn()
         ->escapeColumns([])
         ->make(true);

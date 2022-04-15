@@ -6,7 +6,7 @@
         <div class="card">
             <!-- card header -->
             <div class="card-header header-elements-sm-inline">
-                <h4 class="card-title">{{ $title }}/h4>
+                <h4 class="card-title">{{ $title }}</h4>
             </div>
             <!-- /card header -->
 
@@ -33,7 +33,7 @@
 
         </div>
     </div>
-    <div class="col-lg-4" id="master-snew">
+    <div class="col-lg-4" id="master-new">
         <div class="card">
              <!-- card header -->
              <div class="card-header header-elements-sm-inline">

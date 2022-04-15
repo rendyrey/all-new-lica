@@ -14,7 +14,7 @@ class Group extends Model
         'general_code'
     ];
 
-    public function analyzer() {
+    public function analyzers() {
         // the format for one to many (inverse)
         // return $this->belongsTo('App\User', 'foreign_key', 'other_key');
 

@@ -30,7 +30,7 @@
 
         </div>
     </div>
-    <div class="col-lg-4" id="master-snew">
+    <div class="col-lg-4" id="master-new">
         <div class="card">
              <!-- card header -->
              <div class="card-header header-elements-sm-inline">

@@ -52,6 +52,7 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('master/{masterData}/delete/{id}', 'MasterController@delete');
     // datatable route for master data
     Route::get('master/datatable/{masterData}/{with?}', 'MasterController@datatable');
+    Route::get('master/range/{testId}', 'MasterController@rangeDatatable');
     // END all route for master data
 
     // for select option form

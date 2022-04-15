@@ -22,7 +22,8 @@ Class Helper
             url('master/doctor') => 'Master Doctors',
             url('master/insurance') => 'Master Insurances',
             url('master/price') => 'Master Prices',
-            url('master/room') => 'Master Rooms'
+            url('master/room') => 'Master Rooms',
+            url('master/range') => 'Master Ref. Ranges'
         ];
     }
 

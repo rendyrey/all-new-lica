@@ -137,5 +137,8 @@
 	</div>
 	<!-- /page content -->
 
+	<script>
+		var base = "{{ url('/') }}";
+	</script>
 </body>
 </html>

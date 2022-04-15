@@ -68,7 +68,7 @@ var FormValidation = function() {
                 username: {
                     minlength: 5,
                     remote: {
-                        url: '/check-username',
+                        url: base + '/check-username',
                         type: 'GET',
                         data: {
                             username: function() {
@@ -91,7 +91,7 @@ var FormValidation = function() {
                     required: true,
                     email: true,
                     remote: {
-                        url: '/check-email',
+                        url: base + '/check-email',
                         type: 'GET',
                         data: {
                             email: function() {

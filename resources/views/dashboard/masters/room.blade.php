@@ -36,7 +36,7 @@
 
         </div>
     </div>
-    <div class="col-lg-4" id="master-snew">
+    <div class="col-lg-4" id="master-new">
         <div class="card">
              <!-- card header -->
              <div class="card-header header-elements-sm-inline">
@@ -148,7 +148,7 @@
                 </div>
 
                 <div class="row">
-                    {{ Form::button('Add Specimen', ['class' => 'form-control btn-success', 'id' => 'submit-btn','type' => 'submit']) }}
+                    {{ Form::button('Add ' . $masterData, ['class' => 'form-control btn-success', 'id' => 'submit-btn','type' => 'submit']) }}
                 </div>
                 
                 {!! Form::close() !!}

@@ -211,9 +211,7 @@
 	</div>
 	<!-- /footer -->
 	<script>
-		
-		var base = '/';
-	
+		var base = "{{ url('/') }}/";
 	</script>
 	@yield('additional-script')
 </body>
