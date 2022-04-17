@@ -3,32 +3,12 @@ var masterData = 'specimen'; // required for the url
 var withModel = []; // required for the datatable if the model of the datatable has eager load or relationship, set to empty array if not.
 
 // required for the datatable columns
-var responsiveButtonIndexColumn = 5;
+var buttonActionIndex = 4;
 var columnsDataTable = [
     { data: 'DT_RowIndex', orderable: false, searchable: false },
     { data: 'name' },
     { data: 'color' },
-    { data: 'code' },
-    {
-        render: function (data, type, row) {
-            let editBtn = 
-                `<button style="margin:2px;" type="button" class="btn btn-sm btn-primary btn-icon rounded-round" data-popup="tooltip" title="Edit data" data-placement="left" onClick="editData(`+row.id+`)">
-                    <i class="icon-pencil5"></i>
-                </button>`;
-            let deleteBtn = 
-                `<button style="margin:2px;" type="button" class="btn btn-sm btn-danger btn-icon rounded-round" data-popup="tooltip" title="Delete data" data-placement="left" onClick="deleteData(`+row.id+`)">
-                    <i class="icon-trash"></i>
-                </button>`;
-            return editBtn+ '' +deleteBtn;
-        },
-        responsivePriority: 1,
-    },
-    {
-        render: function (data, type, row) {
-            return '';
-        }
-    }
-    
+    { data: 'code' }
 ];
 
 var setValueModalEditForm = function(data)
@@ -36,7 +16,7 @@ var setValueModalEditForm = function(data)
     $("#modal_form_horizontal").modal('show');
     $("#modal_form_horizontal input[name='id']").val(data.id);
     $("#modal_form_horizontal input[name='name']").val(data.name);
-    $("#modal_form_horizontal input[name='color']").val(data.color);
+    $("#modal_form_horizontal select[name='color']").val(data.color).trigger('change');
     $("#modal_form_horizontal input[name='code']").val(data.code);
 }
 
@@ -53,14 +33,39 @@ var rulesFormValidation = {
     },
 };
 
-// On document ready
-document.addEventListener('DOMContentLoaded', function () {
-    DatatableDataSources.init();
-    FormValidation.init();
-    Select2Component.init();
+// this is for open select2 when pressing tab in keyboard
+$(document).on('focus', '.select2-selection.select2-selection--single', function (e) {
+    $(this).closest(".select2-container").siblings('select:enabled').select2('open');
+});
 
-    $('body').tooltip({
-        selector: '[data-popup="tooltip"]',
-        trigger: 'hover'
-    });
+document.addEventListener('DOMContentLoaded', function () {
+    DatatablesServerSide.init();
+    FormValidation.init();
+
+    toastr.options = {
+        "closeButton": false,
+        "debug": false,
+        "newestOnTop": false,
+        "progressBar": false,
+        "positionClass": "toastr-top-right",
+        "preventDuplicates": false,
+        "onclick": null,
+        "showDuration": "500",
+        "hideDuration": "1000",
+        "timeOut": "7000",
+        "extendedTimeOut": "1000",
+        "showEasing": "swing",
+        "hideEasing": "linear",
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut",
+        "opacity": 1
+    };
+
+    // steal focus during close - only capture once and stop propogation
+    // $('select.form-select').on('select2:closing', function (e) {
+    //     alert("ANJAY");
+    //     $(e.target).data("select2").$selection.one('focus focusin', function (e) {
+    //         e.stopPropagation();
+    //     });
+    // });
 });

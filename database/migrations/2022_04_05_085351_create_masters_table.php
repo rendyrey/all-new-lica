@@ -38,7 +38,7 @@ class CreateMastersTable extends Migration
             $table->string('referral_address');
             $table->string('referral_no_phone');
             $table->string('referral_email');
-            $table->string('general_code');
+            $table->string('general_code')->nullable();
             $table->timestamps();
         });
 
@@ -47,7 +47,7 @@ class CreateMastersTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('title');
-            $table->string('general_code');
+            $table->string('general_code')->nullable();
             $table->timestamps();
         });
 
@@ -56,7 +56,7 @@ class CreateMastersTable extends Migration
             $table->id();
             $table->string('name');
             $table->integer('discount');
-            $table->string('general_code');
+            $table->string('general_code')->nullable();
             $table->timestamps();
         });
 
@@ -66,7 +66,7 @@ class CreateMastersTable extends Migration
             $table->string('name');
             $table->integer('early_limit');
             $table->integer('limit');
-            $table->string('general_code');
+            $table->string('general_code')->nullable();
             $table->timestamps();
         });
 
@@ -104,7 +104,7 @@ class CreateMastersTable extends Migration
             $table->integer('sequence');
             $table->string('sub_group');
             $table->longText('normal_notes')->nullable();
-            $table->string('general_code');
+            $table->string('general_code')->nullable();
             $table->timestamps();
         });
 
@@ -117,7 +117,7 @@ class CreateMastersTable extends Migration
             $table->id();
             $table->string('name');
             $table->integer('price');
-            $table->string('general_code');
+            $table->string('general_code')->nullable();
             $table->timestamps();
         });
 
@@ -149,7 +149,7 @@ class CreateMastersTable extends Migration
         Schema::create('general_code_tests', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('test_id')->unsigned();
-            $table->string('general_code');
+            $table->string('general_code')->nullable();
             $table->timestamps();
         });
 

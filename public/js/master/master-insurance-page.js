@@ -3,32 +3,15 @@ var masterData = 'insurance'; // required for the url
 var withModel = []; // required for the datatable if the model of the datatable has eager load or relationship, set to empty array if not.
 
 // required for the datatable columns
-var responsiveButtonIndexColumn = 5;
+var buttonActionIndex = 4;
 var columnsDataTable = [
     { data: 'DT_RowIndex', orderable: false, searchable: false },
     { data: 'name' },
-    { data: 'discount' },
-    { data: 'general_code' },
-    {
-        render: function (data, type, row) {
-            let editBtn = 
-                `<button style="margin:2px;" type="button" class="btn btn-sm btn-primary btn-icon rounded-round" data-popup="tooltip" title="Edit data" data-placement="left" onClick="editData(`+row.id+`)">
-                    <i class="icon-pencil5"></i>
-                </button>`;
-            let deleteBtn = 
-                `<button style="margin:2px;" type="button" class="btn btn-sm btn-danger btn-icon rounded-round" data-popup="tooltip" title="Delete data" data-placement="left" onClick="deleteData(`+row.id+`)">
-                    <i class="icon-trash"></i>
-                </button>`;
-            return editBtn+ '' +deleteBtn;
-        },
-        responsivePriority: 1,
-    },
-    {
-        render: function (data, type, row) {
-            return '';
+    { data: 'discount' , render: function(data, type, row){
+            return data + "%";
         }
-    }
-    
+    },
+    { data: 'general_code' }
 ];
 
 var setValueModalEditForm = function(data)
@@ -47,22 +30,37 @@ var rulesFormValidation = {
     },
     discount: {
         required: true,
-        digits: true,
+        number: true,
         min: 1,
         max: 100
-    },
-    general_code: {
-        required: true,
     }
 };
 
-// On document ready
+// this is for open select2 when pressing tab in keyboard
+$(document).on('focus', '.select2-selection.select2-selection--single', function (e) {
+    $(this).closest(".select2-container").siblings('select:enabled').select2('open');
+});
+
 document.addEventListener('DOMContentLoaded', function () {
-    DatatableDataSources.init();
+    DatatablesServerSide.init();
     FormValidation.init();
 
-    $('body').tooltip({
-        selector: '[data-popup="tooltip"]',
-        trigger: 'hover'
-    });
+    toastr.options = {
+        "closeButton": false,
+        "debug": false,
+        "newestOnTop": false,
+        "progressBar": false,
+        "positionClass": "toastr-top-right",
+        "preventDuplicates": false,
+        "onclick": null,
+        "showDuration": "500",
+        "hideDuration": "1000",
+        "timeOut": "7000",
+        "extendedTimeOut": "1000",
+        "showEasing": "swing",
+        "hideEasing": "linear",
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut",
+        "opacity": 1
+    };
 });

@@ -7,12 +7,20 @@ use Illuminate\Support\Facades\Validator;
 
 class Room extends Model
 {
+    // rawat inap, rawat jalan, IGD
     const TYPE = [
-        '1' => 'Satu',
-        '2' => 'Dua',
-        '3' => 'Tiga',
-        '4' => 'Empat'
+        'rawat_inap' => 'Rawat Inap',
+        'rawat_jalan' => 'Rawat Jalan',
+        'igd' => 'IGD',
+        'rujukan' => 'Rujukan'
     ];
+    
+    // const TYPE = [
+    //     '1' => 'Satu',
+    //     '2' => 'Dua',
+    //     '3' => 'Tiga',
+    //     '4' => 'Empat'
+    // ];
 
     protected $fillable = [
         'room',
