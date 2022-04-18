@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Validator;
 
 class Analyzer extends Model
 {
-    protected $with = ['Group']; // eager loding by default
+    protected $with = ['group']; // eager loding by default
     protected $fillable = [
         'group_id',
         'name'

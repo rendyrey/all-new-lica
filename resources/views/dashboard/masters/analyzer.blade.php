@@ -58,15 +58,8 @@
                                 <table class="table gy-1 align-middle table-striped px-0 datatable-ajax">
                                     <thead>
                                         <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
-                                            <th>Test Name</th>
-                                            <th>Initial</th>
-                                            <th>Unit</th>
-                                            <th>Volume</th>
-                                            <th>Ref. Range Type</th>
+                                            <th>Analyzer Name</th>
                                             <th>Test Group</th>
-                                            <th>Sub Group</th>
-                                            <th>Specimen</th>
-                                            <th>Sequence</th>
                                             <th class="text-end min-w-100px">Actions</th>
                                         </tr>
                                     </thead>
@@ -93,50 +86,18 @@
                             <!--begin::Heading-->
                             <h2 class="anchor fw-bolder mb-5">
                             Add new {{ ucwords($masterData) }}</h2>
+
                             <!--begin::Input group-->
                             {!! Form::open(['class'=>'form form-horizontal form-validate-jquery', 'id' => 'form-create']) !!}
                             <div class="mb-4">
-                                <small><label class="form-label fs-6">Test Name</label></small>
+                                <label class="form-label fs-6">Analyzer Name</label>
                                 {{ Form::text('name', null, ['class' => 'form-control form-control-solid form-control-sm', 'id' => 'first-input']) }}
                             </div>
-                            <div class="mb-4">
-                                <label class="form-label fs-6">Initial</label>
-                                {{ Form::text('initial', null, ['class' => 'form-control form-control-solid form-control-sm']) }}
-                            </div>
-                            <div class="row mb-4">
-                                <div class="col">
-                                    <label class="form-label fs-6">Volume</label>
-                                    {{ Form::text('volume', null, ['class' => 'form-control form-control-solid form-control-sm']) }}
-                                </div>
-                                <div class="col">
-                                    <label class="form-label fs-6">Unit</label>
-                                    {{ Form::text('unit', null, ['class' => 'form-control form-control-solid form-control-sm']) }}
-                                </div>
-                            </div>
-                            <div class="mb-4">
-                                <label class="form-label fs-6">Group Test</label>
-                                {{ Form::select('group_id', [], null, ['class' => 'form-select form-select-sm form-select-solid select-group select-two', 'data-placeholder' => 'Select group test']) }}
-                            </div>
-                            <div class="mb-4">
-                                <label class="form-label fs-6">Sub Group</label>
-                                {{ Form::text('sub_group', null, ['class' => 'form-control form-control-solid form-control-sm']) }}
-                            </div>
-                            <div class="mb-4">
-                                <label class="form-label fs-6">Specimen</label>
-                                {{ Form::select('specimen_id', [], null, ['class' => 'form-select form-select-sm form-select-solid select-specimen select-two', 'data-control' => 'select2', 'data-placeholder' => 'Select specimen']) }}
-                            </div>
-                            <div class="mb-4">
-                                <label class="form-label fs-6">Sequence</label>
-                                {{ Form::text('sequence', null, ['class' => 'form-control form-control-solid form-control-sm']) }}
+                            <div class="mb-4" id="test-list">
+                                <label class="form-label fs-6">Test Group</label>
+                                {{ Form::select('group_id', [], null, ['class' => 'form-select form-select-sm form-select-solid select-two select-group', 'data-control' => 'select2', 'data-placeholder' => 'Select test']) }}
                             </div>
                             <div class="mb-8">
-                                <label class="form-label fs-6">Ref. Range Type</label>
-                                {{ Form::select('range_type', array_replace(Helper::testRangeType(),[''=>'']), null, ['class' => 'form-select form-select-sm form-select-solid select-two range-type', 'data-control' => 'select2', 'data-placeholder' => 'Select group test', 'data-hide-search' => 'true']) }}
-                            </div>
-                            <div class="mb-4 d-none" id="normal-notes">
-                                <label class="form-label fs-6">Normal Notes</label>
-                                {{ Form::textarea('normal_notes', '', ['class' => 'editor-full', 'id' => 'editor-full'])}}                            </div>
-                            <div class="mb-4">
                                 <label class="form-label fs-6">General Code</label>
                                 {{ Form::text('general_code', null, ['class' => 'form-control form-control-solid form-control-sm']) }}
                             </div>
@@ -177,47 +138,14 @@
             {!! Form::open(['class'=>'form form-horizontal form-validate-jquery', 'id' => 'form-edit', 'method' => 'put']) !!}
             {{ Form::hidden('id') }}
             <div class="mb-4">
-                <small><label class="form-label fs-6">Test Name</label></small>
+                <label class="form-label fs-6">Analyzer Name</label>
                 {{ Form::text('name', null, ['class' => 'form-control form-control-solid form-control-sm', 'id' => 'first-input']) }}
             </div>
-            <div class="mb-4">
-                <label class="form-label fs-6">Initial</label>
-                {{ Form::text('initial', null, ['class' => 'form-control form-control-solid form-control-sm']) }}
-            </div>
-            <div class="row mb-4">
-                <div class="col">
-                    <label class="form-label fs-6">Volume</label>
-                    {{ Form::text('volume', null, ['class' => 'form-control form-control-solid form-control-sm']) }}
-                </div>
-                <div class="col">
-                    <label class="form-label fs-6">Unit</label>
-                    {{ Form::text('unit', null, ['class' => 'form-control form-control-solid form-control-sm']) }}
-                </div>
-            </div>
-            <div class="mb-4">
-                <label class="form-label fs-6">Group Test</label>
-                {{ Form::select('group_id', [], null, ['class' => 'form-select form-select-sm form-select-solid select-group select-two', 'data-placeholder' => 'Select group test']) }}
-            </div>
-            <div class="mb-4">
-                <label class="form-label fs-6">Sub Group</label>
-                {{ Form::text('sub_group', null, ['class' => 'form-control form-control-solid form-control-sm']) }}
-            </div>
-            <div class="mb-4">
-                <label class="form-label fs-6">Specimen</label>
-                {{ Form::select('specimen_id', [], null, ['class' => 'form-select form-select-sm form-select-solid select-specimen select-two', 'data-control' => 'select2', 'data-placeholder' => 'Select specimen']) }}
-            </div>
-            <div class="mb-4">
-                <label class="form-label fs-6">Sequence</label>
-                {{ Form::text('sequence', null, ['class' => 'form-control form-control-solid form-control-sm']) }}
+            <div class="mb-4" id="test-list">
+                <label class="form-label fs-6">Test Group</label>
+                {{ Form::select('group_id', [], null, ['class' => 'form-select form-select-sm form-select-solid select-two select-group', 'data-control' => 'select2', 'data-placeholder' => 'Select test']) }}
             </div>
             <div class="mb-8">
-                <label class="form-label fs-6">Ref. Range Type</label>
-                {{ Form::select('range_type', array_replace(Helper::testRangeType(),[''=>'']), null, ['class' => 'form-select form-select-sm form-select-solid select-two range-type', 'data-control' => 'select2', 'data-placeholder' => 'Select group test', 'data-hide-search' => 'true']) }}
-            </div>
-            <div class="mb-4 d-none" id="normal-notes-edit">
-                <label class="form-label fs-6">Normal Notes</label>
-                {{ Form::textarea('normal_notes', '', ['class' => 'editor-full', 'id' => 'editor-full-edit'])}}                            </div>
-            <div class="mb-4">
                 <label class="form-label fs-6">General Code</label>
                 {{ Form::text('general_code', null, ['class' => 'form-control form-control-solid form-control-sm']) }}
             </div>
@@ -238,8 +166,6 @@
 <!-- Form validation -->
 <script src="{{asset('limitless_assets/js/plugins/forms/validation/validate.min.js')}}"></script>
 <!-- /Form validation -->
-
-<script src="{{asset('metronic_assets/plugins/custom/ckeditor/ckeditor-classic.bundle.js')}}"></script>
 
 <script src="{{asset('metronic_assets/plugins/custom/datatables/datatables.bundle.js')}}"></script>
 <script src="{{asset('js/master/master-'.$masterData.'-page.js')}}"></script>

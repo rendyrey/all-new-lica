@@ -58,7 +58,6 @@
                                 <table class="table gy-1 align-middle table-striped px-0 datatable-ajax">
                                     <thead>
                                         <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
-                                            <th>No</th>
                                             <th>Specimen Name</th>
                                             <th>Color</th>
                                             <th>Code</th>

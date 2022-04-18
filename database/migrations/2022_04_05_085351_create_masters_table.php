@@ -34,10 +34,10 @@ class CreateMastersTable extends Migration
             $table->string('class');
             $table->boolean('auto_checkin')->default(false);
             $table->boolean('auto_draw')->default(false);
-            $table->string('type');
-            $table->string('referral_address');
-            $table->string('referral_no_phone');
-            $table->string('referral_email');
+            $table->enum('type', ['rawat_inap', 'rawat_jalan', 'igd', 'rujukan']);
+            $table->string('referral_address')->nullable();
+            $table->string('referral_no_phone')->nullable();
+            $table->string('referral_email')->nullable();
             $table->string('general_code')->nullable();
             $table->timestamps();
         });
@@ -64,8 +64,6 @@ class CreateMastersTable extends Migration
         Schema::create('groups', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->integer('early_limit');
-            $table->integer('limit');
             $table->string('general_code')->nullable();
             $table->timestamps();
         });
@@ -99,7 +97,7 @@ class CreateMastersTable extends Migration
             $table->string('initial');
             $table->string('unit');
             $table->decimal('volume', 12, 2);
-            $table->enum('range_type',['number','label','description','free_formatted_text']);
+            $table->enum('range_type', ['number','label','description','free_formatted_text']);
             $table->integer('sequence');
             $table->string('sub_group');
             $table->longText('normal_notes')->nullable();

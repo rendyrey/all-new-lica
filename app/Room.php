@@ -14,13 +14,6 @@ class Room extends Model
         'igd' => 'IGD',
         'rujukan' => 'Rujukan'
     ];
-    
-    // const TYPE = [
-    //     '1' => 'Satu',
-    //     '2' => 'Dua',
-    //     '3' => 'Tiga',
-    //     '4' => 'Empat'
-    // ];
 
     protected $fillable = [
         'room',
@@ -43,9 +36,6 @@ class Room extends Model
             'room_code' => 'required',
             'class' => 'required',
             'type' => 'required',
-            'referral_address' => 'required',
-            'referral_no_phone' => 'required',
-            'referral_email' => 'required',
             'general_code'
         ]);
         

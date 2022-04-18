@@ -3,9 +3,8 @@ var masterData = 'package'; // required for the url
 var withModel = []; // required for the datatable if the model of the datatable has eager load or relationship, set to empty array if not.
 
 // required for the datatable columns
-var buttonActionIndex = 4;
+var buttonActionIndex = 3;
 var columnsDataTable = [
-    { data: 'DT_RowIndex', orderable: false, searchable: false },
     { data: 'name' },
     { data: 'general_code' },
     { data: null, render: function(data, type, row){
@@ -14,7 +13,7 @@ var columnsDataTable = [
                 row.package_tests.forEach(function(item) {
                     tests.push(`<span class="badge badge-secondary">`+item.test.name+`</span>`);
                 });
-                return tests.join(", ");
+                return tests.join(" ");
             }
         }, searchable: false
     }
@@ -71,15 +70,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 url: baseUrl('master/test-packages/'+packageList.toString()),
                 method: 'GET',
                 success: function(res){
-                    // var distinctTest = res.filter(function(element, index, self) {
-                    //     debugger;
-                    //     return index === self.indexOf(element);
-                    // })
-                    // console.log(res);
-                    // console.log(distinctTest);
                     var selectedTestIds = [];
                     var options = '';
                     res.forEach(function(item){
+                        // select distinct test id
                         if (selectedTestIds.includes(item.test_id) == false) {
                             selectedTestIds.push(item.test_id);
                             options += `<option value='`+item.test_id+`' selected>`+ item.test.name +`</option>`;

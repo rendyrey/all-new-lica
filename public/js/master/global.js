@@ -21,7 +21,7 @@ var DatatablesServerSide = function () {
             searchDelay: 500,
             processing: true,
             serverSide: true,
-            // order: [[1, 'desc']],
+            order: [],
             stateSave: false,
             ajax: {
                 url: baseUrl('master/datatable/'+masterData+'/'+withModel.toString())
@@ -303,6 +303,20 @@ var deleteData = function (id) {
             })
         }
     });
+}
+
+var theFullDate = function(date) {
+    const monthNames = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ];
+    let d = new Date(date);
+    let day = d.getDate();
+    let month = d.getMonth();
+    let year = d.getFullYear();
+    let theDate = day + ' ' + monthNames[month] + ' ' + year;
+
+    return theDate;
 }
 
 

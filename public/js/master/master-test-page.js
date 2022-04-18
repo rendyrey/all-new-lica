@@ -3,10 +3,9 @@ var masterData = 'test'; // required for the url
 var withModel = ['group','specimen']; // required for the datatable if the model of the datatable has eager load or relationship
 
 // required for the datatable columns
-var buttonActionIndex = 10;
+var buttonActionIndex = 9;
 var columnsDataTable = [
-    { data: 'DT_RowIndex', orderable: false, searchable: false },
-    { data: 'name' },
+    { data: 'name'},
     { data: 'initial' },
     { data: 'unit' },
     { data: 'volume' },

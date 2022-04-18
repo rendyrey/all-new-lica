@@ -9,8 +9,6 @@ class Group extends Model
 {
     protected $fillable = [
         'name',
-        'early_limit',
-        'limit',
         'general_code'
     ];
 
@@ -27,10 +25,7 @@ class Group extends Model
     {
         return Validator::make($request->all(),
         [
-            'name' => 'required',
-            'early_limit' => 'required|numeric',
-            'limit' => 'required|numeric',
-            'general_code' => 'required'
+            'name' => 'required'
         ]);
     }
 }

@@ -3,9 +3,8 @@ var masterData = 'insurance'; // required for the url
 var withModel = []; // required for the datatable if the model of the datatable has eager load or relationship, set to empty array if not.
 
 // required for the datatable columns
-var buttonActionIndex = 4;
+var buttonActionIndex = 3;
 var columnsDataTable = [
-    { data: 'DT_RowIndex', orderable: false, searchable: false },
     { data: 'name' },
     { data: 'discount' , render: function(data, type, row){
             return data + "%";

@@ -266,10 +266,6 @@ class MasterController extends Controller
     {
         $data = array();
         switch ($masterData) {
-            case 'patient': // patient need custom mapping, so we must to add here
-                $data = $request->all();
-                $data['birthdate'] = $request->birthdate_submit;
-                break;
             case 'test':
                 if (!$request->normal_notes || (!isset($request->normal_notes)) || $request->normal_notes == null) {
                     return $request->except(['normal_notes']);

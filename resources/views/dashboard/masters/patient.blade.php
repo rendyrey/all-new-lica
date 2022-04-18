@@ -9,7 +9,7 @@
     <!--begin::Container-->
     <div class="container px-2" id="kt_docs_content_container">
         <div class="row">
-            <div class="col-lg-8">
+            <div class="col-lg-12">
                 <!--begin::Card-->
                 <div class="card card-docs mb-2">
                     <!--begin::Card Body-->
@@ -58,9 +58,13 @@
                                 <table class="table gy-1 align-middle table-striped px-0 datatable-ajax">
                                     <thead>
                                         <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
-                                            <th>Insurance Name</th>
-                                            <th>Discount</th>
-                                            <th>General Code</th>
+                                            <th>Name</th>
+                                            <th>Medrec</th>
+                                            <th>Gender</th>
+                                            <th>Birthdate</th>
+                                            <th>Phone</th>
+                                            <th>Email</th>
+                                            <th>Address</th>
                                             <th class="text-end min-w-100px">Actions</th>
                                         </tr>
                                     </thead>
@@ -75,46 +79,6 @@
                     <!--end::Card Body-->
                 </div>
                 <!--end::Card-->
-            </div>
-
-            <div class="col-lg-4">
-                <!--begin::Card-->
-                <div class="card card-docs mb-2">
-                    <!--begin::Card Body-->
-                    <div class="card-body fs-6 py-15 px-5 py-lg-8 px-lg-8 text-gray-700">
-                        <!--begin::Section-->
-                        <div class="p-2">
-                            <!--begin::Heading-->
-                            <h2 class="anchor fw-bolder mb-5">
-                            Add new {{ ucwords($masterData) }}</h2>
-
-                            <!--begin::Input group-->
-                            {!! Form::open(['class'=>'form form-horizontal form-validate-jquery', 'id' => 'form-create']) !!}
-                            <div class="mb-4">
-                                <label class="form-label fs-6">Insurance Name</label>
-                                {{ Form::text('name', null, ['class' => 'form-control form-control-solid form-control-sm', 'id' => 'first-input']) }}
-
-                            </div>
-                            <div class="mb-4">
-                                <label for="basic-url" class="form-label">Discount</label>
-                                <div class="input-group input-group-solid input-group-sm">
-                                    {{ Form::text('discount', null, ['class' => 'form-control form-control-solid form-control-sm']) }}
-                                    <span class="input-group-text">%</span>
-                                </div>
-                            </div>
-                            <div class="mb-8">
-                                <label class="form-label fs-6">General Code</label>
-                                {{ Form::text('general_code', null, ['class' => 'form-control form-control-solid form-control-sm']) }}
-                            </div>
-                            <div class="mb-2 mt-8">
-                                {{ Form::submit('Add ' . $masterData, ['class' => 'form-control btn btn-light-success']) }}
-                            </div>
-                            {!! Form::close() !!}
-                            <!--end::Input group-->
-                        </div>
-                    </div>
-                </div>
-
             </div>
         </div>
         
@@ -143,20 +107,50 @@
             {!! Form::open(['class'=>'form form-horizontal form-validate-jquery', 'id' => 'form-edit', 'method' => 'put']) !!}
             {{ Form::hidden('id') }}
             <div class="mb-4">
-                <label class="form-label fs-6">Insurance Name</label>
+                <label class="form-label fs-6">Patient Name</label>
                 {{ Form::text('name', null, ['class' => 'form-control form-control-solid form-control-sm', 'id' => 'first-input']) }}
 
             </div>
             <div class="mb-4">
-                <label for="basic-url" class="form-label">Discount</label>
-                <div class="input-group input-group-solid input-group-sm">
-                    {{ Form::text('discount', null, ['class' => 'form-control form-control-solid form-control-sm']) }}
-                    <span class="input-group-text">%</span>
+                <label for="basic-url" class="form-label">Email</label>
+                {{ Form::text('email', null, ['class' => 'form-control form-control-solid form-control-sm']) }}
+            </div>
+            <div class="mb-4">
+                <label for="basic-url" class="form-label">Phone Number</label>
+                {{ Form::text('phone', null, ['class' => 'form-control form-control-solid form-control-sm']) }}
+            </div>
+            <div class="mb-4">
+                <label for="basic-url" class="form-label">Medical Record</label>
+                {{ Form::text('medrec', null, ['class' => 'form-control form-control-solid form-control-sm']) }}
+            </div>
+            <div class="mb-4">
+                <label for="basic-url" class="form-label">Birthdate</label>
+                {{ Form::text('birthdate', null, ['class' => 'form-control form-control-solid form-control-sm birthdate']) }}
+            </div>
+            <div class="mb-4">
+                <label for="basic-url" class="form-label">Gender</label>
+                <div class="row">
+                    <div class="col-3">
+                        <div class="form-check form-check-custom form-check-solid me-10">
+                            {{ Form::radio('gender', 'M', null, ['class' => 'form-check-input h-15px w-15px', 'id' => 'radio-male']) }}
+                            <label class="form-check-label mr-1" for="radio-male">
+                                Male
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="form-check form-check-custom form-check-solid me-10">
+                            {{ Form::radio('gender', 'M', null, ['class' => 'form-check-input h-15px w-15px', 'id' => 'radio-female']) }}
+                            <label class="form-check-label" for="radio-female">
+                                Female
+                            </label>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="mb-8">
-                <label class="form-label fs-6">General Code</label>
-                {{ Form::text('general_code', null, ['class' => 'form-control form-control-solid form-control-sm']) }}
+            <div class="mb-4">
+                <label for="basic-url" class="form-label">Address</label>
+                {{ Form::textarea('address', null, ['class' => 'h-80px form-control form-control-solid form-control-sm']) }}
             </div>
             <div class="mb-2 mt-8">
                 {{ Form::submit('Update ' . $masterData, ['class' => 'form-control btn btn-light-success']) }}

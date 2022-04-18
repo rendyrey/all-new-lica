@@ -18,7 +18,6 @@ class Package extends Model
         return Validator::make($request->all(),
         [
             'name' => 'required',
-            'general_code' => 'required',
         ]);
     }
 

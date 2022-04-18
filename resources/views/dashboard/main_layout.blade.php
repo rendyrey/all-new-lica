@@ -13,7 +13,7 @@ License: For each use you must have a valid license purchased only from above li
 <html lang="en">
 	<!--begin::Head-->
 	<head><base href="{{ url('/') }}">
-		<title>LICA @if($masterData) {{ " - Master ".$masterData }} @endif</title>
+		<title>LICA - {{ $title }}</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="csrf-token" content="{{ csrf_token() }}" />
@@ -67,7 +67,7 @@ License: For each use you must have a valid license purchased only from above li
 										<!--begin::Menu-->
 										<div class="menu menu-lg-rounded menu-column menu-lg-row menu-state-bg menu-title-gray-700 menu-state-title-primary menu-state-icon-primary menu-state-bullet-primary menu-arrow-gray-400 fw-bold my-5 my-lg-0 align-items-stretch" id="#kt_header_menu" data-kt-menu="true">
 											<div data-kt-menu-trigger="click" data-kt-menu-placement="bottom-start" class="menu-item menu-lg-down-accordion me-lg-1">
-                                                <a class="btn btn-md btn-icon-muted btn-active-light btn-active-color-primary position-relative me-5" href="../../demo1/dist/documentation/getting-started/dark-mode.html">
+                                                <a class="btn btn-md btn-icon-muted btn-active-light btn-active-color-primary position-relative me-5" href="{{ url('pre-analytics') }}">
                                                     <i class="las la-file-medical fs-1"></i>
                                                     Pre Analytics
 													<span class="badge badge-circle badge-danger ms-2">4</span>
