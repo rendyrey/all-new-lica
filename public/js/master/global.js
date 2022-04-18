@@ -154,6 +154,70 @@ var DatatablesServerSide = function () {
     }
 }();
 
+var Select2ServerSide = function (theData, searchKey = 'name') {
+    var _componentSelect2 = function() {
+        // Initialize
+        $('.select-' + theData).select2({
+            allowClear: true,
+            ajax: {
+                url: baseUrl('master/select-options/' + theData + '/' + searchKey),
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        query: params.term // search term
+                    };
+                },
+                processResults: function (data, params) {
+
+                    // parse the results into the format expected by Select2
+                    // since we are using custom formatting functions we do not need to
+                    // alter the remote JSON data, except to indicate that infinite
+                    // scrolling can be used
+                    // params.page = params.page || 1;
+
+                    return {
+                        results: $.map(data, function(item){
+                            return {
+                                text: item.name,
+                                id: item.id
+                            }
+                        })
+                    };
+                },
+                cache: true
+            },
+            // escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+            // minimumInputLength: 0,
+            // tags: true, // for create new tags
+            language: {
+                inputTooShort: function () {
+                    return 'Input is too short';
+                },
+                errorLoading: function () {
+                    return `There's error on our side`;
+                },
+                noResults: function () {
+                    return 'There are no result based on your search';
+                }
+            }
+            
+        });
+
+    }
+
+    //
+    // Return objects assigned to module
+    //
+
+    return {
+        init: function() {
+            _componentSelect2();
+        }
+    }
+}
+
+
 var createData = function () {
     $("#submit-btn").prop('disabled', true); // disabled button
 
@@ -240,6 +304,7 @@ var deleteData = function (id) {
         }
     });
 }
+
 
 // Form Validation Component
 var FormValidation = function() {
@@ -358,6 +423,9 @@ var FormValidation = function() {
 
         $("#form-create").on('submit', function(e) {
             e.preventDefault();
+            if (typeof ckeditor != 'undefined') {
+                ckeditor.updateSourceElement();
+            }
             if ($(this).valid()) {
                 createData();
             }
@@ -365,14 +433,13 @@ var FormValidation = function() {
 
         $("#form-edit").on('submit', function(e) {
             e.preventDefault();
+            if (typeof ckeditor != 'undefined') {
+                ckeditor.updateSourceElement();
+            }
             if ($(this).valid()) {
                 // it is needed because CKEditor need double submit to work if using jquery post
                 // REF: https://stackoverflow.com/questions/47756773/why-in-my-ckeditor-need-to-double-click-the-submit-button-to-work
-                if (typeof CKEDITOR != 'undefined') {
-                    for ( instance in CKEDITOR.instances ){
-                        CKEDITOR.instances[instance].updateElement();
-                    }
-                }
+                
                 updateData();
             }
             // editData(e);

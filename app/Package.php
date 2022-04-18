@@ -10,7 +10,6 @@ class Package extends Model
     protected $with = ['package_tests'];
     protected $fillable = [
         'name',
-        'price',
         'general_code'
     ];
 
@@ -19,7 +18,6 @@ class Package extends Model
         return Validator::make($request->all(),
         [
             'name' => 'required',
-            'price' => 'required',
             'general_code' => 'required',
         ]);
     }

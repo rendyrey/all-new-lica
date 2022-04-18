@@ -55,7 +55,7 @@
                                 </div>
                                 <!--end::Wrapper-->
                                 <!--begin::Datatable-->
-                                <table id="kt_datatable_example_1" class="table gy-1 align-middle table-striped px-0 datatable-ajax">
+                                <table class="table gy-1 align-middle table-striped px-0 datatable-ajax">
                                     <thead>
                                         <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
                                             <th>No</th>

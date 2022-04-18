@@ -59,9 +59,9 @@
                                     <thead>
                                         <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
                                             <th>No</th>
-                                            <th>Insurance Name</th>
-                                            <th>Discount</th>
+                                            <th>Package Name</th>
                                             <th>General Code</th>
+                                            <th>Tests</th>
                                             <th class="text-end min-w-100px">Actions</th>
                                         </tr>
                                     </thead>
@@ -88,20 +88,27 @@
                             <!--begin::Heading-->
                             <h2 class="anchor fw-bolder mb-5">
                             Add new {{ ucwords($masterData) }}</h2>
-
                             <!--begin::Input group-->
                             {!! Form::open(['class'=>'form form-horizontal form-validate-jquery', 'id' => 'form-create']) !!}
                             <div class="mb-4">
-                                <label class="form-label fs-6">Insurance Name</label>
+                                <label class="form-label fs-6">Package Name</label>
                                 {{ Form::text('name', null, ['class' => 'form-control form-control-solid form-control-sm', 'id' => 'first-input']) }}
-
                             </div>
                             <div class="mb-4">
-                                <label for="basic-url" class="form-label">Discount</label>
-                                <div class="input-group input-group-solid input-group-sm">
-                                    {{ Form::text('discount', null, ['class' => 'form-control form-control-solid form-control-sm']) }}
-                                    <span class="input-group-text">%</span>
+                                <div class="form-check form-switch form-check-custom form-check-solid me-10 mb-4">
+                                    <input class="form-check-input h-20px w-30px" type="checkbox" value="" id="from-another-packages"/>
+                                    <label class="form-check-label" for="flexSwitch20x30">
+                                        From another package
+                                    </label>
                                 </div>
+                                <div id="package-list" class="mb-4 d-none">
+                                    <label class="form-label fs-6">Package List</label>
+                                    {{ Form::select('package_ids', [], null, ['class' => 'form-select form-select-sm form-select-solid select-two select-package', 'data-control' => 'select2', 'data-placeholder' => 'Select test', 'multiple' => 'multiple', 'id' => 'select-package-list']) }}
+                                </div>                                
+                            </div>
+                            <div class="mb-4" id="test-list">
+                                <label class="form-label fs-6">Test List</label>
+                                {{ Form::select('test_ids[]', [], null, ['class' => 'form-select form-select-sm form-select-solid select-two select-test', 'data-control' => 'select2', 'data-placeholder' => 'Select test', 'multiple' => 'multiple']) }}
                             </div>
                             <div class="mb-8">
                                 <label class="form-label fs-6">General Code</label>
@@ -144,16 +151,12 @@
             {!! Form::open(['class'=>'form form-horizontal form-validate-jquery', 'id' => 'form-edit', 'method' => 'put']) !!}
             {{ Form::hidden('id') }}
             <div class="mb-4">
-                <label class="form-label fs-6">Insurance Name</label>
+                <label class="form-label fs-6">Package Name</label>
                 {{ Form::text('name', null, ['class' => 'form-control form-control-solid form-control-sm', 'id' => 'first-input']) }}
-
             </div>
             <div class="mb-4">
-                <label for="basic-url" class="form-label">Discount</label>
-                <div class="input-group input-group-solid input-group-sm">
-                    {{ Form::text('discount', null, ['class' => 'form-control form-control-solid form-control-sm']) }}
-                    <span class="input-group-text">%</span>
-                </div>
+                <label class="form-label fs-6">Test List</label>
+                {{ Form::select('test_ids[]', [], null, ['class' => 'form-select form-select-sm form-select-solid select-two select-test', 'data-placeholder' => 'Select test', 'multiple' => 'multiple']) }}
             </div>
             <div class="mb-8">
                 <label class="form-label fs-6">General Code</label>

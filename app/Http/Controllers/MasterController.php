@@ -286,4 +286,10 @@ class MasterController extends Controller
 
         return $data;
     }
+
+    public function getTestPackage($packageIds) {
+        $pIds = explode(',', $packageIds);
+        $data = \App\PackageTest::whereIn('package_id', $pIds)->get();
+        return response()->json($data);
+    }
 }

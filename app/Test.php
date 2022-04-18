@@ -23,12 +23,10 @@ class Test extends Model
         'initial',
         'unit',
         'volume',
-        'price',
         'range_type',
         'sequence',
         'sub_group',
         'normal_notes',
-        'general_code'
     ];
 
 

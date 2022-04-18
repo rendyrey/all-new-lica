@@ -54,6 +54,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('master/datatable/{masterData}/{with?}', 'MasterController@datatable');
     Route::get('master/range/{testId}', 'MasterController@rangeDatatable');
     // END all route for master data
+    Route::get('master/test-packages/{Ids}', 'MasterController@getTestPackage');
 
     // for select option form
     Route::get('master/select-options/{masterData}/{searchKey}', 'MasterController@selectOptions');

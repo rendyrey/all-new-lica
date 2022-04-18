@@ -151,7 +151,7 @@ License: For each use you must have a valid license purchased only from above li
 																	</a>
 																</div>
 																<div class="menu-item">
-																	<a href="{{ url('master/doctor') }}" class="menu-link">
+																	<a href="{{ url('master/insurance') }}" class="menu-link">
 																		<span class="menu-bullet">
 																			<span class="bullet bullet-dot"></span>
 																		</span>
