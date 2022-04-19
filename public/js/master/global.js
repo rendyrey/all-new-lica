@@ -281,7 +281,7 @@ var deleteData = function (id) {
     Swal.fire({
         title: 'Are you sure?',
         text: 'You will not be able to recover this data!',
-        type: 'warning',
+        // type: 'warning',
         showCancelButton: true,
         confirmButtonText: 'Yes, delete it!',
         customClass: {

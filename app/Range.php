@@ -38,8 +38,6 @@ class Range extends Model
                 'max_male_ref' => 'required',
                 'min_female_ref' => 'required',
                 'max_female_ref' => 'required',
-                'normal_male' => 'required',
-                'normal_female' => 'required'
             ]
         );
     }

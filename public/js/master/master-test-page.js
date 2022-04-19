@@ -73,9 +73,6 @@ var rulesFormValidation = {
     },
     range_type: {
         required: true,
-    },
-    normal_notes: {
-        required: true
     }
 };
 
@@ -97,7 +94,7 @@ document.addEventListener('DOMContentLoaded', function () {
             toolbar: [ 'bold', 'italic', 'undo', 'redo', 'numberedList', 'bulletedList' ]
         })
         .then(editor => {
-            console.log(editor);
+
         })
         .catch(error => {
             console.error(error);
@@ -108,7 +105,6 @@ document.addEventListener('DOMContentLoaded', function () {
             toolbar: [ 'bold', 'italic', 'undo', 'redo', 'numberedList', 'bulletedList' ]
         })
         .then(editor => {
-            console.log(editor);
             ckeditor = editor;
         })
         .catch(error => {

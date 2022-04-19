@@ -166,8 +166,8 @@ class CreateMastersTable extends Migration
             $table->decimal('max_male_ref', 13, 2);
             $table->decimal('min_female_ref', 13, 2);
             $table->decimal('max_female_ref', 13, 2);
-            $table->decimal('normal_male', 13, 2);
-            $table->decimal('normal_female', 13, 2);
+            $table->text('normal_male')->nullable();
+            $table->text('normal_female')->nullable();
             $table->timestamps();
         });
 
