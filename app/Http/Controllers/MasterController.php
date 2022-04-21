@@ -209,19 +209,22 @@ class MasterController extends Controller
 
     private function validateDelete($masterData, $id)
     {
-        $exists = false;
+        $exists = [];
         switch($masterData)
         {
             case 'test':
-                $exists = \App\PackageTest::where('test_id', $id)->exists();
+                $exists[] = \App\PackageTest::where('test_id', $id)->exists();
                 break;
             case 'group':
-                $exists = \App\Analyzer::where('group_id', $id)->exists();
+                $exists[] = \App\Analyzer::where('group_id', $id)->exists();
+                break;
+            case 'package':
+                $exists[] = \App\Price::where('package_id', $id)->exists();
                 break;
             default:
-                $exists = false;
+                $exists[] = false;
         }
-        if ($exists) {
+        if (in_array(true, $exists)) {
             throw new \Exception("You can't delete this data, because this data has been used");
         }
     }
