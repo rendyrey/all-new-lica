@@ -241,14 +241,10 @@
           </div>
           </div>
         </div>
-        
     </div>
     <!--end::Container-->
-
-
 </div>
 <!--end::Content-->
-
 
 
 <!-- Horizontal form modal -->
@@ -264,56 +260,83 @@
                 <!--end::Close-->
             </div>
             <div class="modal-body">
-            {!! Form::open(['class'=>'form form-horizontal form-validate-jquery', 'id' => 'form-edit', 'method' => 'put']) !!}
+            {!! Form::open(['class'=>'form form-horizontal form-validate-jquery', 'id' => 'form-range-edit', 'method' => 'put']) !!}
             {{ Form::hidden('id') }}
+            {{ Form::hidden('test_id') }}
             <div class="mb-4">
-                <small><label class="form-label fs-6">Test Name</label></small>
-                {{ Form::text('name', null, ['class' => 'form-control form-control-solid form-control-sm', 'id' => 'first-input']) }}
-            </div>
-            <div class="mb-4">
-                <label class="form-label fs-6">Initial</label>
-                {{ Form::text('initial', null, ['class' => 'form-control form-control-solid form-control-sm']) }}
-            </div>
-            <div class="row mb-4">
-                <div class="col">
-                    <label class="form-label fs-6">Volume</label>
-                    {{ Form::text('volume', null, ['class' => 'form-control form-control-solid form-control-sm']) }}
+                <label class="form-label fs-6">Age</label>
+                <div class="input-group input-group-sm mb-5">
+                  {{ Form::text('min_age', null, ['class' => 'form-control min-age', 'id' => 'first-input-edit', 'placeholder' => 'Min Age']) }}
+                  <span class="input-group-text">-</span>
+                  {{ Form::text('max_age', null, ['class' => 'form-control', 'placeholder' => 'Max Age', 'id' => 'max-age']) }}
                 </div>
-                <div class="col">
-                    <label class="form-label fs-6">Unit</label>
-                    {{ Form::text('unit', null, ['class' => 'form-control form-control-solid form-control-sm']) }}
+              </div>
+
+              <div class="mb-4">
+                <label class="form-label fs-6">Male Ref.</label>
+                <div class="input-group input-group-sm mb-5">
+                  {{ Form::text('min_male_ref', null, ['class' => 'form-control', 'placeholder' => 'Min Male Ref.', 'id' => 'min-male-ref-edit']) }}
+                  <span class="input-group-text">-</span>
+                  {{ Form::text('max_male_ref', null, ['class' => 'form-control', 'placeholder' => 'Max Male Ref.', 'id' => 'max-male-ref-edit']) }}
                 </div>
-            </div>
-            <div class="mb-4">
-                <label class="form-label fs-6">Group Test</label>
-                {{ Form::select('group_id', [], null, ['class' => 'form-select form-select-sm form-select-solid select-group select-two', 'data-placeholder' => 'Select group test']) }}
-            </div>
-            <div class="mb-4">
-                <label class="form-label fs-6">Sub Group</label>
-                {{ Form::text('sub_group', null, ['class' => 'form-control form-control-solid form-control-sm']) }}
-            </div>
-            <div class="mb-4">
-                <label class="form-label fs-6">Specimen</label>
-                {{ Form::select('specimen_id', [], null, ['class' => 'form-select form-select-sm form-select-solid select-specimen select-two', 'data-control' => 'select2', 'data-placeholder' => 'Select specimen']) }}
-            </div>
-            <div class="mb-4">
-                <label class="form-label fs-6">Sequence</label>
-                {{ Form::text('sequence', null, ['class' => 'form-control form-control-solid form-control-sm']) }}
-            </div>
-            <div class="mb-8">
-                <label class="form-label fs-6">Ref. Range Type</label>
-                {{ Form::select('range_type', array_replace(Helper::testRangeType(),[''=>'']), null, ['class' => 'form-select form-select-sm form-select-solid select-two range-type', 'data-control' => 'select2', 'data-placeholder' => 'Select group test', 'data-hide-search' => 'true']) }}
-            </div>
-            <div class="mb-4 d-none" id="normal-notes-edit">
-                <label class="form-label fs-6">Normal Notes</label>
-                {{ Form::textarea('normal_notes', '', ['class' => 'editor-full', 'id' => 'editor-full-edit'])}}                            </div>
-            <div class="mb-4">
-                <label class="form-label fs-6">General Code</label>
-                {{ Form::text('general_code', null, ['class' => 'form-control form-control-solid form-control-sm']) }}
-            </div>
-            <div class="mb-2 mt-8">
+              </div>
+
+              <div class="">
+                <label class="form-label fs-6">Male Crit.</label>
+                <div class="row">
+                    <div class="col-6">
+                      <div class="input-group input-group-sm mb-5">
+                        <span class="input-group-text"><</span>
+                        {{ Form::text('min_crit_male', null, ['class' => 'form-control form-control-sm', 'placeholder' => 'Below']) }}
+                      </div>
+                    </div>
+                    <div class="col-6">
+                      <div class="input-group input-group-sm mb-5">
+                        <span class="input-group-text">></span>
+                        {{ Form::text('max_crit_male', null, ['class' => 'form-control form-control-sm', 'placeholder' => 'Above']) }}
+                      </div>
+                    </div>
+                </div>
+              </div>
+
+              <div class="mb-4">
+                <label class="form-label fs-6">Female Ref.</label>
+                <div class="input-group input-group-sm mb-5">
+                  {{ Form::text('min_female_ref', null, ['class' => 'form-control', 'placeholder' => 'Min Female Ref.', 'id' => 'min-female-ref-edit']) }}
+                  <span class="input-group-text">-</span>
+                  {{ Form::text('max_female_ref', null, ['class' => 'form-control', 'placeholder' => 'Max Female Ref.', 'id' => 'max-female-ref-edit']) }}
+                </div>
+              </div>
+
+              <div class="">
+                <label class="form-label fs-6">Female Crit.</label>
+                <div class="row">
+                    <div class="col-6">
+                      <div class="input-group input-group-sm mb-5">
+                        <span class="input-group-text"><</span>
+                        {{ Form::text('min_crit_female', null, ['class' => 'form-control form-control-sm', 'placeholder' => 'Below']) }}
+                      </div>
+                    </div>
+                    <div class="col-6">
+                      <div class="input-group input-group-sm mb-5">
+                        <span class="input-group-text">></span>
+                        {{ Form::text('max_crit_female', null, ['class' => 'form-control form-control-sm', 'placeholder' => 'Above']) }}
+                      </div>
+                    </div>
+                </div>
+              </div>
+
+              <div class="mb-4">
+                <label class="form-label fs-6">Normal Male</label>
+                {{ Form::textarea('normal_male', '', ['class' => 'form-control editor-male', 'id' => 'editor-male-edit'])}}       
+              </div>
+              <div class="mb-4">
+                <label class="form-label fs-6">Normal Female</label>
+                {{ Form::textarea('normal_female', '', ['class' => 'form-control editor-female', 'id' => 'editor-female-edit'])}}       
+              </div>
+              <div class="mb-2 mt-8">
                 {{ Form::submit('Update ' . $masterData, ['class' => 'form-control btn btn-light-success']) }}
-            </div>
+              </div>
             
             {!! Form::close() !!}
             </div>

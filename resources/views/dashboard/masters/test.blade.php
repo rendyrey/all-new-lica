@@ -135,7 +135,8 @@
                             </div>
                             <div class="mb-4 d-none" id="normal-notes">
                                 <label class="form-label fs-6">Normal Notes</label>
-                                {{ Form::textarea('normal_notes', '', ['class' => 'editor-full', 'id' => 'editor-full'])}}                            </div>
+                                {{ Form::textarea('normal_notes', '', ['class' => 'editor-full', 'id' => 'editor-full'])}}
+                            </div>
                             <div class="mb-4">
                                 <label class="form-label fs-6">General Code</label>
                                 {{ Form::text('general_code', null, ['class' => 'form-control form-control-solid form-control-sm']) }}
@@ -151,14 +152,10 @@
 
             </div>
         </div>
-        
     </div>
     <!--end::Container-->
-
-
 </div>
 <!--end::Content-->
-
 
 
 <!-- Horizontal form modal -->
@@ -212,7 +209,7 @@
             </div>
             <div class="mb-8">
                 <label class="form-label fs-6">Ref. Range Type</label>
-                {{ Form::select('range_type', array_replace(Helper::testRangeType(),[''=>'']), null, ['class' => 'form-select form-select-sm form-select-solid select-two range-type', 'data-control' => 'select2', 'data-placeholder' => 'Select group test', 'data-hide-search' => 'true']) }}
+                {{ Form::select('range_type', array_replace(Helper::testRangeType(),[''=>'']), null, ['class' => 'form-select form-select-sm form-select-solid select-two range-type-edit', 'data-control' => 'select2', 'data-placeholder' => 'Select group test', 'data-hide-search' => 'true']) }}
             </div>
             <div class="mb-4 d-none" id="normal-notes-edit">
                 <label class="form-label fs-6">Normal Notes</label>

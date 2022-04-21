@@ -46,4 +46,9 @@ Class Helper
     {
         return Room::TYPE;
     }
+
+    public static function priceClass()
+    {
+        return Price::THE_CLASS;
+    }
 }

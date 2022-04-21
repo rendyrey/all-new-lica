@@ -15,15 +15,27 @@ class Price extends Model
         '4' => 'Empat'
     ];
 
-    protected $with = ['package'];
+    const THE_CLASS = [
+        '1' => '1',
+        '2' => '2',
+        '3' => '3',
+    ];
+
+    protected $with = ['test','package'];
 
     public function package()
     {
         return $this->belongsTo('App\Package', 'package_id', 'id');
     }
 
+    public function test()
+    {
+        return $this->belongsTo('App\Test', 'test_id', 'id');
+    }
+
     protected $fillable = [
         'package_id',
+        'test_id',
         'type',
         'price',
         'class'
@@ -33,10 +45,9 @@ class Price extends Model
     {
         return Validator::make($request->all(),
         [
-            'package_id' => 'required',
             'type' => 'required',
-            'price' => 'required',
-            'class' => 'required'
+            'class_price.*.class' => 'required|number',
+            'class_price.*.price' => 'required|number'
         ]);
     }
 

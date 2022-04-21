@@ -8,6 +8,7 @@ var responsiveButtonIndexColumn = 10;
 var setValueModalEditForm = function(data)
 {
     $("#modal_form_horizontal").modal('show');
+    $("#modal_form_horizontal input[name='test_id']").val(data.test_id);
     $("#modal_form_horizontal input[name='id']").val(data.id);
     $("#modal_form_horizontal input[name='min_age']").val(data.min_age);
     $("#modal_form_horizontal input[name='max_age']").val(data.max_age);
@@ -19,13 +20,19 @@ var setValueModalEditForm = function(data)
     $("#modal_form_horizontal input[name='max_male_ref']").val(data.max_male_ref);
     $("#modal_form_horizontal input[name='min_female_ref']").val(data.min_female_ref);
     $("#modal_form_horizontal input[name='max_female_ref']").val(data.max_female_ref);
-    $("#modal_form_horizontal input[name='normal_male']").val(data.normal_male);
-    $("#modal_form_horizontal input[name='normal_female']").val(data.normal_female);
-
+    // $("#modal_form_horizontal input[name='normal_male']").val(data.normal_male);
+    // $("#modal_form_horizontal input[name='normal_female']").val(data.normal_female);
+    // debugger;
+    if (data.normal_male != null && data.normal_male != '') {
+        ckEditorNormalMaleEdit.setData(data.normal_male);
+    }
+    if (data.normal_female != null && data.normal_female) {
+        ckEditorNormalFemaleEdit.setData(data.normal_female);
+    }
 }
 
 // required for the form validation rules
-var rulesFormValidation = {
+var rulesFormValidationCreate = {
     min_age: {
         required: true,
         number: true
@@ -60,6 +67,52 @@ var rulesFormValidation = {
         required: true,
         number: true,
         greaterThan: ['#min-female-ref', '#max-female-ref']
+    },
+    min_crit_female: {
+        required: true,
+        number: true
+    },
+    max_crit_female: {
+        required: true,
+        number: true
+    }
+};
+// required for the form validation rules
+var rulesFormValidationEdit = {
+    min_age: {
+        required: true,
+        number: true
+    },
+    max_age: {
+        required: true,
+        number: true,
+        greaterThan: ['#first-input-edit','#max-age-edit']
+    },
+    min_male_ref: {
+        required: true,
+        number: true
+    },
+    max_male_ref: {
+        required: true,
+        number: true,
+        greaterThan: ['#min-male-ref-edit', '#max-male-ref-edit']
+    },
+    min_crit_male: {
+        required: true,
+        number: true
+    },
+    max_crit_male: {
+        required: true,
+        number: true
+    },
+    min_female_ref: {
+        required: true,
+        number: true
+    },
+    max_female_ref: {
+        required: true,
+        number: true,
+        greaterThan: ['#min-female-ref-edit', '#max-female-ref-edit']
     },
     min_crit_female: {
         required: true,
@@ -327,7 +380,7 @@ var FormRangeValidation = function() {
                     error.insertAfter(element);
                 }
             },
-            rules: rulesFormValidation,
+            rules: rulesFormValidationCreate,
             messages: messageFormValidation
             // submitHandler: function(form, event) {
             // }
@@ -371,7 +424,7 @@ var FormRangeValidation = function() {
                     error.insertAfter(element);
                 }
             },
-            rules: rulesFormValidation,
+            rules: rulesFormValidationEdit,
             messages: {
                 custom: {
                     required: 'This is a custom error message'
@@ -397,10 +450,16 @@ var FormRangeValidation = function() {
 
         $("#form-range-edit").on('submit', function(e) {
             e.preventDefault();
+            if (typeof ckEditorNormalMaleEdit != 'undefined') {
+                ckEditorNormalMaleEdit.updateSourceElement();
+            }
+            if (typeof ckEditorNormalFemaleEdit != 'undefined') {
+                ckEditorNormalFemaleEdit.updateSourceElement();
+            }
             if ($(this).valid()) {
                 // it is needed because CKEditor need double submit to work if using jquery post
                 // REF: https://stackoverflow.com/questions/47756773/why-in-my-ckeditor-need-to-double-click-the-submit-button-to-work
-                updateData();
+                updateRangeData();
             }
             // editData(e);
         });
@@ -485,7 +544,7 @@ var editRangeData = function (id) {
 var updateRangeData = function () {
     let theForm = $("#form-range-edit");
     let formData = $("#form-range-edit").serialize();
-
+    console.log(formData);
     $.ajax({
         url: baseUrl('master/range/update'),
         data: formData,
@@ -494,11 +553,11 @@ var updateRangeData = function () {
             $("#modal_form_horizontal").modal('hide');
             theForm.trigger('reset');
             $(".uniform-choice span").removeClass('checked'); // uncheck all the radio buttons
-            DataTables.refreshRangeTable();
-            jGrowlSuccess(res.message);
+            DatatableRefRange.refreshRangeTable();
+            toastr.success(res.message, "Update Success!");
         },
         error: function(res) {
-            jGrowlError();
+            toastr.error(request.responseJSON.message);
         }
     });
 }
@@ -527,10 +586,10 @@ document.addEventListener('DOMContentLoaded', function () {
           toolbar: [ 'bold', 'italic', 'undo', 'redo', 'numberedList', 'bulletedList' ],
       })
       .then(editor => {
+          ckEditorNormalMaleCreate = editor;
           editor.editing.view.change(writer=>{
             writer.setStyle('min-height', '120px', editor.editing.view.document.getRoot());
           });
-          ckEditorNormalMaleCreate = editor;
       })
       .catch(error => {
           console.error(error);
@@ -541,10 +600,10 @@ document.addEventListener('DOMContentLoaded', function () {
           toolbar: [ 'bold', 'italic', 'undo', 'redo', 'numberedList', 'bulletedList' ]
       })
       .then(editor => {
+          ckEditorNormalFemaleCreate = editor;
           editor.editing.view.change(writer=>{
             writer.setStyle('min-height', '120px', editor.editing.view.document.getRoot());
           });
-          ckEditorNormalFemaleCreate = editor;
       })
       .catch(error => {
           console.error(error);
@@ -555,10 +614,10 @@ document.addEventListener('DOMContentLoaded', function () {
           toolbar: [ 'bold', 'italic', 'undo', 'redo', 'numberedList', 'bulletedList' ],
       })
       .then(editor => {
-          editor.editing.view.change(writer=>{
-            writer.setStyle('min-height', '120px', editor.editing.view.document.getRoot());
-          });
           ckEditorNormalMaleEdit = editor;
+        //   editor.editing.view.change(writer=>{
+        //     writer.setStyle('min-height', '120px', editor.editing.view.document.getRoot());
+        //   });
       })
       .catch(error => {
           console.error(error);
@@ -569,10 +628,10 @@ document.addEventListener('DOMContentLoaded', function () {
           toolbar: [ 'bold', 'italic', 'undo', 'redo', 'numberedList', 'bulletedList' ],
       })
       .then(editor => {
-          editor.editing.view.change(writer=>{
-            writer.setStyle('min-height', '120px', editor.editing.view.document.getRoot());
-          });
           ckEditorNormalFemaleEdit = editor;
+        //   editor.editing.view.change(writer=>{
+        //     writer.setStyle('min-height', '120px', editor.editing.view.document.getRoot());
+        //   });
       })
       .catch(error => {
           console.error(error);

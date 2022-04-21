@@ -37,8 +37,6 @@ var setValueModalEditForm = function(data)
     $("#modal_form_horizontal").modal('show');
     $("#modal_form_horizontal input[name='id']").val(data.id);
     $("#modal_form_horizontal input[name='name']").val(data.name);
-    $("#modal_form_horizontal input[name='early_limit']").val(data.early_limit);
-    $("#modal_form_horizontal input[name='limit']").val(data.limit);
     $("#modal_form_horizontal input[name='general_code']").val(data.general_code);
 }
 

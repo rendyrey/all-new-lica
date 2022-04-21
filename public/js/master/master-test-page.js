@@ -32,11 +32,11 @@ var setValueModalEditForm = function(data)
     $("#modal_form_horizontal input[name='volume']").val(data.volume);
     $("#modal_form_horizontal input[name='range_type']").val(data.range_type);
     $("#modal_form_horizontal select[name='group_id']").html(
-        `<option value='`+data.group_id+`'>`+data.group.name+`</option>`
+        `<option value='`+data.group_id+`' selected>`+data.group.name+`</option>`
     )
     $("#modal_form_horizontal input[name='sub_group']").val(data.sub_group);
     $("#modal_form_horizontal select[name='specimen_id']").html(
-        `<option value='`+data.specimen_id+`'>`+data.specimen.name+`</option>`
+        `<option value='`+data.specimen_id+`' selected>`+data.specimen.name+`</option>`
     )
     $("#modal_form_horizontal input[name='sequence']").val(data.sequence);
     $("#modal_form_horizontal select[name='range_type']").val(data.range_type).trigger('change');

@@ -8,7 +8,6 @@ use Faker\Generator as Faker;
 $factory->define(Package::class, function (Faker $faker) {
     return [
         'name' => $faker->name,
-        'price' => $faker->randomNumber(6),
         'general_code' => $faker->randomNumber(3, true)
     ];
 });

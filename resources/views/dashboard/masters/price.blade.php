@@ -58,9 +58,11 @@
                                 <table class="table gy-1 align-middle table-striped px-0 datatable-ajax">
                                     <thead>
                                         <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
+                                            <th>Test Name</th>
                                             <th>Package Name</th>
-                                            <th>General Code</th>
-                                            <th>Tests</th>
+                                            <th>Price</th>
+                                            <th>Type</th>
+                                            <th>Class</th>
                                             <th class="text-end min-w-100px">Actions</th>
                                         </tr>
                                     </thead>
@@ -87,31 +89,76 @@
                             <!--begin::Heading-->
                             <h2 class="anchor fw-bolder mb-5">
                             Add new {{ ucwords($masterData) }}</h2>
-                            <!--begin::Input group-->
                             {!! Form::open(['class'=>'form form-horizontal form-validate-jquery', 'id' => 'form-create']) !!}
                             <div class="mb-4">
-                                <label class="form-label fs-6">Package Name</label>
-                                {{ Form::text('name', null, ['class' => 'form-control form-control-solid form-control-sm', 'id' => 'first-input']) }}
-                            </div>
-                            <div class="mb-4">
-                                <div class="form-check form-switch form-check-custom form-check-solid me-10 mb-4">
-                                    <input class="form-check-input h-20px w-30px" type="checkbox" value="" id="from-another-packages"/>
-                                    <label class="form-check-label" for="flexSwitch20x30">
-                                        From another package
-                                    </label>
-                                </div>
-                                <div id="package-list" class="mb-4 d-none">
-                                    <label class="form-label fs-6">Package List</label>
-                                    {{ Form::select('package_ids', [], null, ['class' => 'form-select form-select-sm form-select-solid select-two select-package', 'data-control' => 'select2', 'data-placeholder' => 'Select package', 'multiple' => 'multiple', 'id' => 'select-package-list']) }}
-                                </div>                                
+                              <small><label class="form-label fs-6">Add Price For</label></small><br>
+                              <!--begin::Radio group-->
+                              <div class="btn-group btn-group-sm w-100 w-lg-50" data-kt-buttons="true" data-kt-buttons-target="[data-kt-button]">
+                                <!--begin::Radio-->
+                                <label class="btn btn-outline-secondary text-muted text-hover-white text-active-white btn-outline btn-active-primary active" data-kt-button="true">
+                                    <!--begin::Input-->
+                                    <input class="btn-check" type="radio" name="type" value="test" checked="checked" />
+                                    <!--end::Input-->
+                                    Test
+                                </label>
+                                <!--end::Radio-->
+
+                                <!--begin::Radio-->
+                                <label class="btn btn-outline-secondary text-muted text-hover-white text-active-white btn-outline btn-active-primary" data-kt-button="true">
+                                    <!--begin::Input-->
+                                    <input class="btn-check" type="radio" name="type" value="package" />
+                                    <!--end::Input-->
+                                    Package
+                                </label>
+                                <!--end::Radio-->
+                              </div>
+                              <!--end::Radio group-->
                             </div>
                             <div class="mb-4" id="test-list">
-                                <label class="form-label fs-6">Test List</label>
-                                {{ Form::select('test_ids[]', [], null, ['class' => 'form-select form-select-sm form-select-solid select-two select-test', 'data-control' => 'select2', 'data-placeholder' => 'Select test', 'multiple' => 'multiple']) }}
+                              <label class="form-label fs-6">Test List</label>
+                              {{ Form::select('test_id', [], null, ['class' => 'form-select form-select-sm form-select-solid select-two select-test', 'data-control' => 'select2', 'data-placeholder' => 'Select test']) }}
                             </div>
-                            <div class="mb-8">
-                                <label class="form-label fs-6">General Code</label>
-                                {{ Form::text('general_code', null, ['class' => 'form-control form-control-solid form-control-sm']) }}
+                            <div class="mb-4 d-none" id="package-list">
+                              <label class="form-label fs-6">Package List</label>
+                              {{ Form::select('package_id', [], null, ['class' => 'form-select form-select-sm form-select-solid select-two select-package', 'data-control' => 'select2', 'data-placeholder' => 'Select package']) }}
+                            </div>
+                            
+                            <div class="mb-4">
+                              <!--begin::Repeater-->
+                              <div id="class_price">
+                                <!--begin::Form group-->
+                                <div class="form-group">
+                                    <div data-repeater-list="class_price">
+                                        <div data-repeater-item>
+                                            <div class="form-group row">
+                                                <div class="col-md-5">
+                                                    <label class="form-label">Class</label>
+                                                    <input type="text" name="class" class="form-control form-control-solid form-control-sm mb-2 mb-md-0" />
+                                                </div>
+                                                <div class="col-md-5">
+                                                    <label class="form-label">Price:</label>
+                                                    <input type="text" name="price" class="form-control form-control-solid form-control-sm mb-2 mb-md-0" />
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <a href="javascript:;" data-repeater-delete class="btn btn-sm btn-light-danger mt-3 mt-md-8">
+                                                        Delete
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--end::Form group-->
+
+                                <!--begin::Form group-->
+                                <div class="form-group mt-5">
+                                    <a href="javascript:;" data-repeater-create class="btn btn-sm btn-light-primary">
+                                        <i class="la la-plus"></i>Add
+                                    </a>
+                                </div>
+                                <!--end::Form group-->
+                              </div>
+                              <!--end::Repeater-->
                             </div>
                             <div class="mb-2 mt-8">
                                 {{ Form::submit('Add ' . $masterData, ['class' => 'form-control btn btn-light-success']) }}
@@ -150,16 +197,44 @@
             {!! Form::open(['class'=>'form form-horizontal form-validate-jquery', 'id' => 'form-edit', 'method' => 'put']) !!}
             {{ Form::hidden('id') }}
             <div class="mb-4">
-                <label class="form-label fs-6">Package Name</label>
-                {{ Form::text('name', null, ['class' => 'form-control form-control-solid form-control-sm', 'id' => 'first-input']) }}
+              <small><label class="form-label fs-6">Update Price For</label></small><br>
+              <!--begin::Radio group-->
+              <div class="btn-group btn-group-sm w-100 w-lg-50" data-kt-buttons="true" data-kt-buttons-target="[data-kt-button]">
+                <!--begin::Radio-->
+                <label class="btn btn-outline-secondary text-muted text-hover-white text-active-white btn-outline btn-active-primary" data-kt-button="true" id="test-type">
+                    <!--begin::Input-->
+                    <input class="btn-check" type="radio" name="type" value="test" checked="checked" />
+                    <!--end::Input-->
+                    Test
+                </label>
+                <!--end::Radio-->
+
+                <!--begin::Radio-->
+                <label class="btn btn-outline-secondary text-muted text-hover-white text-active-white btn-outline btn-active-primary" data-kt-button="true" id="package-type">
+                    <!--begin::Input-->
+                    <input class="btn-check" type="radio" name="type" value="package" />
+                    <!--end::Input-->
+                    Package
+                </label>
+                <!--end::Radio-->
+              </div>
+              <!--end::Radio group-->
+            </div>
+            <div class="mb-4" id="test-list-edit">
+              <label class="form-label fs-6">Test List</label>
+              {{ Form::select('test_id', [], null, ['class' => 'form-select form-select-sm form-select-solid select-two select-test', 'data-control' => 'select2', 'data-placeholder' => 'Select test']) }}
+            </div>
+            <div class="mb-4 d-none" id="package-list-edit">
+              <label class="form-label fs-6">Package List</label>
+              {{ Form::select('package_id', [], null, ['class' => 'form-select form-select-sm form-select-solid select-two select-package', 'data-control' => 'select2', 'data-placeholder' => 'Select package']) }}
             </div>
             <div class="mb-4">
-                <label class="form-label fs-6">Test List</label>
-                {{ Form::select('test_ids[]', [], null, ['class' => 'form-select form-select-sm form-select-solid select-two select-test', 'data-placeholder' => 'Select test', 'multiple' => 'multiple']) }}
+              <label for="basic-url" class="form-label">Class</label>
+              {{ Form::text('class', null, ['class' => 'form-control form-control-solid form-control-sm']) }}
             </div>
-            <div class="mb-8">
-                <label class="form-label fs-6">General Code</label>
-                {{ Form::text('general_code', null, ['class' => 'form-control form-control-solid form-control-sm']) }}
+            <div class="mb-4">
+              <label for="basic-url" class="form-label">Price</label>
+              {{ Form::text('price', null, ['class' => 'form-control form-control-solid form-control-sm']) }}
             </div>
             <div class="mb-2 mt-8">
                 {{ Form::submit('Update ' . $masterData, ['class' => 'form-control btn btn-light-success']) }}
@@ -180,6 +255,7 @@
 <!-- /Form validation -->
 
 <script src="{{asset('metronic_assets/plugins/custom/datatables/datatables.bundle.js')}}"></script>
+<script src="{{asset('metronic_assets/plugins/custom/formrepeater/formrepeater.bundle.js')}}"></script>
 <script src="{{asset('js/master/master-'.$masterData.'-page.js')}}"></script>
 <script src="{{asset('js/master/global.js')}}"></script>
 @endsection

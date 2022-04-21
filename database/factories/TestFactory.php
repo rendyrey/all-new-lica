@@ -11,7 +11,6 @@ $factory->define(Test::class, function (Faker $faker) {
         'initial' => $faker->lexify('??'),
         'unit' => $faker->randomElement(['kg','mm','cm','L','mmHg']),
         'volume' => $faker->randomNumber(5),
-        'price' => $faker->randomNumber(6),
         'range_type' => $faker->randomElement(['number','label','description','free_formatted_text']),
         'sequence' => $faker->randomNumber(2),
         'sub_group' => $faker->name,

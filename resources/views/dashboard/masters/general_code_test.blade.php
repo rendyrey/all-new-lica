@@ -18,7 +18,7 @@
                         <div class="p-0">
                             <!--begin::Heading-->
                             <h1 class="anchor fw-bolder mb-5">
-                            Master {{ ucwords($masterData) }}</h1>
+                            Master {{ ucwords(str_replace("_", " ", $masterData)) }}</h1>
                             <!--end::Heading-->
                             <!--begin::CRUD-->
                             <div class="py-5">
@@ -58,9 +58,8 @@
                                 <table class="table gy-1 align-middle table-striped px-0 datatable-ajax">
                                     <thead>
                                         <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
-                                            <th>Package Name</th>
+                                            <th>Test Name</th>
                                             <th>General Code</th>
-                                            <th>Tests</th>
                                             <th class="text-end min-w-100px">Actions</th>
                                         </tr>
                                     </thead>
@@ -86,35 +85,18 @@
                         <div class="p-2">
                             <!--begin::Heading-->
                             <h2 class="anchor fw-bolder mb-5">
-                            Add new {{ ucwords($masterData) }}</h2>
-                            <!--begin::Input group-->
+                            Add new {{ ucwords(str_replace("_", " ", $masterData)) }}</h2>
                             {!! Form::open(['class'=>'form form-horizontal form-validate-jquery', 'id' => 'form-create']) !!}
-                            <div class="mb-4">
-                                <label class="form-label fs-6">Package Name</label>
-                                {{ Form::text('name', null, ['class' => 'form-control form-control-solid form-control-sm', 'id' => 'first-input']) }}
-                            </div>
-                            <div class="mb-4">
-                                <div class="form-check form-switch form-check-custom form-check-solid me-10 mb-4">
-                                    <input class="form-check-input h-20px w-30px" type="checkbox" value="" id="from-another-packages"/>
-                                    <label class="form-check-label" for="flexSwitch20x30">
-                                        From another package
-                                    </label>
-                                </div>
-                                <div id="package-list" class="mb-4 d-none">
-                                    <label class="form-label fs-6">Package List</label>
-                                    {{ Form::select('package_ids', [], null, ['class' => 'form-select form-select-sm form-select-solid select-two select-package', 'data-control' => 'select2', 'data-placeholder' => 'Select package', 'multiple' => 'multiple', 'id' => 'select-package-list']) }}
-                                </div>                                
-                            </div>
                             <div class="mb-4" id="test-list">
-                                <label class="form-label fs-6">Test List</label>
-                                {{ Form::select('test_ids[]', [], null, ['class' => 'form-select form-select-sm form-select-solid select-two select-test', 'data-control' => 'select2', 'data-placeholder' => 'Select test', 'multiple' => 'multiple']) }}
+                              <label class="form-label fs-6">Test List</label>
+                              {{ Form::select('test_id', [], null, ['class' => 'form-select form-select-sm form-select-solid select-two select-test', 'data-control' => 'select2', 'data-placeholder' => 'Select test']) }}
                             </div>
                             <div class="mb-8">
                                 <label class="form-label fs-6">General Code</label>
                                 {{ Form::text('general_code', null, ['class' => 'form-control form-control-solid form-control-sm']) }}
                             </div>
                             <div class="mb-2 mt-8">
-                                {{ Form::submit('Add ' . $masterData, ['class' => 'form-control btn btn-light-success']) }}
+                                {{ Form::submit('Add ' . ucwords(str_replace("_", " ", $masterData)), ['class' => 'form-control btn btn-light-success']) }}
                             </div>
                             {!! Form::close() !!}
                             <!--end::Input group-->
@@ -124,11 +106,8 @@
 
             </div>
         </div>
-        
     </div>
     <!--end::Container-->
-
-
 </div>
 <!--end::Content-->
 
@@ -139,7 +118,7 @@
     <div class="modal-dialog modal-md">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Update data {{ $masterData }}</h5>
+                <h5 class="modal-title">Update data {{ ucwords(str_replace("_", " ", $masterData)) }}</h5>
                 <!--begin::Close-->
                 <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
                     X
@@ -149,20 +128,16 @@
             <div class="modal-body">
             {!! Form::open(['class'=>'form form-horizontal form-validate-jquery', 'id' => 'form-edit', 'method' => 'put']) !!}
             {{ Form::hidden('id') }}
-            <div class="mb-4">
-                <label class="form-label fs-6">Package Name</label>
-                {{ Form::text('name', null, ['class' => 'form-control form-control-solid form-control-sm', 'id' => 'first-input']) }}
-            </div>
-            <div class="mb-4">
-                <label class="form-label fs-6">Test List</label>
-                {{ Form::select('test_ids[]', [], null, ['class' => 'form-select form-select-sm form-select-solid select-two select-test', 'data-placeholder' => 'Select test', 'multiple' => 'multiple']) }}
+            <div class="mb-4" id="test-list">
+              <label class="form-label fs-6">Test List</label>
+              {{ Form::select('test_id', [], null, ['class' => 'form-select form-select-sm form-select-solid select-two select-test', 'data-control' => 'select2', 'data-placeholder' => 'Select test']) }}
             </div>
             <div class="mb-8">
                 <label class="form-label fs-6">General Code</label>
                 {{ Form::text('general_code', null, ['class' => 'form-control form-control-solid form-control-sm']) }}
             </div>
             <div class="mb-2 mt-8">
-                {{ Form::submit('Update ' . $masterData, ['class' => 'form-control btn btn-light-success']) }}
+                {{ Form::submit('Update ' . ucwords(str_replace("_", " ", $masterData)), ['class' => 'form-control btn btn-light-success']) }}
             </div>
             
             {!! Form::close() !!}

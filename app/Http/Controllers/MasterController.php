@@ -22,7 +22,9 @@ class MasterController extends Controller
         'insurance' => 'App\Insurance',
         'price' => 'App\Price',
         'room' => 'App\Room',
-        'range' => 'App\Range'
+        'range' => 'App\Range',
+        'interfacing' => 'App\Interfacing',
+        'general_code_test' => 'App\GeneralCodeTest'
     ];
 
     protected $masterId = null;
@@ -59,16 +61,25 @@ class MasterController extends Controller
                 throw new \Exception($validator->errors());
             }
 
-            $createdData = $this->masters[$masterData]::create($this->mapInputs($masterData, $request));
+            switch ($masterData) {
+                case 'price':
+                    $creates = $this->createPrices($request);
+                    break;
+                default:
+                    $createdData = $this->masters[$masterData]::create($this->mapInputs($masterData, $request));
+                     // this is for create package in particular, it will be executed if the masterData is package
+                    $this->createPackageTest($createdData, $masterData, $request);
 
-            $this->createPackageTest($createdData, $masterData, $request);
-
-            $this->logActivity(
-                "Create $masterData with ID $createdData->id",
-                json_encode($createdData)
-            );
+                    $this->logActivity(
+                        "Create $masterData with ID $createdData->id",
+                        json_encode($createdData)
+                    );
+            }
+            
+            
+           
             DB::commit();
-            return response()->json(['message' => ucwords($masterData) . ' added successfully']);
+            return response()->json(['message' => ucwords(str_replace("_", " ", $masterData)) . ' added successfully']);
         } catch (\Exception $e) {
             DB::rollback();
             return response()->json(['message' => $e->getMessage()], 400);
@@ -95,7 +106,26 @@ class MasterController extends Controller
 
         \App\PackageTest::insert($data);
     }
-    
+
+    private function createPrices($request)
+    {
+        $data = [];
+        $currentTime = date('Y-m-d H:i:s');
+        foreach ($request->class_price as $class_price) {
+            $data[] = [
+                'class' => $class_price['class'],
+                'price' => $class_price['price'],
+                'test_id' => $request->type == 'test' ? $request->test_id : null,
+                'type' => $request->type,
+                'package_id' => $request->type == 'package' ? $request->package_id : null,
+                'created_at' => $currentTime,
+                'updated_at' => $currentTime
+            ];
+        }
+
+        \App\Price::insert($data);
+    }
+
     public function edit($masterData, $id)
     {
         try {
@@ -127,7 +157,7 @@ class MasterController extends Controller
             );
 
             DB::commit();
-            return response()->json(['message' => ucwords($masterData) . ' updated successfully']);
+            return response()->json(['message' => ucwords(str_replace("_", " ", $masterData)) . ' updated successfully']);
         } catch (\Exception $e) {
             DB::rollback();
             return response()->json(['message' => $e->getMessage()], 400);
@@ -275,6 +305,11 @@ class MasterController extends Controller
                 $data = $request->all();
                 $data['auto_checkin'] = $request->auto_checkin == 1;
                 $data['auto_draw'] = $request->auto_draw == 1;
+                break;
+            case 'price':
+                $data = $request->all();
+                $data['test_id'] = $request->type == 'test' ? $request->test_id : null;
+                $data['package_id'] = $request->type == 'package' ? $request->package_id : null;
                 break;
             default:
                 return $request->all();

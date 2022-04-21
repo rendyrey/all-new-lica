@@ -46,7 +46,6 @@ class CreateMastersTable extends Migration
         Schema::create('doctors', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('title');
             $table->string('general_code')->nullable();
             $table->timestamps();
         });
@@ -131,15 +130,17 @@ class CreateMastersTable extends Migration
 
         Schema::create('prices', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('package_id')->unsigned();
-            $table->integer('type'); // TODO: INI APA?
+            $table->bigInteger('package_id')->unsigned()->nullable();
+            $table->bigInteger('test_id')->unsigned()->nullable();
+            $table->string('type'); // TODO: INI APA?
             $table->integer('price');
             $table->string('class');
             $table->timestamps();
         });
 
         Schema::table('prices', function (Blueprint $table) {
-            $table->foreign('package_id')->references('id')->on('packages')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('package_id')->references('id')->on('packages');
+            $table->foreign('test_id')->references('id')->on('tests');
         });
 
         Schema::create('general_code_tests', function (Blueprint $table) {

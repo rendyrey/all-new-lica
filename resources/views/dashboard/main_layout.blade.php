@@ -185,6 +185,36 @@ License: For each use you must have a valid license purchased only from above li
 															</div>
 														</div>
 														<!--end:Col-->
+														<!--begin:Col-->
+														<div class="col-lg-4 border-left-lg-1">
+															<div class="menu-inline menu-column menu-active-bg">
+																<div class="menu-item">
+																	<a href="{{ url('master/interfacing') }}" class="menu-link">
+																		<span class="menu-bullet">
+																			<span class="bullet bullet-dot"></span>
+																		</span>
+																		<span class="menu-title">Master Interfacings</span>
+																	</a>
+																</div>
+																<div class="menu-item">
+																	<a href="{{ url('master/general_code_test') }}" class="menu-link">
+																		<span class="menu-bullet">
+																			<span class="bullet bullet-dot"></span>
+																		</span>
+																		<span class="menu-title">Master General Code Test</span>
+																	</a>
+																</div>
+																<div class="menu-item">
+																	<a href="{{ url('master/doctor') }}" class="menu-link">
+																		<span class="menu-bullet">
+																			<span class="bullet bullet-dot"></span>
+																		</span>
+																		<span class="menu-title">Master Doctor</span>
+																	</a>
+																</div>
+															</div>
+														</div>
+														<!--end:Col-->
 													</div>
 													<!--end:Row-->
 												</div>
