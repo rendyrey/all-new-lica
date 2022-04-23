@@ -32,12 +32,14 @@ class Test extends Model
 
     public static function validate($request)
     {
-        return Validator::make($request->all(),
-        [
+        return Validator::make(
+            $request->all(),
+            [
             // 'name' => 'required',
             // 'price' => 'required',
             // 'general_code' => 'required',
-        ]);
+            ]
+        );
     }
 
     public function group()

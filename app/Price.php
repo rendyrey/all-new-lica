@@ -7,14 +7,6 @@ use Illuminate\Support\Facades\Validator;
 
 class Price extends Model
 {
-    
-    const TYPE = [
-        '1' => 'Satu',
-        '2' => 'Dua',
-        '3' => 'Tiga',
-        '4' => 'Empat'
-    ];
-
     const THE_CLASS = [
         '1' => '1',
         '2' => '2',

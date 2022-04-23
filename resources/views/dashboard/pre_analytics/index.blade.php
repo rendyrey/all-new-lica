@@ -47,7 +47,7 @@
                                             </svg>
                                         </span>
                                         <!--end::Svg Icon-->
-                                        <input type="text" data-kt-docs-table-filter="search" class="form-control form-control-sm form-control-solid w-250px ps-15" placeholder="Search Pre-Analytics" />
+                                        <input type="text" data-kt-docs-table-filter="search-pre-analytics" class="form-control form-control-sm form-control-solid w-250px ps-15" placeholder="Search Pre-Analytics" />
                                     </div>
                                     <!--end::Search-->
                                     <!--begin::Group actions-->
@@ -60,7 +60,7 @@
                                 </div>
                                 <!--end::Wrapper-->
                                 <!--begin::Datatable-->
-                                <table class="table gy-1 align-middle table-striped px-0 datatable-ajax">
+                                <table class="table gy-1 align-middle table-striped px-0 pre-analytics-datatable-ajax">
                                     <thead>
                                         <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
                                             <th>Date</th>

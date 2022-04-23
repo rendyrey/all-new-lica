@@ -18,10 +18,10 @@ var DatatablesServerSide = function () {
   var table;
   var dt;
   var filterPayment;
-
+  var selectorName = '.pre-analytics-datatable-ajax';
   // Private functions
   var initDatatable = function () {
-      dt = $(".datatable-ajax").DataTable({
+      dt = $(selectorName).DataTable({
           responsive: true,
           searchDelay: 500,
           processing: true,
@@ -87,7 +87,7 @@ var DatatablesServerSide = function () {
 
   // Search Datatable --- official docs reference: https://datatables.net/reference/api/search()
   var handleSearchDatatable = function () {
-      const filterSearch = document.querySelector('[data-kt-docs-table-filter="search"]');
+      const filterSearch = document.querySelector('[data-kt-docs-table-filter="search-pre-analytics"]');
       filterSearch.addEventListener('keyup', function (e) {
           dt.search(e.target.value).draw();
       });
@@ -97,7 +97,7 @@ var DatatablesServerSide = function () {
   var initToggleToolbar = function () {
       // Toggle selected action toolbar
       // Select all checkboxes
-      const container = document.querySelector('.datatable-ajax');
+      const container = document.querySelector(selectorName);
       const checkboxes = container.querySelectorAll('[type="checkbox"]');
       
       // Toggle delete selected toolbar
@@ -115,7 +115,7 @@ var DatatablesServerSide = function () {
   // Toggle toolbars
   var toggleToolbars = function () {
       // Define variables
-      const container = document.querySelector('.datatable-ajax');
+      const container = document.querySelector(selectorName);
       const toolbarSelected = document.querySelector('[data-kt-docs-table-toolbar="selected"]');
       const selectedCount = document.querySelector('[data-kt-docs-table-select="selected_count"]');
 
@@ -157,6 +157,159 @@ var DatatablesServerSide = function () {
           dt.ajax.reload();
       }
   }
+}();
+
+var room_class = '0';
+var getRoomClass = function () {
+  $(".select-room").on('change', function(e) {
+    const roomId = $(this).val();
+    $.ajax({
+      url: baseUrl('master/room/edit/'+roomId),
+      method: 'GET',
+      success: function(res) {
+        room_class = res.class;
+        const newUrl = baseUrl('pre-analytics/test/'+room_class+'/datatable');
+        DatatableTestServerSide.refreshNewTable(newUrl);
+      }
+    })
+  });
+}
+
+var DatatableTestServerSide = function () {
+    // Shared variables
+    var table;
+    var dt;
+    var filterPayment;
+    var selectorName = '.test-datatable-ajax';
+  
+    // Private functions
+    var initDatatable = function () {
+        dt = $(selectorName).DataTable({
+            responsive: true,
+            searchDelay: 500,
+            processing: true,
+            serverSide: true,
+            order: [[0, 'asc']],
+            stateSave: false,
+            ajax: {
+                url: baseUrl('pre-analytics/test/'+room_class+'/datatable')
+            },
+            columns: [
+              { data: 'name', searchable: true },
+              { data: 'price', render: function(data, type, row){
+                  if (data != null && data != '') {
+                    return 'Rp'+data.toLocaleString('ID');
+                  }
+                  return '';
+                }
+              },
+              { data: 'type' }
+            ],
+            columnDefs: [
+                {
+                    responsivePriority: 1,
+                    targets: 3,
+                    data: null,
+                    orderable: false,
+                    className: 'text-end',
+                    searchable: false,
+                    render: function (data, type, row) {
+                        return ``;
+                    },
+                },
+            ],
+            // Add data-filter attribute
+            // createdRow: function (row, data, dataIndex) {
+            //     $(row).find('td:eq(4)').attr('data-filter', data.CreditCardType);
+            // }
+        });
+  
+        table = dt.$;
+  
+        // Re-init functions on every table re-draw -- more info: https://datatables.net/reference/event/draw
+        dt.on('draw', function () {
+            initToggleToolbar();
+            toggleToolbars();
+            KTMenu.createInstances();
+        });
+    }
+  
+  
+    // Search Datatable --- official docs reference: https://datatables.net/reference/api/search()
+    var handleSearchDatatable = function () {
+        const filterSearch = document.querySelector('[data-kt-docs-table-filter="search-test"]');
+        filterSearch.addEventListener('keyup', function (e) {
+            dt.search(e.target.value).draw();
+        });
+    }
+  
+    // Init toggle toolbar
+    var initToggleToolbar = function () {
+        // Toggle selected action toolbar
+        // Select all checkboxes
+        const container = document.querySelector(selectorName);
+        const checkboxes = container.querySelectorAll('[type="checkbox"]');
+        
+        // Toggle delete selected toolbar
+        checkboxes.forEach(c => {
+            // Checkbox on click event
+            c.addEventListener('click', function () {
+                setTimeout(function () {
+                    // toggleToolbars();
+                }, 50);
+            });
+        });
+    }
+    
+  
+    // Toggle toolbars
+    var toggleToolbars = function () {
+        // Define variables
+        const container = document.querySelector(selectorName);
+        const toolbarSelected = document.querySelector('[data-kt-docs-table-toolbar="selected"]');
+        const selectedCount = document.querySelector('[data-kt-docs-table-select="selected_count"]');
+  
+        // Select refreshed checkbox DOM elements
+        const allCheckboxes = container.querySelectorAll('tbody [type="checkbox"]');
+  
+        // Detect checkboxes state & count
+        let checkedState = false;
+        let count = 0;
+  
+        // Count checked boxes
+        allCheckboxes.forEach(c => {
+            if (c.checked) {
+                checkedState = true;
+                count++;
+            }
+        });
+  
+        // Toggle toolbars
+        if (checkedState) {
+            selectedCount.innerHTML = count;
+            toolbarSelected.classList.remove('d-none');
+        } else {
+            toolbarSelected.classList.add('d-none');
+        }
+    }
+  
+    // Public methods
+    return {
+        init: function () {
+            initDatatable();
+            handleSearchDatatable();
+            // initToggleToolbar();
+            // handleFilterDatatable();
+            // handleDeleteRows();
+            // handleResetForm();
+        },
+        refreshTable: function() {
+            dt.ajax.reload();
+        },
+        refreshNewTable: function(url) {
+          dt.ajax.url(url).load();
+        }
+    }
 }();
 
 var DateRangePicker = () => {
@@ -363,9 +516,13 @@ var areAllFilled = function() {
   }
 }
 
+
+
 // On document ready
 document.addEventListener('DOMContentLoaded', function () {
   DatatablesServerSide.init();
+  DatatableTestServerSide.init();
+  getRoomClass();
   automaticFillPatientForm();
   DateRangePicker();
   Select2ServerSide('patient').init();
@@ -385,4 +542,5 @@ document.addEventListener('DOMContentLoaded', function () {
     areAllFilled();
   });
 
+  
 });
