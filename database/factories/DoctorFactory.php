@@ -7,8 +7,7 @@ use Faker\Generator as Faker;
 
 $factory->define(Doctor::class, function (Faker $faker) {
     return [
-        'name' => $faker->name,
-        'title' => $faker->lexify('Dr?'),
+        'name' => $faker->lexify('Dr? ' . $faker->name),
         'general_code' => $faker->randomNumber(3, true)
     ];
 });

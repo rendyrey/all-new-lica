@@ -253,17 +253,19 @@ var Select2ServerSide = function (theData, searchKey = 'name') {
   }
 }
 
-
 var addNewPatient = () => {
   $(".add-new-patient").addClass('d-none');
   $(".cancel-new-patient").removeClass('d-none');
 
-  $("#new-pre-analytics input").removeAttr('disabled');
-  $("#new-pre-analytics input").removeAttr('readonly');
-  $("#new-pre-analytics textarea").removeAttr('disabled');
-  $("#new-pre-analytics textarea").removeAttr('readonly');
+  // $("#new-pre-analytics .patient-form input").removeAttr('disabled');
+  // $("#new-pre-analytics .patient-form input").removeAttr('readonly');
+  // $("#new-pre-analytics .patient-form textarea").removeAttr('disabled');
+  // $("#new-pre-analytics .patient-form textarea").removeAttr('readonly');
 
-  $(".the-form label").removeClass('text-muted');
+  $(".patient-form label").removeClass('text-muted');
+
+  $("select[name='patient_id']").val('').trigger('change');
+  $("select[name='patient_id']").prop('disabled', true);
 
 }
 
@@ -271,12 +273,14 @@ var cancelNewPatient = () => {
   $(".add-new-patient").removeClass('d-none');
   $(".cancel-new-patient").addClass('d-none');
 
-  $("#new-pre-analytics input").attr('disabled', true);
-  $("#new-pre-analytics input").attr('readonly', true);
-  $("#new-pre-analytics textarea").attr('disabled', true);
-  $("#new-pre-analytics textarea").attr('readonly', true);
+  $("#new-pre-analytics .patient-form input").attr('disabled', true);
+  $("#new-pre-analytics .patient-form input").attr('readonly', true);
+  $("#new-pre-analytics .patient-form textarea").attr('disabled', true);
+  $("#new-pre-analytics .patient-form textarea").attr('readonly', true);
 
-  $(".the-form label").addClass('text-muted');
+  $(".patient-form label").addClass('text-muted');
+
+  $("select[name='patient_id']").prop('disabled', false);
 }
 
 var Stepper = () => {
@@ -306,13 +310,79 @@ var birthdate = () => {
   });
 }
 
+var automaticFillPatientForm = function() {
+  $(".select-patient").on('change', function (e) {
+    var patientId = $(this).val();
+    if (patientId != '' && patientId != null) {
+      $.ajax({
+        url: baseUrl('master/patient/edit/'+patientId),
+        method: 'GET',
+        success: function(res) {
+          $(".patient-form input[name='name']").val(res.name);
+          $(".patient-form input[name='email']").val(res.email);
+          $(".patient-form input[name='phone']").val(res.phone);
+          $(".patient-form input[name='medrec']").val(res.medrec);
+          datepicker.setDate(res.birthdate);
+          $(".patient-form input[name='gender']").prop('disabled', false);
+          $(".patient-form input[name='gender']").prop('readonly', false);
+          $(".patient-form input[name='gender'][value='"+res.gender+"']").trigger('click');
+          $(".patient-form input[name='gender']").prop('disabled', true);
+          $(".patient-form input[name='gender']").prop('readonly', true);
+          $(".patient-form textarea[name='address']").val(res.address);
+          areAllFilled();
+        }
+      });
+    } else {
+      $(".patient-form input.req-input").val('');
+      $(".patient-form textarea").val('');
+      areAllFilled();
+    }
+    
+  });
+}
+
+var areAllFilled = function() {
+  var filled = true;
+  $('.patient-right-form select.req-input').each(function() {
+      if($(this).val() == '' || $(this).val() == null) {
+        filled = false;
+      }
+  });
+
+  $(".patient-form input.req-input").each(function() {
+    console.log($(this).val());
+    if($(this).val() == '' || $(this).val() == null) {
+      filled = false;
+    }
+  });
+  
+  if (filled == true) {
+    $("#continue-btn").prop('disabled', false);
+  } else {
+    $("#continue-btn").prop('disabled', true);
+  }
+}
+
 // On document ready
 document.addEventListener('DOMContentLoaded', function () {
   DatatablesServerSide.init();
+  automaticFillPatientForm();
   DateRangePicker();
   Select2ServerSide('patient').init();
+  Select2ServerSide('insurance').init();
+  Select2ServerSide('room','room').init();
+  Select2ServerSide('doctor').init();
   Stepper();
   birthdate();
 
-  $(".the-form label").addClass('text-muted');
+  $(".patient-form label").addClass('text-muted');
+
+  $(".patient-right-form select.req-input").on('change', function(e) {
+    areAllFilled();
+  });
+
+  $(".patient-form input.req-input").on('change keyup input', function(e) {
+    areAllFilled();
+  });
+
 });

@@ -94,40 +94,40 @@
                               </div>
                             </div>
                           </div>
-                          <div class="row the-form">
-                            <div class="col-md-6">
+                          <div class="row form-step-1">
+                            <div class="col-md-6 patient-form">
                               <div class="fv-row row mb-4">
                                 <div class="col-md-3"><label class="form-label fs-7">Patient Name</label></div>
                                 <div class="col-md-9">
-                                  {{ Form::text('name', null, ['class' => 'form-control form-control-solid form-control-sm', 'id' => 'first-input', 'disabled', 'readonly']) }}
+                                  {{ Form::text('name', null, ['class' => 'form-control form-control-solid form-control-sm req-input', 'id' => 'first-input', 'disabled', 'readonly']) }}
                                 </div>
                               </div>
 
                               <div class="fv-row row mb-4">
                                 <div class="col-md-3"><label class="form-label fs-7">Email</label></div>
                                 <div class="col-md-9">
-                                  {{ Form::text('email', null, ['class' => 'form-control form-control-solid form-control-sm', 'disabled', 'readonly']) }}
+                                  {{ Form::text('email', null, ['class' => 'form-control form-control-solid form-control-sm req-input', 'disabled', 'readonly']) }}
                                 </div>
                               </div>
 
                               <div class="fv-row row mb-4">
                                 <div class="col-md-3"><label class="form-label fs-7">Phone</label></div>
                                 <div class="col-md-9">
-                                  {{ Form::text('phone', null, ['class' => 'form-control form-control-solid form-control-sm', 'disabled', 'readonly']) }}
+                                  {{ Form::text('phone', null, ['class' => 'form-control form-control-solid form-control-sm req-input', 'disabled', 'readonly']) }}
                                 </div>
                               </div>
 
                               <div class="fv-row row mb-4">
                                 <div class="col-md-3"><label class="form-label fs-7">Medical Record</label></div>
                                 <div class="col-md-9">
-                                  {{ Form::text('medrec', null, ['class' => 'form-control form-control-solid form-control-sm', 'disabled', 'readonly']) }}
+                                  {{ Form::text('medrec', null, ['class' => 'form-control form-control-solid form-control-sm req-input', 'disabled', 'readonly']) }}
                                 </div>
                               </div>
 
                               <div class="fv-row row mb-4">
                                 <div class="col-md-3"><label class="form-label fs-7">Birthdate</label></div>
                                 <div class="col-md-9">
-                                  {{ Form::text('birthdate', null, ['class' => 'form-control form-control-solid form-control-sm birthdate', 'disabled', 'readonly']) }}
+                                  {{ Form::text('birthdate', null, ['class' => 'form-control form-control-solid form-control-sm birthdate req-input', 'disabled', 'readonly']) }}
                                 </div>
                               </div>
 
@@ -145,7 +145,7 @@
                                     </div>
                                     <div class="col-3">
                                         <div class="form-check form-check-custom form-check-solid me-10">
-                                            {{ Form::radio('gender', 'M', null, ['class' => 'form-check-input h-15px w-15px', 'id' => 'radio-female', 'disabled', 'readonly']) }}
+                                            {{ Form::radio('gender', 'F', null, ['class' => 'form-check-input h-15px w-15px', 'id' => 'radio-female', 'disabled', 'readonly']) }}
                                             <label class="form-check-label" for="radio-female">
                                                 Female
                                             </label>
@@ -159,6 +159,56 @@
                                 <div class="col-md-3"><label class="form-label fs-7">Address</label></div>
                                 <div class="col-md-9">
                                   {{ Form::textarea('address', null, ['class' => 'h-80px form-control form-control-solid form-control-sm', 'disabled', 'readonly']) }}
+                                </div>
+                              </div>
+                              <!-- End Input -->
+                            </div>
+
+                            <div class="col-md-6 patient-right-form">
+                              <div class="fv-row row mb-4">
+                                <div class="col-md-3"><label class="form-label fs-7">Insurance</label></div>
+                                <div class="col-md-9">
+                                  {{ Form::select('insurance_id', [], null, ['class' => 'form-select form-select-sm form-select-solid select-two select-insurance req-input', 'data-control' => 'select2', 'data-placeholder' => 'Select insurance']) }}
+                                </div>
+                              </div>
+
+                              <div class="fv-row row mb-4">
+                                <div class="col-md-3"><label class="form-label fs-7">Type</label></div>
+                                <div class="col-md-9">
+                                  {{ Form::select('type', array_replace(Helper::roomType(),['' => '']), null, ['class' => 'form-select form-select-sm form-select-solid select-two req-input', 'data-control' => 'select2', 'data-placeholder' => 'Select type', 'data-hide-search' => 'true', 'id' => 'select-type']) }}
+                                </div>
+                              </div>
+
+                              <div class="fv-row row mb-4">
+                                <div class="col-md-3"><label class="form-label fs-7">Room</label></div>
+                                <div class="col-md-9">
+                                  {{ Form::select('room_id', [], null, ['class' => 'form-select form-select-sm form-select-solid select-two select-room req-input', 'data-control' => 'select2', 'data-placeholder' => 'Select room']) }}
+                                </div>
+                              </div>
+
+                              <div class="fv-row row mb-4">
+                                <div class="col-md-3"><label class="form-label fs-7">Physican/Doctor</label></div>
+                                <div class="col-md-9">
+                                  {{ Form::select('doctor_id', [], null, ['class' => 'form-select form-select-sm form-select-solid select-two select-doctor req-input', 'data-control' => 'select2', 'data-placeholder' => 'Select doctor']) }}
+                                </div>
+                              </div>
+
+                              <div class="fv-row row mb-4">
+                                <div class="col-md-3"><label class="form-label fs-7">Cito</label></div>
+                                <div class="col-md-9">
+                                  <div class="form-check form-check-custom form-check-solid">
+                                    {{ Form::checkbox('cito', true, false, ['class' => 'form-check-input', 'id' => 'cito']) }}
+                                    <label class="form-check-label" for="cito">
+                                      CITO
+                                    </label>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div class="fv-row row mb-4">
+                                <div class="col-md-3"><label class="form-label fs-7">Diagnosis</label></div>
+                                <div class="col-md-9">
+                                  {{ Form::textarea('diagnosis', null, ['class' => 'h-80px form-control form-control-solid form-control-sm']) }}
                                 </div>
                               </div>
                               <!-- End Input -->
@@ -235,7 +285,7 @@
                                 </span>
                             </button>
 
-                            <button type="button" class="btn btn-primary" data-kt-stepper-action="next">
+                            <button type="button" class="btn btn-primary" data-kt-stepper-action="next" id="continue-btn" disabled>
                                 Continue
                             </button>
                         </div>
