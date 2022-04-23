@@ -95,7 +95,7 @@
                             </div>
                             <div class="mb-4" id="test-list">
                                 <label class="form-label fs-6">Test Group</label>
-                                {{ Form::select('group_id', [], null, ['class' => 'form-select form-select-sm form-select-solid select-two select-group', 'data-control' => 'select2', 'data-placeholder' => 'Select test']) }}
+                                {{ Form::select('group_id', [], null, ['class' => 'form-select form-select-sm form-select-solid select-two select-group', 'data-control' => 'select2', 'data-placeholder' => 'Select group']) }}
                             </div>
                             <div class="mb-8">
                                 <label class="form-label fs-6">General Code</label>

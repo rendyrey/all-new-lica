@@ -42,7 +42,10 @@ Route::get('send', 'MailController@send');
 
 // Dashboard
 Route::middleware(['auth'])->group(function () {
+    // BEGIN Pre Analytics
     Route::get('pre-analytics', 'PreAnalyticController@index')->name('pre-analytics');
+    Route::get('pre-analytics/datatable', 'PreAnalyticController@datatable');
+    // END Pre Analytics
 
     // BEGIN all route for master data
     Route::get('master/{masterData}', 'MasterController@index');

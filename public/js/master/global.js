@@ -217,7 +217,6 @@ var Select2ServerSide = function (theData, searchKey = 'name') {
     }
 }
 
-
 var createData = function () {
     $("#submit-btn").prop('disabled', true); // disabled button
 

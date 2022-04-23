@@ -1,0 +1,252 @@
+<div class="modal fade" tabindex="-1" id="add-patient-modal">
+  <div class="modal-dialog modal-xl ">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h2 class="modal-title">Add New Data</h2>
+
+              <!--begin::Close-->
+              <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
+                  <span class="svg-icon svg-icon-2x"></span>
+              </div>
+              <!--end::Close-->
+          </div>
+
+          <div class="modal-body">
+              <!--begin::Stepper-->
+              <div class="stepper stepper-pills" id="kt_stepper_example_basic">
+                <!--begin::Nav-->
+                <div class="stepper-nav flex-center flex-wrap mb-2 mt-0">
+                    <!--begin::Step 1-->
+                    <div class="stepper-item current" data-kt-stepper-element="nav">
+                        <!--begin::Line-->
+                        <div class="stepper-line w-40px"></div>
+                        <!--end::Line-->
+
+                        <!--begin::Icon-->
+                        <div class="stepper-icon w-30px h-30px">
+                            <i class="stepper-check fas fa-check"></i>
+                            <span class="stepper-number fs-6">1</span>
+                        </div>
+                        <!--end::Icon-->
+
+                        <!--begin::Label-->
+                        <div class="stepper-label">
+                            <h5 class="stepper-title fs-7">
+                                Add Patient
+                            </h5>
+
+                            <div class="stepper-desc fs-7">
+                                Step 1
+                            </div>
+                        </div>
+                        <!--end::Label-->
+                    </div>
+                    <!--end::Step 1-->
+
+                    <!--begin::Step 2-->
+                    <div class="stepper-item" data-kt-stepper-element="nav">
+                        <!--begin::Line-->
+                        <div class="stepper-line w-40px"></div>
+                        <!--end::Line-->
+
+                        <!--begin::Icon-->
+                        <div class="stepper-icon w-30px h-30px">
+                            <i class="stepper-check fas fa-check"></i>
+                            <span class="stepper-number fs-6">2</span>
+                        </div>
+                        <!--begin::Icon-->
+
+                        <!--begin::Label-->
+                        <div class="stepper-label">
+                            <h3 class="stepper-title fs-7">
+                                Step 2
+                            </h3>
+
+                            <div class="stepper-desc fs-7">
+                                Description
+                            </div>
+                        </div>
+                        <!--end::Label-->
+                    </div>
+                    <!--end::Step 2-->
+                </div>
+                <!--end::Nav-->
+
+                <!--begin::Form-->
+                {{-- <form class="form mx-auto" novalidate="novalidate" id="kt_stepper_example_basic_form"> --}}
+                  {!! Form::open(['url' => 'pre-analytic/new', 'class' => '', 'id' => 'new-pre-analytics']) !!}
+                    <!--begin::Group-->
+                    <div class="mb-5">
+                        <!--begin::Step 1-->
+                        <div class="flex-column current" data-kt-stepper-element="content">
+                          <div class="mb-4 row">
+                            <div class="col-md-1 my-auto">
+                              <label class="form-label fs-5">Search</label>
+                            </div>
+                            <div class="col-md-11">
+                              <div class="input-group input-group-solid flex-nowrap">
+                                <span class="input-group-text"><i class="bi bi-person-circle fs-4"></i></span>
+                                <div class="overflow-hidden flex-grow-1">
+                                  {{ Form::select('patient_id', [], null, ['class' => 'form-select form-select-solid rounded-0 border-start select-two select-patient', 'data-control' => 'select2', 'data-placeholder' => 'Select patient']) }}
+                                </div>
+                                <span class="input-group-text bg-danger text-white cursor-pointer cancel-new-patient d-none" onClick="cancelNewPatient()">Cancel</span>
+                                <span class="input-group-text bg-primary text-white cursor-pointer add-new-patient" onClick="addNewPatient()">Add new Patient</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="row the-form">
+                            <div class="col-md-6">
+                              <div class="fv-row row mb-4">
+                                <div class="col-md-3"><label class="form-label fs-7">Patient Name</label></div>
+                                <div class="col-md-9">
+                                  {{ Form::text('name', null, ['class' => 'form-control form-control-solid form-control-sm', 'id' => 'first-input', 'disabled', 'readonly']) }}
+                                </div>
+                              </div>
+
+                              <div class="fv-row row mb-4">
+                                <div class="col-md-3"><label class="form-label fs-7">Email</label></div>
+                                <div class="col-md-9">
+                                  {{ Form::text('email', null, ['class' => 'form-control form-control-solid form-control-sm', 'disabled', 'readonly']) }}
+                                </div>
+                              </div>
+
+                              <div class="fv-row row mb-4">
+                                <div class="col-md-3"><label class="form-label fs-7">Phone</label></div>
+                                <div class="col-md-9">
+                                  {{ Form::text('phone', null, ['class' => 'form-control form-control-solid form-control-sm', 'disabled', 'readonly']) }}
+                                </div>
+                              </div>
+
+                              <div class="fv-row row mb-4">
+                                <div class="col-md-3"><label class="form-label fs-7">Medical Record</label></div>
+                                <div class="col-md-9">
+                                  {{ Form::text('medrec', null, ['class' => 'form-control form-control-solid form-control-sm', 'disabled', 'readonly']) }}
+                                </div>
+                              </div>
+
+                              <div class="fv-row row mb-4">
+                                <div class="col-md-3"><label class="form-label fs-7">Birthdate</label></div>
+                                <div class="col-md-9">
+                                  {{ Form::text('birthdate', null, ['class' => 'form-control form-control-solid form-control-sm birthdate', 'disabled', 'readonly']) }}
+                                </div>
+                              </div>
+
+                              <div class="fv-row row mb-4">
+                                <div class="col-md-3"><label class="form-label fs-7">Gender</label></div>
+                                <div class="col-md-9">
+                                  <div class="row">
+                                    <div class="col-3">
+                                        <div class="form-check form-check-custom form-check-solid me-10">
+                                            {{ Form::radio('gender', 'M', null, ['class' => 'form-check-input h-15px w-15px', 'id' => 'radio-male', 'disabled', 'readonly']) }}
+                                            <label class="form-check-label mr-1" for="radio-male">
+                                                Male
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="form-check form-check-custom form-check-solid me-10">
+                                            {{ Form::radio('gender', 'M', null, ['class' => 'form-check-input h-15px w-15px', 'id' => 'radio-female', 'disabled', 'readonly']) }}
+                                            <label class="form-check-label" for="radio-female">
+                                                Female
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                </div>
+                              </div>
+
+                              <div class="fv-row row mb-4">
+                                <div class="col-md-3"><label class="form-label fs-7">Address</label></div>
+                                <div class="col-md-9">
+                                  {{ Form::textarea('address', null, ['class' => 'h-80px form-control form-control-solid form-control-sm', 'disabled', 'readonly']) }}
+                                </div>
+                              </div>
+                              <!-- End Input -->
+                            </div>
+                          </div>
+                        </div>
+                        <!--begin::Step 1-->
+
+                        <!--begin::Step 2-->
+                        <div class="flex-column" data-kt-stepper-element="content">
+                            <!--begin::Input group-->
+                            <div class="fv-row mb-10">
+                                <!--begin::Label-->
+                                <label class="form-label">Example Label 1</label>
+                                <!--end::Label-->
+
+                                <!--begin::Input-->
+                                <input type="text" class="form-control form-control-solid" name="input1" placeholder="" value=""/>
+                                <!--end::Input-->
+                            </div>
+                            <!--end::Input group-->
+
+                            <!--begin::Input group-->
+                            <div class="fv-row mb-10">
+                                <!--begin::Label-->
+                                <label class="form-label">Example Label 2</label>
+                                <!--end::Label-->
+
+                                <!--begin::Input-->
+                                <textarea class="form-control form-control-solid" rows="3" name="input2" placeholder=""></textarea>
+                                <!--end::Input-->
+                            </div>
+                            <!--end::Input group-->
+
+                            <!--begin::Input group-->
+                            <div class="fv-row mb-10">
+                                <!--begin::Label-->
+                                <label class="form-label">Example Label 3</label>
+                                <!--end::Label-->
+
+                                <!--begin::Input-->
+                                <label class="form-check form-check-custom form-check-solid">
+                                    <input class="form-check-input" checked="checked" type="checkbox" value="1"/>
+                                    <span class="form-check-label">
+                                        Checkbox
+                                    </span>
+                                </label>
+                                <!--end::Input-->
+                            </div>
+                            <!--end::Input group-->
+                        </div>
+                        <!--begin::Step 2-->
+                    </div>
+                    <!--end::Group-->
+
+                    <!--begin::Actions-->
+                    <div class="d-flex flex-center">
+                        <!--begin::Wrapper-->
+                        <div class="me-2">
+                            <button type="button" class="btn btn-light btn-active-light-primary" data-kt-stepper-action="previous">
+                                Back
+                            </button>
+                        </div>
+                        <!--end::Wrapper-->
+
+                        <!--begin::Wrapper-->
+                        <div>
+                            <button type="button" class="btn btn-primary" data-kt-stepper-action="submit">
+                                <span class="indicator-label">
+                                    Submit
+                                </span>
+                                <span class="indicator-progress">
+                                    Please wait... <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                                </span>
+                            </button>
+
+                            <button type="button" class="btn btn-primary" data-kt-stepper-action="next">
+                                Continue
+                            </button>
+                        </div>
+                        <!--end::Wrapper-->
+                    </div>
+                    <!--end::Actions-->
+                </form>
+                <!--end::Form-->
+              </div>
+              <!--end::Stepper-->
+          </div>
+      </div>
+  </div>
+</div>
