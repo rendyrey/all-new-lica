@@ -285,9 +285,16 @@ class MasterController extends Controller
     public function selectOptions($masterData, $searchKey, Request $request)
     {
         try {
-            $data = $this->masters[$masterData]::selectRaw('id, '.$searchKey.' as name')
-                ->where($searchKey, 'LIKE', '%' . $request->input('query') . '%')
-                ->take(150)->get();
+            if ($masterData == 'room') {
+                $searchKey = "CONCAT(room, ' - Class ', class)";
+                $data = $this->masters[$masterData]::selectRaw('id, '.$searchKey.' as name')
+                    ->where('room', 'LIKE', '%' . $request->input('query') . '%')
+                    ->take(150)->get();
+            } else {
+                $data = $this->masters[$masterData]::selectRaw('id, '.$searchKey.' as name')
+                    ->where($searchKey, 'LIKE', '%' . $request->input('query') . '%')
+                    ->take(150)->get();
+            }
             
             return response()->json($data);
         } catch (\Exception $e) {
