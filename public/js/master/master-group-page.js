@@ -3,10 +3,9 @@ var masterData = 'group'; // required for the url
 var withModel = []; // required for the datatable if the model of the datatable has eager load or relationship, set to empty array if not.
 
 // required for the datatable columns
-var buttonActionIndex = 2;
+var buttonActionIndex = 1;
 var columnsDataTable = [
-    { data: 'name' },
-    { data: 'general_code' }
+    { data: 'name' }
 ];
 
 var setValueModalEditForm = function(data)

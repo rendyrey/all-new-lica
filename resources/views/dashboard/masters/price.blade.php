@@ -7,7 +7,7 @@
 <!--begin::Content-->
 <div class="docs-content d-flex flex-column flex-column-fluid" id="kt_docs_content">
     <!--begin::Container-->
-    <div class="container px-2" id="kt_docs_content_container">
+    <div class="px-5" id="kt_docs_content_container">
         <div class="row">
             <div class="col-lg-8">
                 <!--begin::Card-->
@@ -34,7 +34,7 @@
                                             </svg>
                                         </span>
                                         <!--end::Svg Icon-->
-                                        <input type="text" data-kt-docs-table-filter="search" class="form-control form-control-sm form-control-solid w-250px ps-15" placeholder="Search Customers" />
+                                        <input type="text" data-kt-docs-table-filter="search" class="form-control form-control-sm form-control-solid w-250px ps-15" placeholder="Search {{ ucwords($masterData) }}" />
                                     </div>
                                     <!--end::Search-->
                                     <!--begin::Toolbar-->
@@ -58,11 +58,11 @@
                                 <table class="table gy-1 align-middle table-striped px-0 datatable-ajax">
                                     <thead>
                                         <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
-                                            <th>Test Name</th>
                                             <th>Package Name</th>
+                                            <th>Test Name</th>
                                             <th>Price</th>
-                                            <th>Type</th>
                                             <th>Class</th>
+                                            <th>Group</th>
                                             <th class="text-end min-w-100px">Actions</th>
                                         </tr>
                                     </thead>
@@ -120,7 +120,7 @@
                             </div>
                             <div class="mb-4 d-none" id="package-list">
                               <label class="form-label fs-6">Package List</label>
-                              {{ Form::select('package_id', [], null, ['class' => 'form-select form-select-sm form-select-solid select-two select-package', 'data-control' => 'select2', 'data-placeholder' => 'Select package']) }}
+                              {{ Form::select('package_id', [], null, ['class' => 'form-select form-select-sm form-select-solid select-two select-package ignore-this', 'data-control' => 'select2', 'data-placeholder' => 'Select package']) }}
                             </div>
                             
                             <div class="mb-4">
@@ -136,8 +136,8 @@
                                                     <input type="text" name="class" class="form-control form-control-solid form-control-sm mb-2 mb-md-0" />
                                                 </div>
                                                 <div class="col-md-5">
-                                                    <label class="form-label">Price:</label>
-                                                    <input type="text" name="price" class="form-control form-control-solid form-control-sm mb-2 mb-md-0" />
+                                                    <label class="form-label">Price</label>
+                                                    <input type="text" name="price" class="form-control form-control-solid form-control-sm mb-2 mb-md-0 thousands-separator" />
                                                 </div>
                                                 <div class="col-md-2">
                                                     <a href="javascript:;" data-repeater-delete class="btn btn-sm btn-light-danger mt-3 mt-md-8">
@@ -222,11 +222,11 @@
             </div>
             <div class="mb-4" id="test-list-edit">
               <label class="form-label fs-6">Test List</label>
-              {{ Form::select('test_id', [], null, ['class' => 'form-select form-select-sm form-select-solid select-two select-test', 'data-control' => 'select2', 'data-placeholder' => 'Select test']) }}
+              {{ Form::select('test_id', [], null, ['class' => 'form-select form-select-sm form-select-solid select-two select-test ignore-this', 'data-control' => 'select2', 'data-placeholder' => 'Select test']) }}
             </div>
             <div class="mb-4 d-none" id="package-list-edit">
               <label class="form-label fs-6">Package List</label>
-              {{ Form::select('package_id', [], null, ['class' => 'form-select form-select-sm form-select-solid select-two select-package', 'data-control' => 'select2', 'data-placeholder' => 'Select package']) }}
+              {{ Form::select('package_id', [], null, ['class' => 'form-select form-select-sm form-select-solid select-two select-package ignore-this', 'data-control' => 'select2', 'data-placeholder' => 'Select package']) }}
             </div>
             <div class="mb-4">
               <label for="basic-url" class="form-label">Class</label>
@@ -234,7 +234,7 @@
             </div>
             <div class="mb-4">
               <label for="basic-url" class="form-label">Price</label>
-              {{ Form::text('price', null, ['class' => 'form-control form-control-solid form-control-sm']) }}
+              {{ Form::text('price', null, ['class' => 'form-control form-control-solid form-control-sm thousands-separator']) }}
             </div>
             <div class="mb-2 mt-8">
                 {{ Form::submit('Update ' . $masterData, ['class' => 'form-control btn btn-light-success']) }}

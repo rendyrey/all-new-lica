@@ -7,7 +7,7 @@
 <!--begin::Content-->
 <div class="docs-content d-flex flex-column flex-column-fluid" id="kt_docs_content">
     <!--begin::Container-->
-    <div class="container px-2" id="kt_docs_content_container">
+    <div class="px-5" id="kt_docs_content_container">
         <div class="row">
             <div class="col-lg-8">
                 <!--begin::Card-->
@@ -34,7 +34,7 @@
                                             </svg>
                                         </span>
                                         <!--end::Svg Icon-->
-                                        <input type="text" data-kt-docs-table-filter="search" class="form-control form-control-sm form-control-solid w-250px ps-15" placeholder="Search Customers" />
+                                        <input type="text" data-kt-docs-table-filter="search" class="form-control form-control-sm form-control-solid w-250px ps-15" placeholder="Search {{ ucwords($masterData) }}" />
                                     </div>
                                     <!--end::Search-->
                                     <!--begin::Toolbar-->
@@ -59,8 +59,9 @@
                                     <thead>
                                         <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
                                             <th>Package Name</th>
-                                            <th>General Code</th>
                                             <th>Tests</th>
+                                            <th>Group</th>
+                                            <th>General Code</th>
                                             <th class="text-end min-w-100px">Actions</th>
                                         </tr>
                                     </thead>
@@ -109,6 +110,10 @@
                                 <label class="form-label fs-6">Test List</label>
                                 {{ Form::select('test_ids[]', [], null, ['class' => 'form-select form-select-sm form-select-solid select-two select-test', 'data-control' => 'select2', 'data-placeholder' => 'Select test', 'multiple' => 'multiple']) }}
                             </div>
+                            <div class="mb-4" id="test-list">
+                                <label class="form-label fs-6">Test Group</label>
+                                {{ Form::select('group_id', [], null, ['class' => 'form-select form-select-sm form-select-solid select-two select-group', 'data-control' => 'select2', 'data-placeholder' => 'Select test']) }}
+                            </div>
                             <div class="mb-8">
                                 <label class="form-label fs-6">General Code</label>
                                 {{ Form::text('general_code', null, ['class' => 'form-control form-control-solid form-control-sm']) }}
@@ -156,6 +161,10 @@
             <div class="mb-4">
                 <label class="form-label fs-6">Test List</label>
                 {{ Form::select('test_ids[]', [], null, ['class' => 'form-select form-select-sm form-select-solid select-two select-test', 'data-placeholder' => 'Select test', 'multiple' => 'multiple']) }}
+            </div>
+            <div class="mb-4" id="test-list">
+                <label class="form-label fs-6">Test Group</label>
+                {{ Form::select('group_id', [], null, ['class' => 'form-select form-select-sm form-select-solid select-two select-group', 'data-control' => 'select2', 'data-placeholder' => 'Select test']) }}
             </div>
             <div class="mb-8">
                 <label class="form-label fs-6">General Code</label>

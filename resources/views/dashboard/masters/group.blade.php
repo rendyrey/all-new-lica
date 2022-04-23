@@ -34,7 +34,7 @@
                                             </svg>
                                         </span>
                                         <!--end::Svg Icon-->
-                                        <input type="text" data-kt-docs-table-filter="search" class="form-control form-control-sm form-control-solid w-250px ps-15" placeholder="Search Customers" />
+                                        <input type="text" data-kt-docs-table-filter="search" class="form-control form-control-sm form-control-solid w-250px ps-15" placeholder="Search {{ ucwords($masterData) }}" />
                                     </div>
                                     <!--end::Search-->
                                     <!--begin::Toolbar-->
@@ -59,7 +59,6 @@
                                     <thead>
                                         <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
                                             <th>Group Name</th>
-                                            <th>General Code</th>
                                             <th class="text-end min-w-100px">Actions</th>
                                         </tr>
                                     </thead>
@@ -90,10 +89,6 @@
                             <div class="mb-4">
                                 <label class="form-label fs-6">Group Name</label>
                                 {{ Form::text('name', null, ['class' => 'form-control form-control-solid form-control-sm', 'id' => 'first-input']) }}
-                            </div>
-                            <div class="mb-8">
-                                <label class="form-label fs-6">General Code</label>
-                                {{ Form::text('general_code', null, ['class' => 'form-control form-control-solid form-control-sm']) }}
                             </div>
                             <div class="mb-2 mt-8">
                                 {{ Form::submit('Add ' . $masterData, ['class' => 'form-control btn btn-light-success']) }}
@@ -134,10 +129,6 @@
             <div class="mb-4">
                 <label class="form-label fs-6">Group Name</label>
                 {{ Form::text('name', null, ['class' => 'form-control form-control-solid form-control-sm', 'id' => 'first-input']) }}
-            </div>
-            <div class="mb-8">
-                <label class="form-label fs-6">General Code</label>
-                {{ Form::text('general_code', null, ['class' => 'form-control form-control-solid form-control-sm']) }}
             </div>
             <div class="mb-2 mt-8">
                 {{ Form::submit('Update ' . $masterData, ['class' => 'form-control btn btn-light-success']) }}

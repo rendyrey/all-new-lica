@@ -7,9 +7,10 @@ use Illuminate\Support\Facades\Validator;
 
 class Package extends Model
 {
-    protected $with = ['package_tests'];
+    protected $with = ['package_tests','group'];
     protected $fillable = [
         'name',
+        'group_id',
         'general_code'
     ];
 
@@ -24,5 +25,10 @@ class Package extends Model
     public function package_tests()
     {
         return $this->hasMany('App\PackageTest', 'package_id', 'id');
+    }
+
+    public function group()
+    {
+        return $this->belongsTo('App\Group', 'group_id', 'id');
     }
 }

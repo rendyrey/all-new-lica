@@ -3,28 +3,36 @@ var masterData = 'price'; // required for the url
 var withModel = ['test','package']; // required for the datatable if the model of the datatable has eager load or relationship, set to empty array if not.
 
 // required for the datatable columns
-var buttonActionIndex = 5;
+var buttonActionIndex = 5; // this is equal to column count
 var columnsDataTable = [
-    { data: 'test.name', render: function (data, type, row) {
-        if (row.test_id != null && row.test_id != '') {
-          return row.test.name;
-        }
-        return '-';
-      }, defaultContent: ''
-    },
     { data: 'package.name', render: function (data, type, row) {
         if (row.package_id != null && row.package_id != '') {
           return row.package.name;
         }
-        return '-';
+        return '';
+      }, defaultContent: ''
+    },
+    { data: 'test.name', render: function (data, type, row) {
+        if (row.test_id != null && row.test_id != '') {
+          return row.test.name;
+        }
+        return '';
       }, defaultContent: ''
     },
     { data: 'price', render: function (data, type, row) {
         return 'Rp' + data.toLocaleString('ID');
       }
     },
-    { data: 'type' },
-    { data: 'class' }
+    { data: 'class' },
+    { data: null, render: function(data, type, row) {
+        if (row.test_id != null && row.test_id != '') {
+          return row.test.group.name;;
+        }
+        if (row.package_id != null && row.package_id != '') {
+          return row.package.group.name;
+        }
+      }, defaultContent: ''
+    }
 ];
 
 var setValueModalEditForm = function(data)
@@ -34,14 +42,18 @@ var setValueModalEditForm = function(data)
     $("#modal_form_horizontal input[name='id']").val(data.id);
     if (data.type == 'test') {
       $("#test-type").trigger('click');
-      $("#modal_form_horizontal select[name='test_id']").html(
-        `<option value='`+data.test_id+`' selected>`+data.test.name+`</option>`
-      );
+      if (data.test != null) {
+        $("#modal_form_horizontal select[name='test_id']").html(
+          `<option value='`+data.test_id+`' selected>`+data.test.name+`</option>`
+        );
+      }
     } else {
       $("#package-type").trigger('click');
-      $("#modal_form_horizontal select[name='package_id']").html(
-        `<option value='`+data.package_id+`' selected>`+data.package.name+`</option>`
-      );
+      if (data.package != null) {
+        $("#modal_form_horizontal select[name='package_id']").html(
+          `<option value='`+data.package_id+`' selected>`+data.package.name+`</option>`
+        );
+      }
     }
     $("#modal_form_horizontal input[name='class']").val(data.class);
     $("#modal_form_horizontal input[name='price']").val(data.price);
@@ -50,11 +62,42 @@ var setValueModalEditForm = function(data)
 // required for the form validation rules
 var rulesFormValidation = {
     "class_price[0][class]": {
-        required: true
+        required: true,
+        digits: true,
+        min: 1,
+        max: 10,
     },
     "class_price[0][price]": {
         required: true,
+        number: true
+    },
+    "class_price[1][class]": {
+      required: true,
+      digits: true,
+      min: 1,
+      max: 10,
+    },
+    "class_price[1][price]": {
+        required: true,
+        number: true
+    },
+    "class_price[2][class]": {
+      required: true,
+      digits: true,
+      min: 1,
+      max: 10,
+    },
+    "class_price[2][price]": {
+        required: true,
+        number: true
+    },
+    test_id: {
+      required: true
+    },
+    package_id: {
+      required: true
     }
+    
 };
 
 // On document ready
@@ -75,21 +118,28 @@ document.addEventListener('DOMContentLoaded', function () {
       if (type == 'test') {
         $("#test-list").removeClass('d-none');
         $("#package-list").addClass('d-none');
+        $("#form-create select[name='test_id']").removeClass('ignore-this');
+        $("#form-create select[name='package_id']").addClass('ignore-this');
       } else {
         $("#test-list").addClass('d-none');
         $("#package-list").removeClass('d-none');
+        $("#form-create select[name='test_id']").addClass('ignore-this');
+        $("#form-create select[name='package_id']").removeClass('ignore-this');
       }
     });
 
     $('#form-edit input[name="type"]').on('change', function(e) {
       const type = $(this).val();
-
       if (type == 'test') {
         $("#test-list-edit").removeClass('d-none');
         $("#package-list-edit").addClass('d-none');
+        $("#form-edit select[name='test_id']").removeClass('ignore-this');
+        $("#form-edit select[name='package_id']").addClass('ignore-this');
       } else {
         $("#test-list-edit").addClass('d-none');
         $("#package-list-edit").removeClass('d-none');
+        $("#form-edit select[name='test_id']").addClass('ignore-this');
+        $("#form-edit select[name='package_id']").removeClass('ignore-this');
       }
     });
 
@@ -102,10 +152,48 @@ document.addEventListener('DOMContentLoaded', function () {
   
       show: function () {
           $(this).slideDown();
+          $(".thousands-separator").on('keyup', function(){
+            var val = $(this).val();
+            var valArr;
+            val = val.replace(/[^0-9\.]/g,'');
+          
+            if(val != "") {
+              valArr = val.split('.');
+              valArr[0] = (parseInt(valArr[0],10)).toLocaleString();
+              val = valArr.join('.');
+            }
+          
+            $(this).val(val);
+          });
+          if ($('#class_price div[data-repeater-item]').length == 3) {
+            $("a[data-repeater-create]").parents('.form-group').addClass('d-none');
+          } else {
+            $("a[data-repeater-create]").parents('.form-group').removeClass('d-none');
+          }
       },
   
       hide: function (deleteElement) {
           $(this).slideUp(deleteElement);
+          if ($('#class_price div[data-repeater-item]').length < 1) {
+            $("a[data-repeater-create]").parents('.form-group').addClass('d-none');
+          } else {
+            $("a[data-repeater-create]").parents('.form-group').removeClass('d-none');
+          }
       }
-  });
+    });
+
+    $(".thousands-separator").on('keyup', function(){
+      var val = $(this).val();
+      var valArr;
+      val = val.replace(/[^0-9\.]/g,'');
+    
+      if(val != "") {
+        valArr = val.split('.');
+        valArr[0] = (parseInt(valArr[0],10)).toLocaleString();
+        val = valArr.join('.');
+      }
+    
+      $(this).val(val);
+    })
+    
 });

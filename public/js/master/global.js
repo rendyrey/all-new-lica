@@ -335,7 +335,7 @@ var FormValidation = function() {
 
         // Initialize
         $('#form-create').validate({
-            ignore: 'input[type=hidden], .select2-search__field', // ignore hidden fields
+            ignore: 'input[type=hidden], .select2-search__field, .ignore-this', // ignore hidden fields
             errorClass: 'fv-plugins-message-container invalid-feedback',
             successClass: 'validation-valid-label',
             validClass: 'validation-valid-label',
@@ -383,7 +383,7 @@ var FormValidation = function() {
         });
 
         $('#form-edit').validate({
-            ignore: 'input[type=hidden], .select2-search__field', // ignore hidden fields
+            ignore: 'input[type=hidden], .select2-search__field, .ignore-this', // ignore hidden fields
             errorClass: 'fv-plugins-message-container invalid-feedback',
             successClass: 'validation-valid-label',
             validClass: 'validation-valid-label',

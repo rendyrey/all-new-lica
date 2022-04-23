@@ -12,16 +12,11 @@ License: For each use you must have a valid license purchased only from above li
 -->
 <html lang="en">
 	<!--begin::Head-->
-	<head><base href="{{ url('/') }}">
+	<head><base href=" {{ url('/') }}">
 		<title>LICA - {{ $title }}</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="csrf-token" content="{{ csrf_token() }}" />
-		<meta property="og:locale" content="en_US" />
-		<meta property="og:type" content="article" />
-		<meta property="og:title" content="Metronic - Bootstrap 5 HTML, VueJS, React, Angular &amp; Laravel Admin Dashboard Theme" />
-		<meta property="og:url" content="https://keenthemes.com/metronic" />
-		<meta property="og:site_name" content="Keenthemes | Metronic" />
 		<link rel="canonical" href="https://preview.keenthemes.com/metronic8" />
 		<link rel="shortcut icon" href="metronic_assets/media/logos/favicon.ico" />
 		<!--begin::Fonts-->
@@ -31,8 +26,8 @@ License: For each use you must have a valid license purchased only from above li
         @yield('styles')
 		<!--end::Page Vendor Stylesheets-->
 		<!--begin::Global Stylesheets Bundle(used by all pages)-->
-		<link href="metronic_assets/plugins/global/plugins.bundle.css" rel="stylesheet" type="text/css" />
-		<link href="metronic_assets/css/style.bundle.css" rel="stylesheet" type="text/css" />
+		<link href="{{ asset('metronic_assets/plugins/global/plugins.bundle.css') }}" rel="stylesheet" type="text/css" />
+		<link href="{{ asset('metronic_assets/css/style.bundle.css')}}" rel="stylesheet" type="text/css" />
 		<!--end::Global Stylesheets Bundle-->
 	</head>
 	<!--end::Head-->
@@ -54,7 +49,7 @@ License: For each use you must have a valid license purchased only from above li
 							<!--begin::Logo-->
 							<div class="d-flex align-items-center flex-grow-1 flex-lg-grow-0 me-lg-15">
 								<a href="{{ url('/') }}">
-									<img alt="Logo" src="metronic_assets/media/logos/logo-1.svg" class="h-20px h-lg-30px" />
+									<img alt="Logo" src="{{ url('metronic_assets/media/logos/logo-1.svg') }}" class="h-20px h-lg-30px" />
 								</a>
 							</div>
 							<!--end::Logo-->
@@ -231,7 +226,7 @@ License: For each use you must have a valid license purchased only from above li
 									<div class="d-flex align-items-center ms-1 ms-lg-3" id="kt_header_user_menu_toggle">
 										<!--begin::Menu wrapper-->
 										<div class="cursor-pointer symbol symbol-30px symbol-md-40px" data-kt-menu-trigger="click" data-kt-menu-attach="parent" data-kt-menu-placement="bottom-end">
-											<img src="metronic_assets/media/avatars/300-1.jpg" alt="user" />
+											<img src="{{url('metronic_assets/media/avatars/300-1.jpg')}}" alt="user" />
 										</div>
 										<!--begin::User account menu-->
 										<div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-800 menu-state-bg menu-state-primary fw-bold py-4 fs-6 w-275px" data-kt-menu="true">
@@ -240,7 +235,7 @@ License: For each use you must have a valid license purchased only from above li
 												<div class="menu-content d-flex align-items-center px-3">
 													<!--begin::Avatar-->
 													<div class="symbol symbol-50px me-5">
-														<img alt="Logo" src="metronic_assets/media/avatars/300-1.jpg" />
+														<img alt="Logo" src="{{url('metronic_assets/media/avatars/300-1.jpg')}}" />
 													</div>
 													<!--end::Avatar-->
 													<!--begin::Username-->
@@ -382,14 +377,14 @@ License: For each use you must have a valid license purchased only from above li
 		</div>
 		<!--end::Root-->
 		<!--begin::Javascript-->
-		<script>var hostUrl = "metronic_assets/";</script>
+		<script>var hostUrl = "{{ url('metronic_assets') }}";</script>
 		<!--begin::Global Javascript Bundle(used by all pages)-->
-		<script src="metronic_assets/plugins/global/plugins.bundle.js"></script>
-		<script src="metronic_assets/js/scripts.bundle.js"></script>
+		<script src="{{asset('metronic_assets/plugins/global/plugins.bundle.js')}}"></script>
+		<script src="{{asset('metronic_assets/js/scripts.bundle.js')}}"></script>
 		<!--end::Global Javascript Bundle-->
 		<!--begin::Page Vendors Javascript(used by this page)-->
 		
-		<script src="metronic_assets/plugins/custom/datatables/datatables.bundle.js"></script>
+		<script src="{{asset('metronic_assets/plugins/custom/datatables/datatables.bundle.js')}}"></script>
 		<!--end::Page Vendors Javascript-->
 		<!--begin::Page Custom Javascript(used by this page)-->
         <script>

@@ -58,7 +58,7 @@ class MasterController extends Controller
         try {
             $validator = $this->masters[$masterData]::validate($request);
             if ($validator->fails()) {
-                throw new \Exception($validator->errors());
+                throw new \Exception($validator->errors()->first());
             }
 
             switch ($masterData) {
@@ -114,7 +114,7 @@ class MasterController extends Controller
         foreach ($request->class_price as $class_price) {
             $data[] = [
                 'class' => $class_price['class'],
-                'price' => $class_price['price'],
+                'price' => str_replace(',','',$class_price['price']),
                 'test_id' => $request->type == 'test' ? $request->test_id : null,
                 'type' => $request->type,
                 'package_id' => $request->type == 'package' ? $request->package_id : null,
@@ -311,6 +311,7 @@ class MasterController extends Controller
                 break;
             case 'price':
                 $data = $request->all();
+                $data['price'] = str_replace(',', '', $request->price);
                 $data['test_id'] = $request->type == 'test' ? $request->test_id : null;
                 $data['package_id'] = $request->type == 'package' ? $request->package_id : null;
                 break;

@@ -7,9 +7,9 @@
 <!--begin::Content-->
 <div class="docs-content d-flex flex-column flex-column-fluid" id="kt_docs_content">
     <!--begin::Container-->
-    <div class="container px-2" id="kt_docs_content_container">
+    <div class="px-5" id="kt_docs_content_container">
         <div class="row">
-            <div class="col-lg-8">
+            <div class="col-lg-9">
                 <!--begin::Card-->
                 <div class="card card-docs mb-2">
                     <!--begin::Card Body-->
@@ -34,7 +34,7 @@
                                             </svg>
                                         </span>
                                         <!--end::Svg Icon-->
-                                        <input type="text" data-kt-docs-table-filter="search" class="form-control form-control-sm form-control-solid w-250px ps-15" placeholder="Search Customers" />
+                                        <input type="text" data-kt-docs-table-filter="search" class="form-control form-control-sm form-control-solid w-250px ps-15" placeholder="Search {{ ucwords($masterData) }}" />
                                     </div>
                                     <!--end::Search-->
                                     <!--begin::Toolbar-->
@@ -58,15 +58,15 @@
                                 <table class="table gy-1 align-middle table-striped px-0 datatable-ajax">
                                     <thead>
                                         <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
-                                            <th>Room</th>
-                                            <th>Room Code</th>
-                                            <th>Class</th>
-                                            <th>Auto Checkin</th>
-                                            <th>Auto Draw</th>
-                                            <th>Type</th>
-                                            <th>Referral Address</th>
-                                            <th>Referral No Phone</th>
-                                            <th>Referral Email</th>
+                                            <th class="min-w-150px">Room</th>
+                                            <th class="min-w-150px">Room Code</th>
+                                            <th class="min-w-150px">Class</th>
+                                            <th class="min-w-150px">Auto Checkin</th>
+                                            <th class="min-w-150px">Auto Draw</th>
+                                            <th class="min-w-150px">Type</th>
+                                            <th class="none">Referral Address</th>
+                                            <th class="none">Referral No Phone</th>
+                                            <th class="none">Referral Email</th>
                                             <th>General Code</th>
                                             <th class="text-end min-w-100px">Actions</th>
                                         </tr>
@@ -84,7 +84,7 @@
                 <!--end::Card-->
             </div>
 
-            <div class="col-lg-4">
+            <div class="col-lg-3">
                 <!--begin::Card-->
                 <div class="card card-docs mb-2">
                     <!--begin::Card Body-->

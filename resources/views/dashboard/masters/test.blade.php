@@ -7,7 +7,7 @@
 <!--begin::Content-->
 <div class="docs-content d-flex flex-column flex-column-fluid" id="kt_docs_content">
     <!--begin::Container-->
-    <div class="container px-2" id="kt_docs_content_container">
+    <div class="px-5 mx-5" id="kt_docs_content_container">
         <div class="row">
             <div class="col-lg-8">
                 <!--begin::Card-->
@@ -34,7 +34,7 @@
                                             </svg>
                                         </span>
                                         <!--end::Svg Icon-->
-                                        <input type="text" data-kt-docs-table-filter="search" class="form-control form-control-sm form-control-solid w-250px ps-15" placeholder="Search Customers" />
+                                        <input type="text" data-kt-docs-table-filter="search" class="form-control form-control-sm form-control-solid w-250px ps-15" placeholder="Search {{ ucwords($masterData) }}" />
                                     </div>
                                     <!--end::Search-->
                                     <!--begin::Toolbar-->

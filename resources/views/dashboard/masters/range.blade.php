@@ -34,7 +34,7 @@
                                           </svg>
                                       </span>
                                       <!--end::Svg Icon-->
-                                      <input type="text" data-kt-docs-table-filter="search" class="form-control form-control-sm form-control-solid w-250px ps-15" placeholder="Search Customers" />
+                                      <input type="text" data-kt-docs-table-filter="search" class="form-control form-control-sm form-control-solid w-250px ps-15" placeholder="Search {{ ucwords($masterData) }}" />
                                   </div>
                                   <!--end::Search-->
                                   <!--begin::Toolbar-->
@@ -99,7 +99,7 @@
                                           </svg>
                                       </span>
                                       <!--end::Svg Icon-->
-                                      <input type="text" data-kt-docs-table-filter="search" class="form-control form-control-sm form-control-solid w-250px ps-15" placeholder="Search Customers" />
+                                      <input type="text" data-kt-docs-table-filter="search" class="form-control form-control-sm form-control-solid w-250px ps-15" placeholder="Search {{ ucwords($masterData) }}" />
                                   </div>
                                   <!--end::Search-->
                                   <!--begin::Toolbar-->

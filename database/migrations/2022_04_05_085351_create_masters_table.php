@@ -63,6 +63,7 @@ class CreateMastersTable extends Migration
         Schema::create('groups', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->integer('wating_time')->nullable();
             $table->string('general_code')->nullable();
             $table->timestamps();
         });

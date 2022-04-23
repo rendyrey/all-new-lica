@@ -16,8 +16,7 @@ class Doctor extends Model
     {
         return Validator::make($request->all(),
             [
-                'name' => 'required',
-                'general_code' => 'required'
+                'name' => 'required'
             ]
         );
     }

@@ -46,8 +46,11 @@ class Price extends Model
         return Validator::make($request->all(),
         [
             'type' => 'required',
-            'class_price.*.class' => 'required|number',
-            'class_price.*.price' => 'required|number'
+            'class_price.*.class' => 'required|numeric',
+            'class_price.*.price' => 'required'
+        ],[
+            'class_price.*.price.required' => 'The Price is required',
+            'class_price.*.class.required' => 'The Class is required'
         ]);
     }
 

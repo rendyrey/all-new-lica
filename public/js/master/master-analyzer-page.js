@@ -20,7 +20,7 @@ var setValueModalEditForm = function(data)
     $("#modal_form_horizontal input[name='id']").val(data.id);
     $("#modal_form_horizontal input[name='name']").val(data.name);
     $("#modal_form_horizontal select[name='group_id']").html(
-        `<option value='`+data.group_id+`'>`+ data.group.name +`</option>`
+        `<option value='`+data.group_id+`' selected>`+ data.group.name +`</option>`
     );
 }
 

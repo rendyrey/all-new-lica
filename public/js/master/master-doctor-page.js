@@ -19,11 +19,8 @@ var setValueModalEditForm = function(data)
 
 // required for the form validation rules
 var rulesFormValidation = {
-    general_code: {
-        required: true
-    },
     name: {
-        required: true,
+        required: true
     }
 };
 
