@@ -47,6 +47,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('pre-analytics/datatable', 'PreAnalyticController@datatable');
     Route::post('pre-analytics/test/{roomClass}/datatable', 'PreAnalyticController@datatableTest');
     Route::post('pre-analytics/test/{roomClass}/datatable/withoutId/{ids}', 'PreAnalyticController@datatableSelectTest');
+    Route::post('pre-analytics/create', 'PreAnalyticController@create');
     // END Pre Analytics
 
     // BEGIN all route for master data

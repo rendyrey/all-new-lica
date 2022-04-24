@@ -2,6 +2,8 @@ var baseUrl = function(url) {
   return base + url;
 }
 
+var newFormId = '#new-pre-analytics';
+
 var buttonActionIndex = 6;
 var columnsDataTable = [
   { data: 'created_at' },
@@ -416,10 +418,10 @@ var addNewPatient = () => {
   $(".add-new-patient").addClass('d-none');
   $(".cancel-new-patient").removeClass('d-none');
 
-  // $("#new-pre-analytics .patient-form input").removeAttr('disabled');
-  // $("#new-pre-analytics .patient-form input").removeAttr('readonly');
-  // $("#new-pre-analytics .patient-form textarea").removeAttr('disabled');
-  // $("#new-pre-analytics .patient-form textarea").removeAttr('readonly');
+  $(newFormId + " .patient-form input").removeAttr('disabled');
+  $(newFormId + " .patient-form input").removeAttr('readonly');
+  $(newFormId + " .patient-form textarea").removeAttr('disabled');
+  $(newFormId + " .patient-form textarea").removeAttr('readonly');
 
   $(".patient-form label").removeClass('text-muted');
 
@@ -432,14 +434,16 @@ var cancelNewPatient = () => {
   $(".add-new-patient").removeClass('d-none');
   $(".cancel-new-patient").addClass('d-none');
 
-  $("#new-pre-analytics .patient-form input").attr('disabled', true);
-  $("#new-pre-analytics .patient-form input").attr('readonly', true);
-  $("#new-pre-analytics .patient-form textarea").attr('disabled', true);
-  $("#new-pre-analytics .patient-form textarea").attr('readonly', true);
+  $(newFormId + " .patient-form input").attr('disabled', true);
+  $(newFormId + " .patient-form input").attr('readonly', true);
+  $(newFormId + " .patient-form textarea").attr('disabled', true);
+  $(newFormId + " .patient-form textarea").attr('readonly', true);
 
   $(".patient-form label").addClass('text-muted');
 
   $("select[name='patient_id']").prop('disabled', false);
+  $(newFormId).validate().resetForm();
+  $(newFormId).trigger('reset');
 }
 
 var selectedTestIds = [];
@@ -486,7 +490,10 @@ var Stepper = () => {
  
    // Handle next step
    stepper.on("kt.stepper.next", function (stepper) {
-       stepper.goNext(); // go next step
+      $(newFormId).validate();
+      if ($(newFormId).valid()) {
+        stepper.goNext(); // go next step
+      }
    });
  
    // Handle previous step
@@ -557,6 +564,175 @@ var areAllFilled = function() {
   }
 }
 
+// required for the form validation rules
+var rulesFormValidation = {
+  name: {
+    required: true
+  },
+  email: {
+    email: true
+  },
+  phone: {
+    digits: true
+  },
+  birthdate: {
+    required: true
+  },
+  gender: {
+    required: true
+  }
+};
+// Form Validation Component
+var FormValidation = function() {
+  //
+  // Setup module components
+  //
+
+  // Validation config
+  var _componentValidation = function() {
+      if (!$().validate) {
+          console.warn('Warning - validate.min.js is not loaded.');
+          return;
+      }
+
+      // Initialize
+      $('#form-create').validate({
+          ignore: 'input[type=hidden], .select2-search__field, .ignore-this', // ignore hidden fields
+          errorClass: 'fv-plugins-message-container invalid-feedback',
+          successClass: 'validation-valid-label',
+          validClass: 'validation-valid-label',
+          highlight: function(element, errorClass) {
+              $(element).removeClass(errorClass);
+          },
+          unhighlight: function(element, errorClass) {
+              $(element).removeClass(errorClass);
+          },
+          // success: function(label) {
+          //     label.addClass('validation-valid-label').text('Valid'); // remove to hide Success message
+          // },
+
+          // Different components require proper error label placement
+          errorPlacement: function(error, element) {
+
+              // Unstyled checkboxes, radios
+              if (element.parents().hasClass('form-check')) {
+                  error.appendTo( element.parents('.form-check').parent() );
+              }
+
+              // Input with icons and Select2
+              else if (element.parents().hasClass('form-group-feedback') || element.hasClass('select2-hidden-accessible')) {
+                  error.appendTo( element.parent() );
+              }
+
+              // Input group, styled file input
+              else if (element.parent().is('.uniform-uploader, .uniform-select') || element.parents().hasClass('input-group')) {
+                  error.appendTo( element.parent().parent() );
+              }
+
+              // Other elements
+              else {
+                  error.insertAfter(element);
+              }
+          },
+          rules: rulesFormValidation,
+          messages: {
+              custom: {
+                  required: 'This is a custom error message'
+              }
+          },
+          // submitHandler: function(form, event) {
+          // }
+      });
+
+      $(newFormId).validate({
+          ignore: 'input[type=hidden], .select2-search__field, .ignore-this', // ignore hidden fields
+          errorClass: 'fv-plugins-message-container invalid-feedback',
+          successClass: 'validation-valid-label',
+          validClass: 'validation-valid-label',
+          highlight: function(element, errorClass) {
+              $(element).removeClass(errorClass);
+          },
+          unhighlight: function(element, errorClass) {
+              $(element).removeClass(errorClass);
+          },
+          // success: function(label) {
+          //     label.addClass('validation-valid-label').text('Valid'); // remove to hide Success message
+          // },
+
+          // Different components require proper error label placement
+          errorPlacement: function(error, element) {
+
+              // Unstyled checkboxes, radios
+              if (element.parents().hasClass('form-check')) {
+                  error.appendTo( element.parents('.form-check').parent() );
+              }
+
+              // Input with icons and Select2
+              else if (element.parents().hasClass('form-group-feedback') || element.hasClass('select2-hidden-accessible')) {
+                  error.appendTo( element.parent() );
+              }
+
+              // Input group, styled file input
+              else if (element.parent().is('.uniform-uploader, .uniform-select') || element.parents().hasClass('input-group')) {
+                  error.appendTo( element.parent().parent() );
+              }
+
+              // Other elements
+              else {
+                  error.insertAfter(element);
+              }
+          },
+          rules: rulesFormValidation,
+          messages: {
+              custom: {
+                  required: 'This is a custom error message'
+              }
+          },
+          // submitHandler: function(form, event) {
+          // }
+      });
+
+      // Reset form
+      // $('#reset').on('click', function() {
+      //     validatorCreate.resetForm();
+      // });
+  };
+
+
+  //
+  // Return objects assigned to module
+  //
+
+  return {
+      init: function() {
+          _componentValidation();
+      }
+  }
+}();
+
+var createNewData = function() {
+  let formData = $(newFormId).serialize();
+  let theForm = $(newFormId);
+  $.ajax({
+    url: baseUrl('pre-analytics/create'),
+    method: 'POST',
+    data: formData,
+    success: function(res) {
+        toastr.success(res.message, "Create Success!");
+        $("#add-patient-modal").modal('hide');
+        $(newFormId).trigger('reset');
+        $(newFormId + ' select').val('').trigger('change');
+        $("selected-test-table tbody").html('');
+        selectedTestIds = [];
+        $("#back-btn").trigger('click');
+        // DatatablesServerSide.refreshTable();
+    },
+    error: function (request, status, error) {
+        toastr.error(request.responseJSON.message);
+    }
+  })
+}
+
 $.ajaxSetup({
   headers: {
       'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -567,6 +743,7 @@ $.ajaxSetup({
 document.addEventListener('DOMContentLoaded', function () {
   DatatablesServerSide.init();
   DatatableTestServerSide.init();
+  FormValidation.init();
   getRoomClass();
   automaticFillPatientForm();
   DateRangePicker();
@@ -586,6 +763,27 @@ document.addEventListener('DOMContentLoaded', function () {
   $(".patient-form input.req-input").on('change keyup input', function(e) {
     areAllFilled();
   });
+
+  $(newFormId).on('submit', function(e) {
+    e.preventDefault();
+    if (selectedTestIds.length == 0) {
+      Swal.fire({
+        text: "Please select at least 1 test!",
+        icon: "error",
+        buttonsStyling: false,
+        confirmButtonText: "Ok, got it!",
+        customClass: {
+            confirmButton: "btn btn-primary"
+        }
+      });
+      return false;
+    }
+
+    if ($(this).valid()) {
+      createNewData();
+    }
+
+  }); 
 
   // $('body').tooltip({
   //   selector: '[data-bs-toggle="tooltip"]',

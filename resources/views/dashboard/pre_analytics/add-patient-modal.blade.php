@@ -36,7 +36,7 @@
                             </h5>
 
                             <div class="stepper-desc fs-7">
-                                Step 1
+                                Select existing patient or add new patient data
                             </div>
                         </div>
                         <!--end::Label-->
@@ -59,11 +59,11 @@
                         <!--begin::Label-->
                         <div class="stepper-label">
                             <h3 class="stepper-title fs-7">
-                                Step 2
+                                Add Test
                             </h3>
 
                             <div class="stepper-desc fs-7">
-                                Description
+                                Please select tests
                             </div>
                         </div>
                         <!--end::Label-->
@@ -74,7 +74,7 @@
 
                 <!--begin::Form-->
                 {{-- <form class="form mx-auto" novalidate="novalidate" id="kt_stepper_example_basic_form"> --}}
-                  {!! Form::open(['url' => 'pre-analytic/new', 'class' => '', 'id' => 'new-pre-analytics']) !!}
+                  {!! Form::open(['url' => 'pre-analytic/create', 'class' => '', 'id' => 'new-pre-analytics', 'method' => 'POST']) !!}
                     <!--begin::Group-->
                     <div class="mb-5">
                         <!--begin::Step 1-->
@@ -229,7 +229,7 @@
                     <div class="d-flex flex-center">
                         <!--begin::Wrapper-->
                         <div class="me-2">
-                            <button type="button" class="btn btn-light btn-active-light-primary" data-kt-stepper-action="previous">
+                            <button type="button" id="back-btn" class="btn btn-light btn-active-light-primary" data-kt-stepper-action="previous">
                                 Back
                             </button>
                         </div>
@@ -237,7 +237,7 @@
 
                         <!--begin::Wrapper-->
                         <div>
-                            <button type="button" class="btn btn-primary" data-kt-stepper-action="submit">
+                            <button type="submit" class="btn btn-primary" data-kt-stepper-action="submit" id="new-data-submit">
                                 <span class="indicator-label">
                                     Submit
                                 </span>

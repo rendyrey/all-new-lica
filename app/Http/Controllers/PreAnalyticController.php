@@ -44,4 +44,9 @@ class PreAnalyticController extends Controller
         ->escapeColumns([])
         ->make(true);
     }
+
+    public function create(Request $request)
+    {
+        return response()->json(['success']);
+    }
 }
