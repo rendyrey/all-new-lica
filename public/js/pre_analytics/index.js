@@ -192,7 +192,8 @@ var DatatableTestServerSide = function () {
             order: [[0, 'asc']],
             stateSave: false,
             ajax: {
-                url: baseUrl('pre-analytics/test/'+room_class+'/datatable')
+                url: baseUrl('pre-analytics/test/'+room_class+'/datatable'),
+                method: 'POST'
             },
             columns: [
               { data: 'name', searchable: true },
@@ -214,7 +215,7 @@ var DatatableTestServerSide = function () {
                     className: 'text-end',
                     searchable: false,
                     render: function (data, type, row) {
-                        return ``;
+                        return `<i onClick="addTestList('`+row.unique_id+`','`+row.type+`','`+row.name+`', '`+row.price+`', event)" class="cursor-pointer bi bi-arrow-right-circle text-success" data-bs-toggle="tooltip" data-bs-custom-class="tooltip-dark" data-bs-placement="top" title="Add `+row.name+` to test list"></i>`;
                     },
                 },
             ],
@@ -365,19 +366,22 @@ var Select2ServerSide = function (theData, searchKey = 'name') {
                   // scrolling can be used
                   // params.page = params.page || 1;
 
-                  return {
-                      results: $.map(data, function(item){
-                          
-                          return {
-                              text: item.name,
-                              id: item.id
-                          }
-                      })
-                  };
+                return {
+                    results: $.map(data, function(item){
+                        var additionalText = '';
+                        if (theData == 'room') {
+                            additionalText = `<i> Class `+item.class+`</i>`;
+                        }      
+                        return {
+                            text: item.name + additionalText,
+                            id: item.id
+                        }
+                    })
+                };
               },
               cache: true
           },
-          // escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+          escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
           // minimumInputLength: 0,
           // tags: true, // for create new tags
           language: {
@@ -435,6 +439,41 @@ var cancelNewPatient = () => {
   $(".patient-form label").addClass('text-muted');
 
   $("select[name='patient_id']").prop('disabled', false);
+}
+
+var selectedTestIds = [];
+var addTestList = function(unique_id, type, name, price, event) {
+  selectedTestIds.push(unique_id);
+  const isEven = (selectedTestIds.length % 2 == 0);
+  const priceFormatted = price.toLocaleString('ID');
+  $(".selected-test-table tr:last").after(`
+    <tr class="`+(isEven == true ? 'even':'odd')+`">
+      <td>`+name+`</td>
+      <td>`+priceFormatted+`</td>
+      <td>`+type+`</td>
+      <td class="text-end">
+      <i onClick="removeTestList('`+unique_id+`', event)" class="cursor-pointer bi bi-arrow-left-circle text-danger" data-bs-toggle="tooltip" data-bs-custom-class="tooltip-dark" data-bs-placement="top" title="Remove `+name+` to test list"></i>
+      </td>
+    </tr>
+  `);
+  event.target.closest('tr').remove();
+  $("#selected-ids").val(selectedTestIds.join(','));
+  const newUrl = baseUrl('pre-analytics/test/'+room_class+'/datatable/withoutId/'+selectedTestIds.join(','));
+  DatatableTestServerSide.refreshNewTable(newUrl);
+}
+
+var removeTestList = function(unique_id, event) {
+  event.target.closest('tr').remove();
+  let indexRemove = selectedTestIds.indexOf(unique_id);
+  selectedTestIds.splice(indexRemove, 1);
+  $("#selected-ids").val(selectedTestIds.join(','));
+  if (selectedTestIds.length > 0) {
+    const newUrl = baseUrl('pre-analytics/test/'+room_class+'/datatable/withoutId/'+selectedTestIds.join(','));
+    DatatableTestServerSide.refreshNewTable(newUrl);
+  } else {
+    const newUrl = baseUrl('pre-analytics/test/'+room_class+'/datatable');
+    DatatableTestServerSide.refreshNewTable(newUrl);
+  }
 }
 
 var Stepper = () => {
@@ -517,7 +556,11 @@ var areAllFilled = function() {
   }
 }
 
-
+$.ajaxSetup({
+  headers: {
+      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+  }
+});
 
 // On document ready
 document.addEventListener('DOMContentLoaded', function () {
@@ -543,5 +586,9 @@ document.addEventListener('DOMContentLoaded', function () {
     areAllFilled();
   });
 
+  // $('body').tooltip({
+  //   selector: '[data-bs-toggle="tooltip"]',
+  //   trigger: 'hover'
+  // });
   
 });

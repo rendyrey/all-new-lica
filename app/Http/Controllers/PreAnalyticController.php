@@ -25,13 +25,20 @@ class PreAnalyticController extends Controller
 
     public function datatableTest($roomClass)
     {
-        // $modelTest = \App\Test::selectRaw('tests.name as name, prices.price as price, "single" as type')
-        //     ->leftJoin('prices','tests.id','=','prices.test_id')
-        //     ->where('prices.class', $roomClass);
-        // $allModel = \App\Package::selectRaw('packages.name as name, prices.price as price, "package" as type')
-        //     ->leftJoin('prices','packages.id','=','prices.package_id')
-        //     ->where('prices.class', $roomClass)->union($modelTest);
-        $model = \App\TestPreAnalyticsView::where('class', $roomClass);
+        $model = \App\TestPreAnalyticsView::where('class', $roomClass)
+            ->orWhere('class', '0')
+            ->orWhereNull('class');
+        return DataTables::of($model)
+        ->addIndexColumn()
+        ->escapeColumns([])
+        ->make(true);
+    }
+
+    public function datatableSelectTest(Request $request, $roomClass, $withoutIds)
+    {
+        $model = \App\TestPreAnalyticsView::where(function($q) use($roomClass){
+            $q->where('class',$roomClass)->orWhere('class','0')->orWhereNull('class');
+        })->whereNotIn('unique_id', explode(',',$withoutIds));
         return DataTables::of($model)
         ->addIndexColumn()
         ->escapeColumns([])

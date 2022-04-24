@@ -29,7 +29,9 @@ var columnsDataTable = [
           return row.test.group.name;;
         }
         if (row.package_id != null && row.package_id != '') {
-          return row.package.group.name;
+          if (row.package.group_id != null && row.package.group_id != '') {
+            return row.package.group.name;
+          }
         }
       }, defaultContent: ''
     }
@@ -96,6 +98,16 @@ var rulesFormValidation = {
     },
     package_id: {
       required: true
+    },
+    class: {
+      required: true,
+      digits: true,
+      min: 1,
+      max: 10
+    },
+    price: {
+      required: true,
+      number: true
     }
     
 };

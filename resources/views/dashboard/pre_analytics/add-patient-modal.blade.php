@@ -218,7 +218,7 @@
                         <!--begin::Step 1-->
 
                         <!--begin::Step 2-->
-                        <div class="flex-column" data-kt-stepper-element="content">
+                        <div class="" data-kt-stepper-element="content">
                           @include('dashboard.pre_analytics.test-table')
                         </div>
                         <!--begin::Step 2-->

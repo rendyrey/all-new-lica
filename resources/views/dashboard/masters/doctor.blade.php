@@ -58,7 +58,7 @@
                                 <table class="table gy-1 align-middle table-striped px-0 datatable-ajax">
                                     <thead>
                                         <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
-                                            <th>Doctor Name</th>
+                                            <th class="min-w-300px">Doctor Name</th>
                                             <th>General Code</th>
                                             <th class="text-end min-w-100px">Actions</th>
                                         </tr>

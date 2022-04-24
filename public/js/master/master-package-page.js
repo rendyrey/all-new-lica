@@ -52,6 +52,8 @@ var setValueModalEditForm = function(data)
         $("#modal_form_horizontal select[name='group_id']").html(
             `<option value='`+data.group_id+`' selected>`+ data.group.name +`</option>`
         );
+    } else {
+        $("#modal_form_horizontal select[name='group_id']").html('');
     }
     
     $("#modal_form_horizontal select[name='test_ids[]']").html('');

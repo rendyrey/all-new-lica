@@ -178,8 +178,12 @@ var Select2ServerSide = function (theData, searchKey = 'name') {
 
                     return {
                         results: $.map(data, function(item){
+                            var additionalText = ''
+                            if (theData == 'test' || theData == 'package') {
+                                additionalText = item.classes ? `<i> set for classes (`+item.classes+`)</i>` : '';
+                            }
                             return {
-                                text: item.name,
+                                text: item.name + additionalText,
                                 id: item.id
                             }
                         })
@@ -187,7 +191,7 @@ var Select2ServerSide = function (theData, searchKey = 'name') {
                 },
                 cache: true
             },
-            // escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+            escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
             // minimumInputLength: 0,
             // tags: true, // for create new tags
             language: {

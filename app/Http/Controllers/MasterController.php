@@ -65,17 +65,43 @@ class MasterController extends Controller
                 case 'price':
                     $creates = $this->createPrices($request);
                     break;
-                default:
+                case 'test':
+                    $createdData = $this->masters[$masterData]::create($this->mapInputs($masterData, $request));
+                    \App\Price::create([
+                        'test_id' => $createdData->id,
+                        'type' => 'test',
+                        'price' => 0, // set default for price that has no class
+                        'class' => 0 // set default for price class that
+                    ]);
+                    
+                    $this->logActivity(
+                        "Create $masterData with ID $createdData->id",
+                        json_encode($createdData)
+                    );
+                    break;
+                case 'package':
                     $createdData = $this->masters[$masterData]::create($this->mapInputs($masterData, $request));
                      // this is for create package in particular, it will be executed if the masterData is package
                     $this->createPackageTest($createdData, $masterData, $request);
+                    \App\Price::create([
+                        'package_id' => $createdData->id,
+                        'type' => 'package',
+                        'price' => 0, // set default for price that has no class
+                        'class' => 0 // set default for price class that
+                    ]);
 
                     $this->logActivity(
                         "Create $masterData with ID $createdData->id",
                         json_encode($createdData)
                     );
+                    break;
+                default:
+                    $createdData = $this->masters[$masterData]::create($this->mapInputs($masterData, $request));
+                    $this->logActivity(
+                        "Create $masterData with ID $createdData->id",
+                        json_encode($createdData)
+                    );
             }
-            
             
            
             DB::commit();
@@ -112,6 +138,17 @@ class MasterController extends Controller
         $data = [];
         $currentTime = date('Y-m-d H:i:s');
         foreach ($request->class_price as $class_price) {
+            $checkExistsClass = \App\Price::where('class', $class_price['class'])->where('type', $request->type);
+            if ($request->type == 'test') {
+                $checkExistsClass = $checkExistsClass->where('test_id', $request->test_id)->exists();
+            } else {
+                $checkExistsClass = $checkExistsClass->where('package_id', $request->package_id)->exists();
+            }
+
+            if ($checkExistsClass) {
+                throw new \Exception("The price for that class already set!");
+            }
+
             $data[] = [
                 'class' => $class_price['class'],
                 'price' => str_replace(',','',$class_price['price']),
@@ -285,15 +322,36 @@ class MasterController extends Controller
     public function selectOptions($masterData, $searchKey, Request $request)
     {
         try {
-            if ($masterData == 'room') {
-                $searchKey = "CONCAT(room, ' - Class ', class)";
-                $data = $this->masters[$masterData]::selectRaw('id, '.$searchKey.' as name')
-                    ->where('room', 'LIKE', '%' . $request->input('query') . '%')
-                    ->take(150)->get();
-            } else {
-                $data = $this->masters[$masterData]::selectRaw('id, '.$searchKey.' as name')
-                    ->where($searchKey, 'LIKE', '%' . $request->input('query') . '%')
-                    ->take(150)->get();
+            switch ($masterData) {
+                case 'room':
+                    $data = $this->masters[$masterData]::selectRaw("id, ".$searchKey." as name, class")
+                        ->where('room', 'LIKE', '%' . $request->input('query') . '%')
+                        ->take(150)->get();
+                    break;
+                case 'test':
+                    $data = $this->masters[$masterData]::selectRaw("tests.id as id, tests.name as name, GROUP_CONCAT(class SEPARATOR ', ') as classes")
+                        ->leftJoin('prices','tests.id','=','prices.test_id')
+                        ->where($searchKey, 'LIKE', '%' . $request->input('query') . '%')
+                        ->where(function($q) {
+                            $q->where('prices.class', '<>', 0)->orWhereNull('prices.class');
+                        })
+                        ->groupBy(['tests.id','tests.name'])
+                        ->take(150)->get();
+                    break;
+                case 'package':
+                    $data = $this->masters[$masterData]::selectRaw("packages.id as id, packages.name as name, GROUP_CONCAT(class SEPARATOR ', ') as classes")
+                        ->leftJoin('prices','packages.id','=','prices.test_id')
+                        ->where($searchKey, 'LIKE', '%' . $request->input('query') . '%')
+                        ->where(function($q) {
+                            $q->where('prices.class', '<>', 0)->orWhereNull('prices.class');
+                        })
+                        ->groupBy(['packages.id','packages.name'])
+                        ->take(150)->get();
+                    break;
+                default:
+                    $data = $this->masters[$masterData]::selectRaw('id, '.$searchKey.' as name')
+                        ->where($searchKey, 'LIKE', '%' . $request->input('query') . '%')
+                        ->take(150)->get();    
             }
             
             return response()->json($data);
@@ -321,6 +379,10 @@ class MasterController extends Controller
                 $data['price'] = str_replace(',', '', $request->price);
                 $data['test_id'] = $request->type == 'test' ? $request->test_id : null;
                 $data['package_id'] = $request->type == 'package' ? $request->package_id : null;
+                break;
+            case 'package':
+                $data = $request->all();
+                $data['group_id'] = $request->group_id == '' ? null : $request->group_id;
                 break;
             default:
                 return $request->all();
