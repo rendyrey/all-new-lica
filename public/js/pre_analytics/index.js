@@ -215,7 +215,8 @@ var DatatableTestServerSide = function () {
                     className: 'text-end',
                     searchable: false,
                     render: function (data, type, row) {
-                        return `<i onClick="addTestList('`+row.unique_id+`','`+row.type+`','`+row.name+`', '`+row.price+`', event)" class="cursor-pointer bi bi-arrow-right-circle text-success" data-bs-toggle="tooltip" data-bs-custom-class="tooltip-dark" data-bs-placement="top" title="Add `+row.name+` to test list"></i>`;
+                        const price = (row.price != null && row.price != '') ? row.price : '';
+                        return `<i onClick="addTestList('`+row.unique_id+`','`+row.type+`','`+row.name+`', '`+price+`', event)" class="cursor-pointer bi bi-arrow-right-circle text-success" data-bs-toggle="tooltip" data-bs-custom-class="tooltip-dark" data-bs-placement="top" title="Add `+row.name+` to test list"></i>`;
                     },
                 },
             ],
@@ -445,7 +446,7 @@ var selectedTestIds = [];
 var addTestList = function(unique_id, type, name, price, event) {
   selectedTestIds.push(unique_id);
   const isEven = (selectedTestIds.length % 2 == 0);
-  const priceFormatted = price.toLocaleString('ID');
+  const priceFormatted = (price != 'null' && price != '') ? 'Rp'+price.toLocaleString('ID') : '';
   $(".selected-test-table tr:last").after(`
     <tr class="`+(isEven == true ? 'even':'odd')+`">
       <td>`+name+`</td>
