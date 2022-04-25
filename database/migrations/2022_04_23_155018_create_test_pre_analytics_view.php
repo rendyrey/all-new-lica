@@ -16,11 +16,11 @@ class CreateTestPreAnalyticsView extends Migration
     {
         DB::statement("
             CREATE VIEW test_pre_analytics_view AS
-            select CONCAT('s',tests.id) as unique_id, tests.id as id, tests.name, p.price, p.class, 'single' as 'type'
+            select CONCAT('s',COALESCE(p.class,'0'),'-',tests.id) as unique_id, tests.id as id, tests.name, p.id as price_id, tests.group_id as group_id, p.price, p.class, 'single' as 'type'
             from tests
             left join prices p on tests.id = p.test_id
             union
-            select CONCAT('p',packages.id) as unique_id, packages.id as id, packages.name,p.price,p.class, 'package' as 'type'
+            select CONCAT('p',COALESCE(p.class,'0'),'-',packages.id) as unique_id, packages.id as id, packages.name, p.id as price_id, packages.group_id as group_id, p.price, p.class, 'package' as 'type'
             from packages
             left join prices p on packages.id = p.package_id
         ");

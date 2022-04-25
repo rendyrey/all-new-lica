@@ -1,4 +1,4 @@
-<div class="modal fade" tabindex="-1" id="add-patient-modal">
+<div class="modal fade" tabindex="9999" id="add-patient-modal">
   <div class="modal-dialog modal-xl ">
       <div class="modal-content">
           <div class="modal-header">

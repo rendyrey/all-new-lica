@@ -6,5 +6,27 @@ use Illuminate\Database\Eloquent\Model;
 
 class Transaction extends Model
 {
-    //
+    protected $with = ['patient','room'];
+    protected $fillable = [
+        'patient_id',
+        'room_id',
+        'doctor_id',
+        'insurance_id',
+        'analyzer_id',
+        'type',
+        'no_lab',
+        'memo',
+        'created_time',
+        'cito'
+    ];
+
+    public function patient()
+    {
+        return $this->belongsTo('App\Patient','patient_id','id');
+    }
+
+    public function room()
+    {
+        return $this->belongsTo('App\Room','room_id','id');
+    }
 }

@@ -65,19 +65,19 @@ License: For each use you must have a valid license purchased only from above li
                                                 <a class="btn btn-md btn-icon-muted btn-active-light btn-active-color-primary position-relative me-5" href="{{ url('pre-analytics') }}">
                                                     <i class="las la-file-medical fs-1"></i>
                                                     Pre Analytics
-													<span class="badge badge-circle badge-danger ms-2">4</span>
+													<span class="badge badge-circle badge-danger ms-2" id="pre-analytics-badge">0</span>
                                                 </a>
 											</div>
                                             <div data-kt-menu-trigger="click" data-kt-menu-placement="bottom-start" class="menu-item menu-lg-down-accordion me-lg-1">
                                                 <a class="btn btn-md btn-icon-muted btn-active-light btn-active-color-primary" href="../../demo1/dist/documentation/getting-started/dark-mode.html">
                                                     <i class="las la-microscope fs-1"></i>
-                                                    Analytics <span class="badge badge-circle badge-primary ms-2">4</span>
+                                                    Analytics <span class="badge badge-circle badge-primary ms-2">0</span>
                                                 </a>
 											</div>
                                             <div data-kt-menu-trigger="click" data-kt-menu-placement="bottom-start" class="menu-item menu-lg-down-accordion me-lg-1">
                                                 <a class="btn btn-md btn-icon-muted btn-active-light btn-active-color-primary" href="../../demo1/dist/documentation/getting-started/dark-mode.html">
                                                     <i class="las la-file-medical-alt fs-1"></i>
-                                                    Post Analytics <span class="badge badge-circle badge-success ms-2">4</span>
+                                                    Post Analytics <span class="badge badge-circle badge-success ms-2">0</span>
                                                 </a>
 											</div>
 											<div data-kt-menu-trigger="click" data-kt-menu-placement="bottom-start" class="menu-item menu-lg-down-accordion me-lg-1">
@@ -393,6 +393,7 @@ License: For each use you must have a valid license purchased only from above li
         
         @yield('scripts')
 		<!--end::Page Custom Javascript-->
+		<script src="{{asset('js/main-layout.js')}}"></script>
 		<!--end::Javascript-->
 	</body>
 	<!--end::Body-->

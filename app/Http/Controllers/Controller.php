@@ -26,4 +26,12 @@ class Controller extends BaseController
             'description' => $description
         ]);
     }
+
+    public function badgeInfo()
+    {
+        $today = date('Y-m-d');
+        $data['pre_analytics'] = \App\Transaction::where('created_at', '>', $today)->count();
+
+        return response()->json($data);
+    }
 }

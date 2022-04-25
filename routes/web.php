@@ -42,6 +42,9 @@ Route::get('send', 'MailController@send');
 
 // Dashboard
 Route::middleware(['auth'])->group(function () {
+    // badge info
+    Route::get('main-layout/badge-info','Controller@badgeInfo');
+    // end of badge info
     // BEGIN Pre Analytics
     Route::get('pre-analytics', 'PreAnalyticController@index')->name('pre-analytics');
     Route::get('pre-analytics/datatable', 'PreAnalyticController@datatable');

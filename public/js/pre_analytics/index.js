@@ -2,16 +2,33 @@ var baseUrl = function(url) {
   return base + url;
 }
 
+var theFullDate = function(date) {
+  const monthNames = [
+      "January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"
+  ];
+  let d = new Date(date);
+  let day = d.getDate();
+  let month = d.getMonth();
+  let year = d.getFullYear();
+  let theDate = day + ' ' + monthNames[month] + ' ' + year;
+
+  return theDate;
+}
+
 var newFormId = '#new-pre-analytics';
 
 var buttonActionIndex = 6;
 var columnsDataTable = [
-  { data: 'created_at' },
+  { data: 'created_at', render: function(data, type, row) {
+      return theFullDate(data);
+    }
+  },
   { data: 'id' },
-  { data: 'lab_no' },
-  { data: 'medrec' },
+  { data: 'no_lab' },
+  { data: 'patient.medrec' },
   { data: 'patient.name' },
-  { data: 'room.name' },
+  { data: 'room.room' },
 ];
 
 // Datatable Component
@@ -165,15 +182,17 @@ var room_class = '0';
 var getRoomClass = function () {
   $(".select-room").on('change', function(e) {
     const roomId = $(this).val();
-    $.ajax({
-      url: baseUrl('master/room/edit/'+roomId),
-      method: 'GET',
-      success: function(res) {
-        room_class = res.class;
-        const newUrl = baseUrl('pre-analytics/test/'+room_class+'/datatable');
-        DatatableTestServerSide.refreshNewTable(newUrl);
-      }
-    })
+    if (roomId != null && roomId != '') {
+      $.ajax({
+        url: baseUrl('master/room/edit/'+roomId),
+        method: 'GET',
+        success: function(res) {
+          room_class = res.class;
+          const newUrl = baseUrl('pre-analytics/test/'+room_class+'/datatable');
+          DatatableTestServerSide.refreshNewTable(newUrl);
+        }
+      })
+    } 
   });
 }
 
@@ -324,8 +343,6 @@ var DateRangePicker = () => {
       $("#daterange-picker").html(start.format("YYYY-MM-DD") + "," + end.format("YYYY-MM-DD"));
       const startDate = $("#daterange-picker").data('daterangepicker').startDate.format('YYYY-MM-DD');
       const endDate = $("#daterange-picker").data('daterangepicker').endDate.format('YYYY-MM-DD');
-      console.log(startDate);
-      console.log(endDate);
   }
 
   $("#daterange-picker").daterangepicker({
@@ -347,7 +364,7 @@ var DateRangePicker = () => {
   cb(start, end);
 }
 
-var Select2ServerSide = function (theData, searchKey = 'name') {
+var Select2ServerSideModal = function (theData, searchKey = 'name') {
   var _componentSelect2 = function() {
       // Initialize
       $('.select-' + theData).select2({
@@ -397,7 +414,8 @@ var Select2ServerSide = function (theData, searchKey = 'name') {
               noResults: function () {
                   return 'There are no result based on your search';
               }
-          }
+          },
+          dropdownParent: $("#add-patient-modal")
           
       });
 
@@ -427,6 +445,7 @@ var addNewPatient = () => {
 
   $("select[name='patient_id']").val('').trigger('change');
   $("select[name='patient_id']").prop('disabled', true);
+  areAllFilled();
 
 }
 
@@ -434,16 +453,22 @@ var cancelNewPatient = () => {
   $(".add-new-patient").removeClass('d-none');
   $(".cancel-new-patient").addClass('d-none');
 
+  // disabled all the patient form
   $(newFormId + " .patient-form input").attr('disabled', true);
   $(newFormId + " .patient-form input").attr('readonly', true);
   $(newFormId + " .patient-form textarea").attr('disabled', true);
   $(newFormId + " .patient-form textarea").attr('readonly', true);
 
+  // mute all label on patient form
   $(".patient-form label").addClass('text-muted');
 
   $("select[name='patient_id']").prop('disabled', false);
-  $(newFormId).validate().resetForm();
-  $(newFormId).trigger('reset');
+
+  // Reset the patient form
+  $(newFormId + ' .patient-form input[type="text"]').val('');
+  $(newFormId + ' .patient-form textarea').val('');
+  $(newFormId + ' .patient-form .invalid-feedback').remove();
+  areAllFilled();
 }
 
 var selectedTestIds = [];
@@ -451,7 +476,7 @@ var addTestList = function(unique_id, type, name, price, event) {
   selectedTestIds.push(unique_id);
   const isEven = (selectedTestIds.length % 2 == 0);
   const priceFormatted = (price != 'null' && price != '') ? 'Rp'+price.toLocaleString('ID') : '';
-  $(".selected-test-table tr:last").after(`
+  $("#selected-test tr:last").after(`
     <tr class="`+(isEven == true ? 'even':'odd')+`">
       <td>`+name+`</td>
       <td>`+priceFormatted+`</td>
@@ -462,7 +487,7 @@ var addTestList = function(unique_id, type, name, price, event) {
     </tr>
   `);
   event.target.closest('tr').remove();
-  $("#selected-ids").val(selectedTestIds.join(','));
+  $("#selected-test-ids").val(selectedTestIds.join(','));
   const newUrl = baseUrl('pre-analytics/test/'+room_class+'/datatable/withoutId/'+selectedTestIds.join(','));
   DatatableTestServerSide.refreshNewTable(newUrl);
 }
@@ -471,7 +496,7 @@ var removeTestList = function(unique_id, event) {
   event.target.closest('tr').remove();
   let indexRemove = selectedTestIds.indexOf(unique_id);
   selectedTestIds.splice(indexRemove, 1);
-  $("#selected-ids").val(selectedTestIds.join(','));
+  $("#selected-test-ids").val(selectedTestIds.join(','));
   if (selectedTestIds.length > 0) {
     const newUrl = baseUrl('pre-analytics/test/'+room_class+'/datatable/withoutId/'+selectedTestIds.join(','));
     DatatableTestServerSide.refreshNewTable(newUrl);
@@ -499,6 +524,12 @@ var Stepper = () => {
    // Handle previous step
    stepper.on("kt.stepper.previous", function (stepper) {
        stepper.goPrevious(); // go previous step
+        $("#selected-test").html('<tr></tr>'); // remove body of table on selected test
+        selectedTestIds = []; // set the selected test id to empty
+
+        // refresh the test table because did the back button
+        const newUrl = baseUrl('pre-analytics/test/'+room_class+'/datatable');
+        DatatableTestServerSide.refreshNewTable(newUrl);
    });
 }
 
@@ -551,7 +582,6 @@ var areAllFilled = function() {
   });
 
   $(".patient-form input.req-input").each(function() {
-    console.log($(this).val());
     if($(this).val() == '' || $(this).val() == null) {
       filled = false;
     }
@@ -718,14 +748,16 @@ var createNewData = function() {
     method: 'POST',
     data: formData,
     success: function(res) {
-        toastr.success(res.message, "Create Success!");
-        $("#add-patient-modal").modal('hide');
-        $(newFormId).trigger('reset');
-        $(newFormId + ' select').val('').trigger('change');
-        $("selected-test-table tbody").html('');
-        selectedTestIds = [];
-        $("#back-btn").trigger('click');
-        // DatatablesServerSide.refreshTable();
+        toastr.success(res.message, "Create Success!"); // give notification
+        $("#add-patient-modal").modal('hide'); // hide the modal
+        $(newFormId).trigger('reset'); // reset the form
+        $(newFormId + ' .patient-right-form select').val('').trigger('change'); // reset the select form manually
+        $("select[name='patient_id']").val('').trigger('change'); // reset the patient select manually
+        $("#selected-test").html('<tr></tr>'); // remove body of table
+        selectedTestIds = []; // set the selected test id to empty
+        $("#back-btn").trigger('click'); // click back manually on stepper
+        console.log(res);
+        DatatablesServerSide.refreshTable();
     },
     error: function (request, status, error) {
         toastr.error(request.responseJSON.message);
@@ -747,10 +779,10 @@ document.addEventListener('DOMContentLoaded', function () {
   getRoomClass();
   automaticFillPatientForm();
   DateRangePicker();
-  Select2ServerSide('patient').init();
-  Select2ServerSide('insurance').init();
-  Select2ServerSide('room','room').init();
-  Select2ServerSide('doctor').init();
+  Select2ServerSideModal('patient').init();
+  Select2ServerSideModal('insurance').init();
+  Select2ServerSideModal('room','room').init();
+  Select2ServerSideModal('doctor').init();
   Stepper();
   birthdate();
 
@@ -784,10 +816,5 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
   }); 
-
-  // $('body').tooltip({
-  //   selector: '[data-bs-toggle="tooltip"]',
-  //   trigger: 'hover'
-  // });
   
 });

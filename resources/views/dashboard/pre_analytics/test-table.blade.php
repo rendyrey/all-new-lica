@@ -35,7 +35,7 @@
             </div>
             <!--end::Wrapper-->
             <!--begin::Datatable-->
-            <input type="hidden" name="selected_ids" value="" id="selected-ids">
+            <input type="hidden" name="selected_test_ids" value="" id="selected-test-ids">
             <table class="table gy-1 align-middle table-striped px-0 test-datatable-ajax">
                 <thead>
                     <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
@@ -69,7 +69,7 @@
                 </thead>
                 <tbody class="fw-bold" id="selected-test">
                     <tr>
-                        
+
                     </tr>
                 </tbody>
             </table>
