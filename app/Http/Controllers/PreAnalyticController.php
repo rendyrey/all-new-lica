@@ -60,6 +60,7 @@ class PreAnalyticController extends Controller
             }
 
             $requestData['memo'] = $request->diagnosis;
+            $requestData['transaction_id_label'] = $this->getTransactionIdLabel($request);
             $transaction = \App\Transaction::create($requestData);
             $transactionId = $transaction->id;
 
@@ -92,16 +93,55 @@ class PreAnalyticController extends Controller
                 switch($test->type) {
                     case 'single':
                         $inputData['test_id'] = $test->id;
+                        \App\TransactionTest::create($inputData);
                         break;
                     case 'package':
                         $inputData['package_id'] = $test->id;
+                        $this->createTransactionTestsFromPackage($inputData);
                         break;
                     default:
                 }
-
-                \App\TransactionTest::create($inputData);
             }
         }
         
+    }
+
+    private function createTransactionTestsFromPackage($inputData)
+    {
+
+        $tests = \App\PackageTest::where('package_id', $inputData['package_id'])->get();
+
+        foreach($tests as $test) {
+            $inputData['test_id'] = $test->test_id;
+            \App\TransactionTest::create($inputData);
+        }
+    }
+
+    private function getTransactionIdLabel($request)
+    {
+        $prefix = '';
+        switch($request->type){
+            case 'rawat_jalan':
+                $prefix = 'RWJ';
+                break;
+            case 'rawat_inap':
+                $prefix = 'RWI';
+                break;
+            case 'igd':
+                $prefix = 'IGD';
+                break;
+            case 'rujukan':
+                $prefix = 'RJK';
+                break;
+            default:
+                $prefix = 'TRX';
+        }
+
+        $year = date('Y');
+        $countExistingData = \App\Transaction::where('transaction_id_label', 'like', $prefix.$year.'%')->count();
+        $countExistingData += 1;
+
+        $trxId = str_pad($countExistingData, 7, '0', STR_PAD_LEFT);
+        return $prefix.$year.$trxId;
     }
 }

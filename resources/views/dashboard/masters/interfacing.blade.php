@@ -7,7 +7,7 @@
 <!--begin::Content-->
 <div class="docs-content d-flex flex-column flex-column-fluid" id="kt_docs_content">
     <!--begin::Container-->
-    <div class="container px-2" id="kt_docs_content_container">
+    <div class="px-2" id="kt_docs_content_container">
         <div class="row">
             <div class="col-lg-8">
                 <!--begin::Card-->
@@ -88,17 +88,46 @@
                             <h2 class="anchor fw-bolder mb-5">
                             Add new {{ ucwords($masterData) }}</h2>
                             {!! Form::open(['class'=>'form form-horizontal form-validate-jquery', 'id' => 'form-create']) !!}
-                            <div class="mb-4" id="test-list">
-                              <label class="form-label fs-6">Test List</label>
-                              {{ Form::select('test_id', [], null, ['class' => 'form-select form-select-sm form-select-solid select-two select-test', 'data-control' => 'select2', 'data-placeholder' => 'Select test']) }}
-                            </div>
                             <div id="package-list" class="mb-4">
                               <label class="form-label fs-6">Analyzer</label>
                               {{ Form::select('analyzer_id', [], null, ['class' => 'form-select form-select-sm form-select-solid select-two select-analyzer', 'data-control' => 'select2', 'data-placeholder' => 'Select analyzer']) }}
                             </div>
-                            <div class="mb-8">
-                                <label class="form-label fs-6">Code</label>
-                                {{ Form::text('code', null, ['class' => 'form-control form-control-solid form-control-sm']) }}
+                            <div class="mb-4">
+                                <!--begin::Repeater-->
+                                <div id="test-code">
+                                  <!--begin::Form group-->
+                                  <div class="form-group">
+                                      <div data-repeater-list="test_code">
+                                          <div data-repeater-item>
+                                              <div class="form-group row mb-2">
+                                                  <div class="col-md-5">
+                                                      <label class="form-label">Test</label>
+                                                      {{ Form::select('test_id', [], null, ['class' => 'form-select form-select-sm form-select-solid select-two select-test', 'data-control' => 'select2', 'data-placeholder' => 'Select test']) }}
+                                                  </div>
+                                                  <div class="col-md-5">
+                                                      <label class="form-label">Code</label>
+                                                      {{ Form::text('code', null, ['class' => 'form-control form-control-solid form-control-sm']) }}
+                                                  </div>
+                                                  <div class="col-md-2">
+                                                      <a href="javascript:;" data-repeater-delete class="btn btn-sm btn-light-danger mt-3 mt-md-8">
+                                                          Delete
+                                                      </a>
+                                                  </div>
+                                              </div>
+                                          </div>
+                                      </div>
+                                  </div>
+                                  <!--end::Form group-->
+  
+                                  <!--begin::Form group-->
+                                  <div class="form-group mt-5">
+                                      <a href="javascript:;" data-repeater-create class="btn btn-sm btn-light-primary">
+                                          <i class="la la-plus"></i>Add
+                                      </a>
+                                  </div>
+                                  <!--end::Form group-->
+                                </div>
+                                <!--end::Repeater-->
                             </div>
                             <div class="mb-2 mt-8">
                                 {{ Form::submit('Add ' . $masterData, ['class' => 'form-control btn btn-light-success']) }}
@@ -164,6 +193,7 @@
 <!-- /Form validation -->
 
 <script src="{{asset('metronic_assets/plugins/custom/datatables/datatables.bundle.js')}}"></script>
+<script src="{{asset('metronic_assets/plugins/custom/formrepeater/formrepeater.bundle.js')}}"></script>
 <script src="{{asset('js/master/master-'.$masterData.'-page.js')}}"></script>
 <script src="{{asset('js/master/global.js')}}"></script>
 @endsection

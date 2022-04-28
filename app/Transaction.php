@@ -17,7 +17,8 @@ class Transaction extends Model
         'no_lab',
         'memo',
         'created_time',
-        'cito'
+        'cito',
+        'transaction_id_label'
     ];
 
     public function patient()

@@ -7,7 +7,7 @@
 <!--begin::Content-->
 <div class="docs-content d-flex flex-column flex-column-fluid" id="kt_docs_content">
     <!--begin::Container-->
-    <div class="container px-2" id="kt_docs_content_container">
+    <div class="px-2" id="kt_docs_content_container">
         <div class="row">
             <div class="col-lg-8">
                 <!--begin::Card-->
@@ -22,7 +22,7 @@
                                 Pre Analytics
                               </h1>
                               <div>
-                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add-patient-modal">
+                                <button type="button" class="btn btn-light-primary" data-bs-toggle="modal" data-bs-target="#add-patient-modal">
                                   Add Patient
                                 </button>
                               </div>
@@ -31,12 +31,15 @@
                             <!--begin::CRUD-->
                             <div class="py-5">
                                 <!--begin::Wrapper-->
-                                <div class='row flex-stack mb-5'>
-                                  <div class="col-lg-6">
+                                <div class='row mb-5'>
+                                  {{-- <div class="col-lg-6">
                                     <input class="form-control form-control-solid form-control-sm" placeholder="Pick date range" id="daterange-picker"/>
-                                  </div>
+                                  </div> --}}
                                 </div>
-                                <div class="d-flex flex-stack flex-wrap mb-5">
+                                <div class="d-flex justify-content-between mb-5">
+                                    <div class="col-lg-6">
+                                        <input class="form-control form-control-solid form-control-sm" placeholder="Pick date range" id="daterange-picker"/>
+                                      </div>
                                     <!--begin::Search-->
                                     <div class="d-flex align-items-center position-relative my-1 mb-2 mb-md-0">
                                         <!--begin::Svg Icon | path: icons/duotune/general/gen021.svg-->

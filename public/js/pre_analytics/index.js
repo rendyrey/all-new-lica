@@ -24,7 +24,7 @@ var columnsDataTable = [
       return theFullDate(data);
     }
   },
-  { data: 'id' },
+  { data: 'transaction_id_label' },
   { data: 'no_lab' },
   { data: 'patient.medrec' },
   { data: 'patient.name' },
@@ -364,13 +364,13 @@ var DateRangePicker = () => {
   cb(start, end);
 }
 
-var Select2ServerSideModal = function (theData, searchKey = 'name') {
+var Select2ServerSideModal = function (theData, searchKey = 'name', params) {
   var _componentSelect2 = function() {
       // Initialize
-      $('.select-' + theData).select2({
+       $('.select-' + theData).select2({
           allowClear: true,
           ajax: {
-              url: baseUrl('master/select-options/' + theData + '/' + searchKey),
+              url: baseUrl('master/select-options/' + theData + '/' + searchKey + (params ? '/' + params : '')),
               dataType: 'json',
               delay: 250,
               data: function (params) {
@@ -415,8 +415,7 @@ var Select2ServerSideModal = function (theData, searchKey = 'name') {
                   return 'There are no result based on your search';
               }
           },
-          dropdownParent: $("#add-patient-modal")
-          
+          dropdownParent: $("#add-patient-modal .modal-body")
       });
 
   }
@@ -442,6 +441,10 @@ var addNewPatient = () => {
   $(newFormId + " .patient-form textarea").removeAttr('readonly');
 
   $(".patient-form label").removeClass('text-muted');
+   // Reset the patient form
+   $(newFormId + ' .patient-form input[type="text"]').val('');
+   $(newFormId + ' .patient-form textarea').val('');
+   $(newFormId + ' .patient-form .invalid-feedback').remove();
 
   $("select[name='patient_id']").val('').trigger('change');
   $("select[name='patient_id']").prop('disabled', true);
@@ -518,12 +521,18 @@ var Stepper = () => {
       $(newFormId).validate();
       if ($(newFormId).valid()) {
         stepper.goNext(); // go next step
+        $(".stepper-number-2").addClass('text-white');
+        $(".stepper-number-2").removeClass('text-primary');
+        $(".stepper-icon-2").addClass('bg-primary');
       }
    });
  
    // Handle previous step
    stepper.on("kt.stepper.previous", function (stepper) {
        stepper.goPrevious(); // go previous step
+        $(".stepper-number-2").removeClass('text-white');
+        $(".stepper-number-2").addClass('text-primary');
+        $(".stepper-icon-2").removeClass('bg-primary');
         $("#selected-test").html('<tr></tr>'); // remove body of table on selected test
         selectedTestIds = []; // set the selected test id to empty
 
@@ -758,6 +767,7 @@ var createNewData = function() {
         $("#back-btn").trigger('click'); // click back manually on stepper
         console.log(res);
         DatatablesServerSide.refreshTable();
+        $("#select-room").prop('disabled', true);
     },
     error: function (request, status, error) {
         toastr.error(request.responseJSON.message);
@@ -781,10 +791,20 @@ document.addEventListener('DOMContentLoaded', function () {
   DateRangePicker();
   Select2ServerSideModal('patient').init();
   Select2ServerSideModal('insurance').init();
-  Select2ServerSideModal('room','room').init();
+  Select2ServerSideModal('room','room', '').init();
   Select2ServerSideModal('doctor').init();
   Stepper();
   birthdate();
+
+  $("#select-type").on('change', function () {
+    if ($(this).val()) {
+      const roomType = $(this).val();
+      $(".select-room").prop('disabled', false);
+      $("#select-room").select2('destroy');
+      $("#select-room").val('').trigger('change');
+      Select2ServerSideModal('room','room', roomType).init();
+    }
+  });
 
   $(".patient-form label").addClass('text-muted');
 

@@ -30,7 +30,7 @@ var rulesFormValidation = {
     discount: {
         required: true,
         number: true,
-        min: 1,
+        min: 0,
         max: 100
     }
 };

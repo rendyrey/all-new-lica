@@ -51,4 +51,19 @@ Class Helper
     {
         return Price::THE_CLASS;
     }
+
+    public static function badgeInfo($data)
+    {
+        $today = date('Y-m-d');
+
+        switch($data) {
+            case 'pre-analytics':
+                return \App\Transaction::where('created_at', '>', $today)->count();
+            case 'post-analytics':
+                return 0;
+            default: 
+                return 0;
+        }
+    }
+    
 }

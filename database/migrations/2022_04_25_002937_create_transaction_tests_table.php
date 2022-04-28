@@ -24,7 +24,7 @@ class CreateTransactionTestsTable extends Migration
             $table->decimal('result_number', 13, 2)->nullable();
             $table->integer('result_label')->nullable();
             $table->text('result_text')->nullable();
-            $table->integer('draw')->nullable();
+            $table->boolean('draw')->nullable();
             $table->text('undraw_memo')->nullable();
             $table->boolean('result_status')->nullable()->default(false);
             $table->datetime('draw_time')->nullable();

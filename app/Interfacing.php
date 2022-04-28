@@ -19,9 +19,7 @@ class Interfacing extends Model
         return Validator::make(
             $request->all(),
             [
-                'test_id' => 'required',
-                'analyzer_id' => 'required',
-                'code' => 'required'
+                'analyzer_id' => 'required'
             ]
         );
     }

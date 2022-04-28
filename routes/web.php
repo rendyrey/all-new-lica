@@ -66,5 +66,5 @@ Route::middleware(['auth'])->group(function () {
     Route::get('master/test-packages/{Ids}', 'MasterController@getTestPackage');
 
     // for select option form
-    Route::get('master/select-options/{masterData}/{searchKey}', 'MasterController@selectOptions');
+    Route::get('master/select-options/{masterData}/{searchKey}/{roomType?}', 'MasterController@selectOptions');
 });

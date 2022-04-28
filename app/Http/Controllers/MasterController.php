@@ -95,6 +95,9 @@ class MasterController extends Controller
                         json_encode($createdData)
                     );
                     break;
+                case 'interfacing':
+                    $creates = $this->createInterfacing($request);
+                    break;
                 default:
                     $createdData = $this->masters[$masterData]::create($this->mapInputs($masterData, $request));
                     $this->logActivity(
@@ -161,6 +164,29 @@ class MasterController extends Controller
         }
 
         \App\Price::insert($data);
+    }
+
+    private function createInterfacing($request)
+    {
+        $data = [];
+        $currentTime = date('Y-m-d H:i:s');
+        foreach ($request->test_code as $test_code) {
+            $checkExistsClass = \App\Interfacing::where('code', $test_code['code'])->where('test_id', $test_code['test_id'])->where('analyzer_id', $request->analyzer_id)->exists();
+
+            if ($checkExistsClass) {
+                throw new \Exception("The data interfacing for that code already set!");
+            }
+
+            $data[] = [
+                'code' => $test_code['code'],
+                'test_id' => $test_code['test_id'],
+                'analyzer_id' => $request->analyzer_id,
+                'created_at' => $currentTime,
+                'updated_at' => $currentTime
+            ];
+        }
+
+        \App\Interfacing::insert($data);
     }
 
     public function edit($masterData, $id)
@@ -319,13 +345,14 @@ class MasterController extends Controller
         ->make(true);
     }
 
-    public function selectOptions($masterData, $searchKey, Request $request)
+    public function selectOptions($masterData, $searchKey, $params = null, Request $request)
     {
         try {
             switch ($masterData) {
                 case 'room':
                     $data = $this->masters[$masterData]::selectRaw("id, ".$searchKey." as name, class")
                         ->where('room', 'LIKE', '%' . $request->input('query') . '%')
+                        ->where('type', $params)
                         ->take(150)->get();
                     break;
                 case 'test':

@@ -1,4 +1,4 @@
-<div class="modal fade" tabindex="9999" id="add-patient-modal">
+<div class="modal fade" id="add-patient-modal">
   <div class="modal-dialog modal-xl ">
       <div class="modal-content">
           <div class="modal-header">
@@ -6,7 +6,7 @@
 
               <!--begin::Close-->
               <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
-                  <span class="svg-icon svg-icon-2x"></span>
+                  <span class="fs-4">&times;</span>
               </div>
               <!--end::Close-->
           </div>
@@ -31,7 +31,7 @@
 
                         <!--begin::Label-->
                         <div class="stepper-label">
-                            <h5 class="stepper-title fs-7">
+                            <h5 class="stepper-title text-black fs-7">
                                 Add Patient
                             </h5>
 
@@ -50,15 +50,14 @@
                         <!--end::Line-->
 
                         <!--begin::Icon-->
-                        <div class="stepper-icon w-30px h-30px">
-                            <i class="stepper-check fas fa-check"></i>
-                            <span class="stepper-number fs-6">2</span>
+                        <div class="stepper-icon stepper-icon-2 w-30px h-30px">
+                            <span class="stepper-number-finish text-primary stepper-number-2 fs-6" style="font-weight:600;">2</span>
                         </div>
                         <!--begin::Icon-->
 
                         <!--begin::Label-->
                         <div class="stepper-label">
-                            <h3 class="stepper-title fs-7">
+                            <h3 class="stepper-title text-black fs-7">
                                 Add Test
                             </h3>
 
@@ -89,11 +88,12 @@
                                 <div class="overflow-hidden flex-grow-1">
                                   {{ Form::select('patient_id', [], null, ['class' => 'form-select form-select-solid rounded-0 border-start select-two select-patient', 'data-control' => 'select2', 'data-placeholder' => 'Select patient']) }}
                                 </div>
-                                <span class="input-group-text bg-danger text-white cursor-pointer cancel-new-patient d-none" onClick="cancelNewPatient()">Cancel</span>
-                                <span class="input-group-text bg-primary text-white cursor-pointer add-new-patient" onClick="addNewPatient()">Add new Patient</span>
+                                <button type="button" class="btn rounded-end btn-light-danger cursor-pointer cancel-new-patient d-none" onClick="cancelNewPatient()">Cancel</span>
+                                <button type="button" class="btn btn-light-primary cursor-pointer add-new-patient" onClick="addNewPatient()">Add new Patient</span>
                               </div>
                             </div>
                           </div>
+                          <div class="separator mb-4"></div>
                           <div class="row form-step-1">
                             <div class="col-md-6 patient-form">
                               <div class="fv-row row mb-4">
@@ -106,14 +106,14 @@
                               <div class="fv-row row mb-4">
                                 <div class="col-md-3"><label class="form-label fs-7">Email</label></div>
                                 <div class="col-md-9">
-                                  {{ Form::text('email', null, ['class' => 'form-control form-control-solid form-control-sm req-input', 'disabled', 'readonly']) }}
+                                  {{ Form::text('email', null, ['class' => 'form-control form-control-solid form-control-sm', 'disabled', 'readonly']) }}
                                 </div>
                               </div>
 
                               <div class="fv-row row mb-4">
                                 <div class="col-md-3"><label class="form-label fs-7">Phone</label></div>
                                 <div class="col-md-9">
-                                  {{ Form::text('phone', null, ['class' => 'form-control form-control-solid form-control-sm req-input', 'disabled', 'readonly']) }}
+                                  {{ Form::text('phone', null, ['class' => 'form-control form-control-solid form-control-sm', 'disabled', 'readonly']) }}
                                 </div>
                               </div>
 
@@ -158,7 +158,7 @@
                               <div class="fv-row row mb-4">
                                 <div class="col-md-3"><label class="form-label fs-7">Address</label></div>
                                 <div class="col-md-9">
-                                  {{ Form::textarea('address', null, ['class' => 'h-80px form-control form-control-solid form-control-sm', 'disabled', 'readonly']) }}
+                                  {{ Form::textarea('address', null, ['class' => 'form-control form-control-solid form-control-sm', 'disabled', 'readonly', 'data-kt-autosize' => 'true', 'rows' => 3]) }}
                                 </div>
                               </div>
                               <!-- End Input -->
@@ -182,7 +182,7 @@
                               <div class="fv-row row mb-4">
                                 <div class="col-md-3"><label class="form-label fs-7">Room</label></div>
                                 <div class="col-md-9">
-                                  {{ Form::select('room_id', [], null, ['class' => 'form-select form-select-sm form-select-solid select-two select-room req-input', 'data-control' => 'select2', 'data-placeholder' => 'Select room']) }}
+                                  {{ Form::select('room_id', [], null, ['class' => 'form-select form-select-sm form-select-solid select-two select-room req-input', 'data-control' => 'select2', 'data-placeholder' => 'Select room', 'id' => 'select-room', 'disabled']) }}
                                 </div>
                               </div>
 
@@ -208,7 +208,7 @@
                               <div class="fv-row row mb-4">
                                 <div class="col-md-3"><label class="form-label fs-7">Diagnosis</label></div>
                                 <div class="col-md-9">
-                                  {{ Form::textarea('diagnosis', null, ['class' => 'h-80px form-control form-control-solid form-control-sm']) }}
+                                  {{ Form::textarea('diagnosis', null, ['class' => 'form-control form-control-solid', 'data-kt-autosize' => 'true', 'rows' => 3]) }}
                                 </div>
                               </div>
                               <!-- End Input -->
@@ -226,7 +226,7 @@
                     <!--end::Group-->
 
                     <!--begin::Actions-->
-                    <div class="d-flex flex-center">
+                    <div class="d-flex justify-content-end">
                         <!--begin::Wrapper-->
                         <div class="me-2">
                             <button type="button" id="back-btn" class="btn btn-light btn-active-light-primary" data-kt-stepper-action="previous">
@@ -240,9 +240,6 @@
                             <button type="submit" class="btn btn-primary" data-kt-stepper-action="submit" id="new-data-submit">
                                 <span class="indicator-label">
                                     Submit
-                                </span>
-                                <span class="indicator-progress">
-                                    Please wait... <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
                                 </span>
                             </button>
 

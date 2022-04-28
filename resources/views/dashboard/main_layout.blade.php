@@ -65,7 +65,7 @@ License: For each use you must have a valid license purchased only from above li
                                                 <a class="btn btn-md btn-icon-muted btn-active-light btn-active-color-primary position-relative me-5" href="{{ url('pre-analytics') }}">
                                                     <i class="las la-file-medical fs-1"></i>
                                                     Pre Analytics
-													<span class="badge badge-circle badge-danger ms-2" id="pre-analytics-badge">0</span>
+													<span class="badge badge-circle badge-danger ms-2" id="pre-analytics-badge">{{ Helper::badgeInfo('pre-analytics') }}</span>
                                                 </a>
 											</div>
                                             <div data-kt-menu-trigger="click" data-kt-menu-placement="bottom-start" class="menu-item menu-lg-down-accordion me-lg-1">
