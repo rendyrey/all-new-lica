@@ -41,6 +41,9 @@ var DatatablesServerSide = function () {
   // Private functions
   var initDatatable = function () {
       dt = $(selectorName).DataTable({
+          select: {
+            style: 'single'
+          },
           responsive: true,
           searchDelay: 500,
           processing: true,
@@ -100,6 +103,11 @@ var DatatablesServerSide = function () {
           initToggleToolbar();
           toggleToolbars();
           KTMenu.createInstances();
+      });
+
+      dt.on('select', function(e, data, type, indexes) {
+        const selectedData = data.rows().data()[indexes];
+        onSelectTransaction(selectedData);
       });
   }
 
@@ -174,6 +182,9 @@ var DatatablesServerSide = function () {
       },
       refreshTable: function() {
           dt.ajax.reload();
+      },
+      refreshTableAjax: function(url) {
+          dt.ajax.url(url).load();
       }
   }
 }();
@@ -335,6 +346,52 @@ var DatatableTestServerSide = function () {
     }
 }();
 
+var onSelectTransaction = function (selectedData) {
+  console.log(selectedData);
+  const patient = selectedData.patient;
+
+  $(".name-detail").html(patient.name);
+  $(".gender-detail").html((patient.gender == 'M' ? 'Male' : 'Female'));
+  $(".email-detail").html(patient.email);
+  $(".phone-detail").html(patient.phone);
+  $(".age-detail").html(getAge(patient.birthdate));
+  $(".insurance-detail").html(selectedData.insurance.name);
+  let patientType = '';
+  switch (selectedData.type) {
+    case 'rawat_jalan':
+       patientType = 'Rawat Jalan';
+       break;
+    case 'rawat_inap':
+      patientType = 'Rawat Inap';
+      break;
+    case 'igd':
+      patientType = 'IGD';
+      break;
+    case 'rujukan':
+      patientType = 'Rujukan';
+      break;
+    default:
+      patientType = '-';
+  }
+
+  $(".type-detail").html(patientType);
+  $(".room-detail").html(selectedData.room.room);
+  $(".medrec-detail").html(patient.medrec);
+  $(".doctor-detail").html(selectedData.doctor.name);
+}
+
+function getAge(dateString) {
+  var today = new Date();
+  var birthDate = new Date(dateString);
+  var age = today.getFullYear() - birthDate.getFullYear();
+  var m = today.getMonth() - birthDate.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+  }
+
+  return age;
+}
+
 var DateRangePicker = () => {
   var start = moment();
   var end = moment();
@@ -362,6 +419,13 @@ var DateRangePicker = () => {
   }, cb);
 
   cb(start, end);
+
+  $("#daterange-picker").on('change', function () {
+    const startDate = $(this).data('daterangepicker').startDate.format('YYYY-MM-DD');
+    const endDate = $(this).data('daterangepicker').endDate.format('YYYY-MM-DD');
+    const url = baseUrl('pre-analytics/datatable/'+startDate+'/'+endDate);
+    DatatablesServerSide.refreshTableAjax(url);
+  });
 }
 
 var Select2ServerSideModal = function (theData, searchKey = 'name', params) {
@@ -835,6 +899,8 @@ document.addEventListener('DOMContentLoaded', function () {
       createNewData();
     }
 
-  }); 
+  });
+
+ 
   
 });

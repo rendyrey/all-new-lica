@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Transaction extends Model
 {
-    protected $with = ['patient','room'];
+    protected $with = ['patient','room','insurance', 'doctor'];
     protected $fillable = [
         'patient_id',
         'room_id',
@@ -23,11 +23,21 @@ class Transaction extends Model
 
     public function patient()
     {
-        return $this->belongsTo('App\Patient','patient_id','id');
+        return $this->belongsTo('App\Patient', 'patient_id', 'id');
     }
 
     public function room()
     {
-        return $this->belongsTo('App\Room','room_id','id');
+        return $this->belongsTo('App\Room', 'room_id', 'id');
+    }
+
+    public function insurance()
+    {
+        return $this->belongsTo('App\Insurance', 'insurance_id', 'id');
+    }
+
+    public function doctor()
+    {
+        return $this->belongsTo('App\Doctor','doctor_id','id');
     }
 }

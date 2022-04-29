@@ -9,7 +9,7 @@
     <!--begin::Container-->
     <div class="px-2" id="kt_docs_content_container">
         <div class="row">
-            <div class="col-lg-8">
+            <div class="col-lg-6">
                 <!--begin::Card-->
                 <div class="card card-docs mb-2">
                     <!--begin::Card Body-->
@@ -66,12 +66,12 @@
                                 <table class="table gy-1 align-middle table-striped px-0 pre-analytics-datatable-ajax">
                                     <thead>
                                         <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
-                                            <th>Date</th>
+                                            <th class="min-w-100px">Date</th>
                                             <th>Transaction ID</th>
-                                            <th>Lab No</th>
+                                            <th class="w-auto">Lab No</th>
                                             <th>Medrec</th>
-                                            <th>Name</th>
-                                            <th>Room</th>
+                                            <th class="min-w-150px">Name</th>
+                                            <th class="w-auto">Room</th>
                                             <th class="text-end min-w-100px">Actions</th>
                                         </tr>
                                     </thead>
@@ -88,31 +88,75 @@
                 <!--end::Card-->
             </div>
 
-            <div class="col-lg-4">
+            <div class="col-lg-6">
                 <!--begin::Card-->
                 <div class="card card-docs mb-2">
                     <!--begin::Card Body-->
-                    <div class="card-body fs-6 py-15 px-5 py-lg-8 px-lg-8 text-gray-700">
+                    <div class="card-body fs-6 py-15 py-lg-6 px-lg-6 text-gray-700">
+                        <h1>Patient Details</h1>
+                        <div class="separator mb-2"></div>
                         <!--begin::Section-->
-                        <div class="p-2">
-                            <!--begin::Heading-->
-                            <h2 class="anchor fw-bolder mb-5">
-                            Add new </h2>
-                            {!! Form::open(['class'=>'form form-horizontal form-validate-jquery', 'id' => 'form-create']) !!}
-                            <div class="mb-4">
-                                <label class="form-label fs-6">Doctor Name</label>
-                                {{ Form::text('name', null, ['class' => 'form-control form-control-solid form-control-sm', 'id' => 'first-input']) }}
+                        <div class="row">
+                            <div class="col-4">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                      <tr>
+                                       <th class="py-1">Name</th>
+                                       <td class="name-detail py-1 text-gray-600">-</th>
+                                      </tr>
+                                      <tr>
+                                        <th class="py-1">Gender</th>
+                                        <td class="gender-detail py-1 text-gray-600">-</th>
+                                       </tr>
+                                       <tr>
+                                        <th class="py-1">Email</th>
+                                        <td class="email-detail py-1 text-gray-600">-</th>
+                                       </tr>
+                                       <tr>
+                                        <th class="py-1">Phone</th>
+                                        <td class="phone-detail py-1 text-gray-600">-</th>
+                                       </tr>
+                                    </table>
+                                </div>
                             </div>
-                            <div class="mb-8">
-                                <label class="form-label fs-6">General Code</label>
-                                {{ Form::text('general_code', null, ['class' => 'form-control form-control-solid form-control-sm']) }}
+                            <div class="col-4">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                      <tr>
+                                       <th class="py-1">Age</th>
+                                       <td class="age-detail py-1 text-gray-600">-</th>
+                                      </tr>
+                                      <tr>
+                                        <th class="py-1">Insurance</th>
+                                        <td class="insurance-detail py-1 text-gray-600">-</th>
+                                       </tr>
+                                       <tr>
+                                        <th class="py-1">Patient type</th>
+                                        <td class="type-detail py-1 text-gray-600">-</th>
+                                       </tr>
+                                       <tr>
+                                        <th class="py-1">Room</th>
+                                        <td class="room-detail py-1 text-gray-600">-</th>
+                                       </tr>
+                                    </table>
+                                </div>
                             </div>
-                            <div class="mb-2 mt-8">
-                                {{ Form::submit('Add ', ['class' => 'form-control btn btn-light-success']) }}
+                            <div class="col-4">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                      <tr>
+                                        <th class="py-1">Medical Record</th>
+                                        <td class="medrec-detail py-1 text-gray-600">-</th>
+                                      </tr>
+                                      <tr>
+                                        <th class="py-1">Physician</th>
+                                        <td class="doctor-detail py-1 text-gray-600">-</th>
+                                       </tr>
+                                    </table>
+                                </div>
                             </div>
-                            {!! Form::close() !!}
-                            <!--end::Input group-->
                         </div>
+                        
                     </div>
                 </div>
 

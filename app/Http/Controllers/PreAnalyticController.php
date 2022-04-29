@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use DataTables;
 use DB;
+use Illuminate\Support\Carbon;
 
 class PreAnalyticController extends Controller
 {
@@ -14,13 +15,27 @@ class PreAnalyticController extends Controller
         return view('dashboard.pre_analytics.index', $data);
     }
 
-    public function datatable()
+    public function datatable($startDate = null, $endDate = null)
     {
-        $model = \App\Transaction::query();
+        if ($startDate == null && $endDate == null) {
+            $from = Carbon::today()->addHours(0)->addMinutes(0)->addSeconds(0)->toDateTimeString();
+            $to = Carbon::today()->addHours(23)->addMinutes(59)->addSeconds(59)->toDateTimeString();
+            $model = \App\Transaction::where('created_time', '>=', $from)->where('created_time', '<=', $to);
+            
+            return DataTables::of($model)
+            ->addIndexColumn()
+            ->escapeColumns([])
+            ->make(true);
+        }
+
+        $from = Carbon::parse($startDate)->addHours(0)->addMinutes(0)->addSeconds(0)->toDateTimeString();
+        $to = Carbon::parse($endDate)->addHours(23)->addMinutes(59)->addSeconds(59)->toDateTimeString();
+        $model = \App\Transaction::where('created_time', '>=', $from)->where('created_time', '<=', $to);
+
         return DataTables::of($model)
-        ->addIndexColumn()
-        ->escapeColumns([])
-        ->make(true);
+            ->addIndexColumn()
+            ->escapeColumns([])
+            ->make(true);
     }
 
     public function datatableTest($roomClass)

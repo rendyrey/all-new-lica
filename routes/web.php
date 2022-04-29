@@ -47,7 +47,7 @@ Route::middleware(['auth'])->group(function () {
     // end of badge info
     // BEGIN Pre Analytics
     Route::get('pre-analytics', 'PreAnalyticController@index')->name('pre-analytics');
-    Route::get('pre-analytics/datatable', 'PreAnalyticController@datatable');
+    Route::get('pre-analytics/datatable/{startDate?}/{endDate?}', 'PreAnalyticController@datatable');
     Route::post('pre-analytics/test/{roomClass}/datatable', 'PreAnalyticController@datatableTest');
     Route::post('pre-analytics/test/{roomClass}/datatable/withoutId/{ids}', 'PreAnalyticController@datatableSelectTest');
     Route::post('pre-analytics/create', 'PreAnalyticController@create');
