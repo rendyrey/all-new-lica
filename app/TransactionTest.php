@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class TransactionTest extends Model
 {
+    protected $with = ['test'];
     protected $fillable = [
         'transaction_id',
         'test_id',
@@ -14,4 +15,9 @@ class TransactionTest extends Model
         'group_id',
         'type'
     ];
+
+    public function test()
+    {
+        return $this->belongsTo('App\Test', 'test_id', 'id');
+    }
 }

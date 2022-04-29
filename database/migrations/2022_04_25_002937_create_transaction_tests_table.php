@@ -20,6 +20,7 @@ class CreateTransactionTestsTable extends Migration
             $table->bigInteger('package_id')->unsigned()->nullable();
             $table->bigInteger('price_id')->unsigned()->nullable();
             $table->bigInteger('group_id')->unsigned()->nullable();
+            $table->bigInteger('analyzer_id')->unsigned()->nullable();
             $table->enum('type', ['single','package']);
             $table->decimal('result_number', 13, 2)->nullable();
             $table->integer('result_label')->nullable();
@@ -48,6 +49,7 @@ class CreateTransactionTestsTable extends Migration
             $table->foreign('package_id')->references('id')->on('packages')->onDelete('restrict')->onUpdate('cascade');
             $table->foreign('price_id')->references('id')->on('prices')->onDelete('restrict')->onUpdate('cascade');
             $table->foreign('group_id')->references('id')->on('groups')->onDelete('restrict')->onUpdate('cascade');
+            $table->foreign('analyzer_id')->references('id')->on('analyzers')->onDelete('restrict')->onUpdate('cascade');
             $table->foreign('verify_by')->references('id')->on('users')->onDelete('restrict')->onUpdate('cascade');
             $table->foreign('validate_by')->references('id')->on('users')->onDelete('restrict')->onUpdate('cascade');
         });

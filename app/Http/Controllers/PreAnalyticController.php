@@ -38,6 +38,30 @@ class PreAnalyticController extends Controller
             ->make(true);
     }
 
+    public function datatableTransactionTest($transactionId)
+    {
+        $model = \App\TransactionTest::where('transaction_id', $transactionId);
+        return DataTables::of($model)
+        ->addIndexColumn()
+        ->escapeColumns([])
+        ->make(true);
+    }
+
+    public function datatableTransactionSpecimen($transactionId)
+    {
+        $transactionTests = \App\TransactionTest::selectRaw('test_id')->where('transaction_id', $transactionId)->get()->toArray();
+        $testIds = [];
+        foreach($transactionTests as $testId) {
+            $testIds[] = $testId['test_id'];
+        }
+        
+        $model = \App\Test::selectRaw('specimen_id, SUM(volume) as volume, unit')->whereIn('id', $testIds)->groupBy('specimen_id','unit');
+        return DataTables::of($model)
+        ->addIndexColumn()
+        ->escapeColumns([])
+        ->make(true);
+    }
+
     public function datatableTest($roomClass)
     {
         $model = \App\TestPreAnalyticsView::where('class', $roomClass)

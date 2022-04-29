@@ -48,6 +48,8 @@ Route::middleware(['auth'])->group(function () {
     // BEGIN Pre Analytics
     Route::get('pre-analytics', 'PreAnalyticController@index')->name('pre-analytics');
     Route::get('pre-analytics/datatable/{startDate?}/{endDate?}', 'PreAnalyticController@datatable');
+    Route::get('pre-analytics/transaction-test/{transactionId}/datatable','PreAnalyticController@datatableTransactionTest');
+    Route::get('pre-analytics/transaction-specimen/{transactionId}/datatable','PreAnalyticController@datatableTransactionSpecimen');
     Route::post('pre-analytics/test/{roomClass}/datatable', 'PreAnalyticController@datatableTest');
     Route::post('pre-analytics/test/{roomClass}/datatable/withoutId/{ids}', 'PreAnalyticController@datatableSelectTest');
     Route::post('pre-analytics/create', 'PreAnalyticController@create');

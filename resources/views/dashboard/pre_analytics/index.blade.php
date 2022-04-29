@@ -65,7 +65,7 @@
                                 <!--begin::Datatable-->
                                 <table class="table gy-1 align-middle table-striped px-0 pre-analytics-datatable-ajax">
                                     <thead>
-                                        <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
+                                        <tr class="text-start text-gray-600 fw-bolder fs-7 text-uppercase gs-0">
                                             <th class="min-w-100px">Date</th>
                                             <th>Transaction ID</th>
                                             <th class="w-auto">Lab No</th>
@@ -97,7 +97,7 @@
                         <div class="separator mb-2"></div>
                         <!--begin::Section-->
                         <div class="row">
-                            <div class="col-4">
+                            <div class="col-4 px-0">
                                 <div class="table-responsive">
                                     <table class="table">
                                       <tr>
@@ -119,7 +119,7 @@
                                     </table>
                                 </div>
                             </div>
-                            <div class="col-4">
+                            <div class="col-4 px-0">
                                 <div class="table-responsive">
                                     <table class="table">
                                       <tr>
@@ -141,7 +141,7 @@
                                     </table>
                                 </div>
                             </div>
-                            <div class="col-4">
+                            <div class="col-4 px-0">
                                 <div class="table-responsive">
                                     <table class="table">
                                       <tr>
@@ -154,6 +154,45 @@
                                        </tr>
                                     </table>
                                 </div>
+                            </div>
+                        </div>
+
+                        <div class="separator mb-2"></div>
+                        <div class="row">
+                            <div class="col-6 d-flex justify-content-between">
+                                <span class="text-dark">Patient test</span>
+                                <button class="btn btn-light-primary btn-sm">Edit test</button>
+                            </div>
+                            <div class="col-6 d-flex justify-content-between">
+                                <span class="text-dark">Specimen</span>
+                                <div>
+                                    <button class="btn btn-light-primary btn-sm">No. Lab</button>
+                                    <button class="btn btn-light-info btn-sm">Draw all</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-2">
+                            <div class="col-6">
+                                <table class="table table-striped transaction-test-table">
+                                    <thead>
+                                        <tr class="px-0 text-uppercase text-gray-600 fw-bolder fs-7">
+                                            <td class="px-0">Test name</td>
+                                            <td class="px-0">Analyzer</td>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                            <div class="col-6">
+                                <table class="table table-striped transaction-specimen-table">
+                                    <thead>
+                                        <tr class="px-0 text-uppercase text-gray-600 fw-bolder fs-7">
+                                            <td class="px-0">Specimen</td>
+                                            <td class="px-0">Vol.</td>
+                                            <td class="px-0">Draw</td>
+                                        </tr>
+                                    </thead>
+                                </table>
                             </div>
                         </div>
                         

@@ -346,10 +346,10 @@ var DatatableTestServerSide = function () {
     }
 }();
 
+var transactionTestTable;
 var onSelectTransaction = function (selectedData) {
-  console.log(selectedData);
   const patient = selectedData.patient;
-
+  const transactionId = selectedData.id;
   $(".name-detail").html(patient.name);
   $(".gender-detail").html((patient.gender == 'M' ? 'Male' : 'Female'));
   $(".email-detail").html(patient.email);
@@ -378,6 +378,60 @@ var onSelectTransaction = function (selectedData) {
   $(".room-detail").html(selectedData.room.room);
   $(".medrec-detail").html(patient.medrec);
   $(".doctor-detail").html(selectedData.doctor.name);
+
+  // Check if #it is a DataTable or not. If not, initialise:, if so, reload with new url
+  if ( ! $.fn.DataTable.isDataTable( '.transaction-test-table' ) ) {
+    transactionTestTable = $('.transaction-test-table').DataTable({
+      select: {
+        style: 'single'
+      },
+      responsive: true,
+      searchDelay: 500,
+      processing: true,
+      serverSide: true,
+      order: [],
+      stateSave: false,
+      ajax: {
+          url: baseUrl('pre-analytics/transaction-test/'+transactionId+'/datatable/')
+      },
+      columns: [
+        { data: 'test.name' },
+        { data: 'id' }
+      ]
+    });
+  } else {
+    transactionTestTable.ajax.url(baseUrl('pre-analytics/transaction-test/'+transactionId+'/datatable/')).load();
+  }
+
+  if ( ! $.fn.DataTable.isDataTable( '.transaction-specimen-table' ) ) {
+    transactionTestTable = $('.transaction-specimen-table').DataTable({
+      select: {
+        style: 'single'
+      },
+      responsive: true,
+      searchDelay: 500,
+      processing: true,
+      serverSide: true,
+      order: [],
+      stateSave: false,
+      ajax: {
+          url: baseUrl('pre-analytics/transaction-specimen/'+transactionId+'/datatable/')
+      },
+      columns: [
+        { data: 'specimen.name', render: function(data, type, row){
+            return data;
+          } 
+        },
+        { data: 'volume', render: function(data, type, row) {
+            return data + row.unit;
+          }, defaultValue: ''
+        }
+      ]
+    });
+  } else {
+    transactionTestTable.ajax.url(baseUrl('pre-analytics/transaction-specimen/'+transactionId+'/datatable/')).load();
+  }
+
 }
 
 function getAge(dateString) {
