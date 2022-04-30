@@ -46,13 +46,22 @@ Route::middleware(['auth'])->group(function () {
     Route::get('main-layout/badge-info','Controller@badgeInfo');
     // end of badge info
     // BEGIN Pre Analytics
-    Route::get('pre-analytics', 'PreAnalyticController@index')->name('pre-analytics');
-    Route::get('pre-analytics/datatable/{startDate?}/{endDate?}', 'PreAnalyticController@datatable');
-    Route::get('pre-analytics/transaction-test/{transactionId}/datatable','PreAnalyticController@datatableTransactionTest');
-    Route::get('pre-analytics/transaction-specimen/{transactionId}/datatable','PreAnalyticController@datatableTransactionSpecimen');
-    Route::post('pre-analytics/test/{roomClass}/datatable', 'PreAnalyticController@datatableTest');
-    Route::post('pre-analytics/test/{roomClass}/datatable/withoutId/{ids}', 'PreAnalyticController@datatableSelectTest');
-    Route::post('pre-analytics/create', 'PreAnalyticController@create');
+    Route::prefix('pre-analytics')->group(function(){
+        Route::get('/', 'PreAnalyticController@index')->name('pre-analytics');
+        // Analytics datatables
+        Route::get('datatable/{startDate?}/{endDate?}', 'PreAnalyticController@datatable');
+        Route::get('transaction-test/{transactionId}/datatable','PreAnalyticController@datatableTransactionTest');
+        Route::get('transaction-specimen/{transactionId}/datatable','PreAnalyticController@datatableTransactionSpecimen');
+        Route::post('test/{roomClass}/datatable/withoutId/{ids}', 'PreAnalyticController@datatableSelectTest');
+        Route::post('test/{roomClass}/datatable', 'PreAnalyticController@datatableTest');
+        // END of analytics datatable
+        Route::get('analyzer-test/{testId}', 'PreAnalyticController@analyzerTest');
+        Route::post('create', 'PreAnalyticController@create');
+        Route::post('transaction-test/update-analyzer/{transactionTestId}', 'PreAnalyticController@updateAnalyzer');
+        Route::post('specimen-test/update-draw', 'PreAnalyticController@updateDraw');
+        Route::post('specimen-test/draw-all/{value}', 'PreAnalyticController@drawAll');
+        Route::get('specimen-test/is-all-drawn/{transactionId}', 'PreAnalyticController@isAllDrawn');
+    });
     // END Pre Analytics
 
     // BEGIN all route for master data

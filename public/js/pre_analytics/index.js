@@ -346,10 +346,36 @@ var DatatableTestServerSide = function () {
     }
 }();
 
+var checkSpecimenDrawStatus = function(transactionId){
+  $.ajax({
+    url: baseUrl('pre-analytics/specimen-test/is-all-drawn/'+transactionId),
+    method: 'GET',
+    success: function(res) {
+      console.log(res);
+      if (res.all_drawn) {
+        $("#undraw-all-btn").show();
+        $("#draw-all-btn").hide();    
+      } else {
+        $("#draw-all-btn").show();
+        $("#undraw-all-btn").hide();
+      }
+    }
+  });
+}
+
 var transactionTestTable;
+var transactionSpecimenTable;
 var onSelectTransaction = function (selectedData) {
   const patient = selectedData.patient;
   const transactionId = selectedData.id;
+
+  checkSpecimenDrawStatus(transactionId);
+
+  $("#draw-all-btn").prop('disabled', false);
+  $("#undraw-all-btn").prop('disabled', false);
+  $("#draw-all-btn").val(transactionId);
+  $("#undraw-all-btn").val(transactionId);
+
   $(".name-detail").html(patient.name);
   $(".gender-detail").html((patient.gender == 'M' ? 'Male' : 'Female'));
   $(".email-detail").html(patient.email);
@@ -382,9 +408,6 @@ var onSelectTransaction = function (selectedData) {
   // Check if #it is a DataTable or not. If not, initialise:, if so, reload with new url
   if ( ! $.fn.DataTable.isDataTable( '.transaction-test-table' ) ) {
     transactionTestTable = $('.transaction-test-table').DataTable({
-      select: {
-        style: 'single'
-      },
       responsive: true,
       searchDelay: 500,
       processing: true,
@@ -392,11 +415,35 @@ var onSelectTransaction = function (selectedData) {
       order: [],
       stateSave: false,
       ajax: {
-          url: baseUrl('pre-analytics/transaction-test/'+transactionId+'/datatable/')
+          url: baseUrl('pre-analytics/transaction-test/'+transactionId+'/datatable/'),
+          complete: function(data) {
+            const testData = data.responseJSON.data;
+            testData.forEach(function(item){
+              $.ajax({
+                url: baseUrl('pre-analytics/analyzer-test/'+item.test_id),
+                type: 'GET',
+                success: function(res) {
+                  $("#select-analyzer-"+item.id).html(res);
+                  $("#select-analyzer-"+item.id).select2({allowClear:true});
+                  $("#select-analyzer-"+item.id).val(item.analyzer_id).trigger('change');
+                  $("#select-analyzer-"+item.id).attr('onChange',"analyzerChange("+item.id+", event)");
+                }
+              })
+            });
+          }
       },
       columns: [
         { data: 'test.name' },
-        { data: 'id' }
+        { data: 'test_id', render: function(data, type, row) {
+            const selectComponent = `
+              <select id="select-analyzer-`+row.id+`" data-control="select2" data-placeholder="Select analyzer" class="select form-select form-select-sm form-select-solid my-0">
+              </select>
+            `;
+           
+            return selectComponent;
+            
+          }, defaultContent: ''
+        }
       ]
     });
   } else {
@@ -404,10 +451,7 @@ var onSelectTransaction = function (selectedData) {
   }
 
   if ( ! $.fn.DataTable.isDataTable( '.transaction-specimen-table' ) ) {
-    transactionTestTable = $('.transaction-specimen-table').DataTable({
-      select: {
-        style: 'single'
-      },
+    transactionSpecimenTable = $('.transaction-specimen-table').DataTable({
       responsive: true,
       searchDelay: 500,
       processing: true,
@@ -425,13 +469,83 @@ var onSelectTransaction = function (selectedData) {
         { data: 'volume', render: function(data, type, row) {
             return data + row.unit;
           }, defaultValue: ''
+        },
+        { data: 'test_ids', render: function(data, type, row) {
+            const checked = row.draw.includes('1') ? 'checked' :'';
+            const checkboxComponent = `
+              <input class="specimen-checkbox" id="specimen-test-`+row.transaction_id+`-`+row.specimen_id+`" type="checkbox" value="`+row.test_ids+`" onChange="drawSpecimenChange(`+row.transaction_id+`,`+row.specimen_id+`,event)" `+checked+`>
+            `;
+            return checkboxComponent;
+          }, sortable: false, searchable: false
         }
       ]
     });
   } else {
-    transactionTestTable.ajax.url(baseUrl('pre-analytics/transaction-specimen/'+transactionId+'/datatable/')).load();
+    transactionSpecimenTable.ajax.url(baseUrl('pre-analytics/transaction-specimen/'+transactionId+'/datatable/')).load();
   }
 
+}
+
+function analyzerChange(transactionTestId, event){
+  const analyzerId = event.target.value;
+  $.ajax({
+    url: baseUrl('pre-analytics/transaction-test/update-analyzer/'+transactionTestId),
+    data: {
+      analyzer_id: analyzerId
+    },
+    type: 'POST',
+    success: function(res) {
+      toastr.success(res.message, "Update analyzer success!");
+    }
+  })
+}
+
+function drawSpecimenChange(transactionId, specimenId, event) {
+  console.log("TRANSACTIONID " + transactionId);
+  $.ajax({
+    url: baseUrl('pre-analytics/specimen-test/update-draw'),
+    type: 'POST',
+    data: {
+      transaction_id: transactionId,
+      specimen_id: specimenId,
+      test_ids: event.target.value
+    },
+    success: function(res) {
+      toastr.success(res.message, "Update draw status success!");
+      transactionSpecimenTable.ajax.url(baseUrl('pre-analytics/transaction-specimen/'+transactionId+'/datatable')).load();
+      checkSpecimenDrawStatus(transactionId);
+    }
+  })
+}
+
+var drawAllBtnComponent = function() {
+  $("#draw-all-btn").on('click', function(e) {
+    const transactionId = $(this).val();
+    $.ajax({
+      url: baseUrl('pre-analytics/specimen-test/draw-all/1'),
+      type: 'POST',
+      data: { transaction_id: transactionId },
+      success: function(res){
+        toastr.success(res.message, 'Success draw all specimen!');
+        transactionSpecimenTable.ajax.url(baseUrl('pre-analytics/transaction-specimen/'+transactionId+'/datatable')).load();
+        checkSpecimenDrawStatus(transactionId);
+      }
+    });
+  });
+
+  $("#undraw-all-btn").on('click', function(e) {
+    const transactionId = $(this).val();
+    $.ajax({
+      url: baseUrl('pre-analytics/specimen-test/draw-all/0'),
+      type: 'POST',
+      data: { transaction_id: transactionId },
+      success: function(res){
+        toastr.success(res.message, 'Success undraw all specimen!');
+        transactionSpecimenTable.ajax.url(baseUrl('pre-analytics/transaction-specimen/'+transactionId+'/datatable/')).load();
+        checkSpecimenDrawStatus(transactionId);
+      }
+    });
+  });
 }
 
 function getAge(dateString) {
@@ -883,7 +997,6 @@ var createNewData = function() {
         $("#selected-test").html('<tr></tr>'); // remove body of table
         selectedTestIds = []; // set the selected test id to empty
         $("#back-btn").trigger('click'); // click back manually on stepper
-        console.log(res);
         DatatablesServerSide.refreshTable();
         $("#select-room").prop('disabled', true);
     },
@@ -892,6 +1005,8 @@ var createNewData = function() {
     }
   })
 }
+
+
 
 $.ajaxSetup({
   headers: {
@@ -913,6 +1028,7 @@ document.addEventListener('DOMContentLoaded', function () {
   Select2ServerSideModal('doctor').init();
   Stepper();
   birthdate();
+  drawAllBtnComponent();
 
   $("#select-type").on('change', function () {
     if ($(this).val()) {
@@ -952,9 +1068,5 @@ document.addEventListener('DOMContentLoaded', function () {
     if ($(this).valid()) {
       createNewData();
     }
-
   });
-
- 
-  
 });

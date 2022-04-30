@@ -55,7 +55,10 @@ class PreAnalyticController extends Controller
             $testIds[] = $testId['test_id'];
         }
         
-        $model = \App\Test::selectRaw('specimen_id, SUM(volume) as volume, unit')->whereIn('id', $testIds)->groupBy('specimen_id','unit');
+        $model = \App\Test::selectRaw('transaction_tests.transaction_id as transaction_id, GROUP_CONCAT(tests.id SEPARATOR ",") as test_ids, IFNULL(GROUP_CONCAT(transaction_tests.draw SEPARATOR ","),0) as draw, specimen_id, SUM(volume) as volume, unit')
+        ->leftJoin('transaction_tests','tests.id','=','transaction_tests.test_id')
+        ->where('transaction_tests.transaction_id', $transactionId)
+        ->whereIn('tests.id', $testIds)->groupBy('specimen_id','unit','transaction_id');
         return DataTables::of($model)
         ->addIndexColumn()
         ->escapeColumns([])
@@ -110,6 +113,67 @@ class PreAnalyticController extends Controller
         } catch (\Exception $e) {
             DB::rollback();
             return response()->json(['message' => $e->getMessage()], 400);
+        }
+    }
+
+    public function analyzerTest($testId)
+    {
+        $interfacings = \App\Interfacing::where('test_id', $testId)->get();
+        $options = '<option value=""></option>';
+        foreach($interfacings as $interfacing) {
+            $options .= '<option value="'.$interfacing->analyzer_id.'">'.$interfacing->analyzer->name.'</option>';
+        }
+
+        return $options;
+    }
+
+    public function updateAnalyzer($transactionTestId, Request $request)
+    {
+        try {
+            \App\TransactionTest::where('id',$transactionTestId)->update(['analyzer_id' => $request->analyzer_id]);
+            return response()->json(['message' => 'Success update analyzer']);
+        } catch (\Exception $e) {
+            return respoinse()->json(['message' => $e->getMessage(), 404]);
+        }
+        
+    }
+
+    public function updateDraw(Request $request)
+    {
+        try {
+            $test_ids = explode(',', $request->test_ids);
+            \App\TransactionTest::where('transaction_id', $request->transaction_id)->whereIn('test_id', $test_ids)
+            ->update([
+                'draw' => DB::raw('1 - draw'),
+                'draw_time' => Carbon::now()
+            ]);
+            return response()->json(['message' => 'Success update draw status']);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage(), 404]);
+        }
+    }
+
+    public function drawAll($value, Request $request)
+    {
+        try {
+            \App\TransactionTest::where('transaction_id', $request->transaction_id)
+            ->update([
+                'draw' => $value,
+                'draw_time' => ($value) ? Carbon::now() : null
+            ]);
+            return response()->json(['message' => 'Success update draw status']);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage(), 404]);
+        }
+    }
+
+    public function isAllDrawn($transactionId)
+    {
+        try {
+            $exists = \App\TransactionTest::where('transaction_id', $transactionId)->where('draw','0')->exists();
+            return response()->json(['message' => $transactionId, 'all_drawn' => !$exists]);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 404);
         }
     }
 

@@ -167,7 +167,8 @@
                                 <span class="text-dark">Specimen</span>
                                 <div>
                                     <button class="btn btn-light-primary btn-sm">No. Lab</button>
-                                    <button class="btn btn-light-info btn-sm">Draw all</button>
+                                    <button class="btn btn-light-info btn-sm" id="draw-all-btn" value="" disabled>Draw all</button>
+                                    <button class="btn btn-light-info btn-sm" id="undraw-all-btn" value="" disabled>Undraw all</button>
                                 </div>
                             </div>
                         </div>
