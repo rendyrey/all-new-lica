@@ -161,7 +161,7 @@
                         <div class="row">
                             <div class="col-6 d-flex justify-content-between">
                                 <span class="text-dark">Patient test</span>
-                                <button class="btn btn-light-primary btn-sm">Edit test</button>
+                                <button class="btn btn-light-primary btn-sm" data-transaction-id="" id="edit-test-btn" data-room-class="">Edit test</button>
                             </div>
                             <div class="col-6 d-flex justify-content-between">
                                 <span class="text-dark">Specimen</span>
@@ -211,6 +211,7 @@
 <!--end::Content-->
 
 @include('dashboard.pre_analytics.add-patient-modal')
+@include('dashboard.pre_analytics.edit-test-modal')
 @endsection
 
 @section('scripts')
@@ -221,4 +222,5 @@
 
 <script src="{{asset('metronic_assets/plugins/custom/datatables/datatables.bundle.js')}}"></script>
 <script src="{{asset('js/pre_analytics/index.js')}}"></script>
+<script src="{{asset('js/pre_analytics/edit-test.js')}}"></script>
 @endsection

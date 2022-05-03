@@ -44,7 +44,7 @@ class CreateTransactionTestsTable extends Migration
         });
 
         Schema::table('transaction_tests', function(Blueprint $table) {
-            $table->foreign('transaction_id')->references('id')->on('transactions')->onDelete('restrict')->onUpdate('cascade');
+            $table->foreign('transaction_id')->references('id')->on('transactions')->onDelete('cascade')->onUpdate('cascade');
             $table->foreign('test_id')->references('id')->on('tests')->onDelete('restrict')->onUpdate('cascade');
             $table->foreign('package_id')->references('id')->on('packages')->onDelete('restrict')->onUpdate('cascade');
             $table->foreign('price_id')->references('id')->on('prices')->onDelete('restrict')->onUpdate('cascade');

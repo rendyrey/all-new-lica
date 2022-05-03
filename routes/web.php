@@ -52,6 +52,11 @@ Route::middleware(['auth'])->group(function () {
         Route::get('datatable/{startDate?}/{endDate?}', 'PreAnalyticController@datatable');
         Route::get('transaction-test/{transactionId}/datatable','PreAnalyticController@datatableTransactionTest');
         Route::get('transaction-specimen/{transactionId}/datatable','PreAnalyticController@datatableTransactionSpecimen');
+        Route::post('edit-test/{roomClass}/{transactionId}/datatable', 'PreAnalyticController@datatableEditTest');
+        Route::post('edit-test/selected-test/{roomClass}/{transactionId}', 'PreAnalyticController@selectedEditTest');
+        Route::post('edit-test/add','PreAnalyticController@editTestAdd');
+        Route::delete('edit-test/{transactionTestId}/delete','PreAnalyticController@editTestDelete');
+        
         Route::post('test/{roomClass}/datatable/withoutId/{ids}', 'PreAnalyticController@datatableSelectTest');
         Route::post('test/{roomClass}/datatable', 'PreAnalyticController@datatableTest');
         // END of analytics datatable
@@ -62,6 +67,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('specimen-test/draw-all/{value}', 'PreAnalyticController@drawAll');
         Route::get('specimen-test/is-all-drawn/{transactionId}', 'PreAnalyticController@isAllDrawn');
         Route::post('check-in/{isManual?}', 'PreAnalyticController@checkIn');
+        Route::delete('transaction/delete/{id}', 'PreAnalyticController@deleteTransaction');
     });
     // END Pre Analytics
 

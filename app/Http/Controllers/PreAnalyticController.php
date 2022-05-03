@@ -109,6 +109,100 @@ class PreAnalyticController extends Controller
             ->make(true);
     }
 
+    public function datatableEditTest($roomClass, $transactionId)
+    {
+        // get all the transaction's tests first to get all the test id(s)
+        $transactionTests = \App\TransactionTest::selectRaw('test_id')->where('transaction_id', $transactionId)->get()->toArray();
+        $uniqueIds = [];
+        $uniqueZeroClassIds = [];
+        foreach($transactionTests as $testId) {
+            $uniqueIds[] = 's'.$roomClass.'-'.$testId['test_id'];
+            $uniqueZeroClassIds[] = 's0-'.$testId['test_id'];
+        }
+
+        $model = \App\TestPreAnalyticsView::where(function($q) use($roomClass) {
+            $q->where('class', $roomClass)
+            ->orWhere('class', '0')
+            ->orWhereNull('class');
+        })->whereNotIn('unique_id', $uniqueIds)->whereNotIn('unique_id', $uniqueZeroClassIds);
+
+        return DataTables::of($model)
+            ->addIndexColumn()
+            ->escapeColumns([])
+            ->make(true);
+    }
+
+    public function selectedEditTest($roomClass, $transactionId)
+    {
+        $transactionTests = \App\TransactionTest::selectRaw('*')->where('transaction_id', $transactionId)->get()->toArray();
+        $testIds = [];
+        foreach($transactionTests as $testId) {
+            $testIds[] = $testId['test_id'];
+        }
+        // return response()->json(['a' => $uniqueIds]);
+
+        $data = \App\TransactionTest::selectRaw('test_pre_analytics_view.*,transaction_tests.draw as draw, transaction_tests.id as transaction_test_id')->leftJoin('test_pre_analytics_view','test_pre_analytics_view.id','=','transaction_tests.test_id')->where(function($q) use($roomClass) {
+            $q->where('class', $roomClass)
+            ->orWhere('class', '0')
+            ->orWhereNull('class');
+        })->whereIn('transaction_tests.test_id', $testIds)
+        ->where('transaction_tests.transaction_id', $transactionId)
+        ->where('test_pre_analytics_view.type','single')->get();
+
+        return response()->json(['selected_test_ids' => implode(",",$testIds), 'data' => $data]);
+    }
+
+    public function editTestAdd(Request $request)
+    {
+        $test = \App\TestPreAnalyticsView::where('unique_id', $request->unique_id)->first();
+        $roomClass = $request->room_class;
+        if ($test->type == 'single') {
+            $transactionTest = \App\TransactionTest::create([
+                'transaction_id' => $request->transaction_id,
+                'test_id' => $test->id,
+                'price_id' => $test->price_id,
+                'group_id' => $test->group_id,
+                'type' => 'single'
+            ]);
+        } else {
+            $package = \App\Package::findOrFail($test->id);
+            foreach($package->package_tests as $testItem) {
+                $transactionTest = \App\TransactionTest::create([
+                    'transaction_id' => $request->transaction_id,
+                    'test_id' => $testItem->test_id,
+                    'price_id' => $test->price_id,
+                    'group_id' => $test->group_id,
+                    'type' => 'single'
+                ]);
+            }
+
+        }
+
+        $transactionTests = \App\TransactionTest::selectRaw('*')->where('transaction_id', $request->transaction_id)->get()->toArray();
+        $testIds = [];
+        foreach($transactionTests as $testId) {
+            $testIds[] = $testId['test_id'];
+        }
+
+        $data = \App\TransactionTest::selectRaw('test_pre_analytics_view.*,transaction_tests.draw as draw, transaction_tests.id as transaction_test_id')
+            ->leftJoin('test_pre_analytics_view','test_pre_analytics_view.id','=','transaction_tests.test_id')->where(function($q) use($roomClass) {
+                $q->where('class', $roomClass)
+                ->orWhere('class', '0')
+                ->orWhereNull('class');
+            })->whereIn('transaction_tests.test_id', $testIds)
+            ->where('transaction_tests.transaction_id', $request->transaction_id)
+            ->where('test_pre_analytics_view.type','single')->get();
+
+        return response()->json(['message' => 'Test added successfully!','selected_test_ids' => implode(",",$testIds), 'data' => $data]);
+    }
+
+    public function editTestDelete($transactionTestId)
+    {
+        \App\TransactionTest::findOrFail($transactionTestId)->delete();
+
+        return response()->json(['message' => 'Test deleted successfully!']);
+    }
+
     public function datatableSelectTest(Request $request, $roomClass, $withoutIds)
     {
         $model = \App\TestPreAnalyticsView::where(function ($q) use ($roomClass) {
@@ -145,6 +239,23 @@ class PreAnalyticController extends Controller
             return response()->json(['message' => $requestData]);
         } catch (\Exception $e) {
             DB::rollback();
+            return response()->json(['message' => $e->getMessage()], 400);
+        }
+    }
+
+    public function deleteTransaction($id)
+    {
+        try {
+            $data = \App\Transaction::findOrFail($id);
+            $data->delete();
+
+            $this->logActivity(
+                "Delete Transaction with ID $id",
+                json_encode($data)
+            );
+
+            return response()->json(['message' => 'Transaction with ID ' .$id. ' deleted successfully']);
+        } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], 400);
         }
     }

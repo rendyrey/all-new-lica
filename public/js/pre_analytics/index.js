@@ -65,28 +65,9 @@ var DatatablesServerSide = function () {
                   searchable: false,
                   render: function (data, type, row) {
                       return `
-                          <a href="#" class="btn btn-light-info btn-sm" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end" data-kt-menu-flip="top-end">
-                          <i class="fas fa-ellipsis-v"></i>
-                          </a>
-                          <!--begin::Menu-->
-                          <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-primary fw-bold fs-7 w-125px py-4" data-kt-menu="true">
-                              <!--begin::Menu item-->
-                              <div class="menu-item px-3">
-                                  <button class="btn btn-light-primary form-control btn-sm" data-kt-docs-table-filter="edit_row" onClick="editData(`+row.id+`)">
-                                  <i class="fas fa-edit"></i>Edit
-                                  </button>
-                              </div>
-                              <!--end::Menu item-->
-
-                              <!--begin::Menu item-->
-                              <div class="menu-item px-3">
-                                  <button class="btn btn-light-danger form-control btn-sm my-1 px-3" data-kt-docs-table-filter="delete_row" onClick="deleteData(`+row.id+`)">
-                                  <i class="fas fa-trash"></i> Delete
-                                  </button>
-                              </div>
-                              <!--end::Menu item-->
-                          </div>
-                          <!--end::Menu-->
+                              <button class="btn btn-light-danger btn-sm px-2" data-kt-docs-table-filter="delete_row" onClick="deleteTransaction(`+row.id+`)">
+                                  delete
+                              </button>
                       `;
                   },
               },
@@ -372,7 +353,6 @@ var onSelectTransaction = function (selectedData) {
   const room = selectedData.room;
   const transactionId = selectedData.id;
   checkSpecimenDrawStatus(transactionId);
-  console.log(transactionId);
 
   $("#draw-all-btn").prop('disabled', false);
   $("#undraw-all-btn").prop('disabled', false);
@@ -400,6 +380,9 @@ var onSelectTransaction = function (selectedData) {
   $("#check-in-btn").data('transaction-id', transactionId);
   $("#check-in-btn").prop('disabled', false);
   $("#check-in-btn").data('auto-checkin', autoCheckin);
+
+  $("#edit-test-btn").data('transaction-id', transactionId);
+  $("#edit-test-btn").data('room-class', room.class);
   // end for check in button
 
   switch (selectedData.type) {
@@ -504,6 +487,36 @@ var onSelectTransaction = function (selectedData) {
     transactionSpecimenTable.ajax.url(baseUrl('pre-analytics/transaction-specimen/'+transactionId+'/datatable/')).load();
   }
 
+}
+
+var deleteTransaction = function (id) {
+  Swal.fire({
+      title: 'Are you sure?',
+      text: 'You will not be able to recover this data!',
+      // type: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete it!',
+      customClass: {
+          confirmButton: "btn btn-danger",
+          cancelButton: 'btn btn-secondary'
+      }
+  }).then(function(isConfirm){
+      if(isConfirm.value) {
+          $.ajax({
+              url: baseUrl('pre-analytics/transaction/delete/'+id),
+              method: 'DELETE',
+              success: function(res) {
+                  DatatablesServerSide.refreshTable();
+                  transactionSpecimenTable.ajax.reload();
+                  transactionTestTable.ajax.reload();
+                  toastr.success(res.message, "Delete Success!");
+              },
+              error: function(request, status, error){
+                  toastr.error(request.responseJSON.message);
+              }
+          })
+      }
+  });
 }
 
 function analyzerChange(transactionTestId, event){
@@ -730,7 +743,7 @@ var selectedTestIds = [];
 var addTestList = function(unique_id, type, name, price, event) {
   selectedTestIds.push(unique_id);
   const isEven = (selectedTestIds.length % 2 == 0);
-  const priceFormatted = (price != 'null' && price != '') ? 'Rp'+price.toLocaleString('ID') : '';
+  const priceFormatted = (price != 'null' && price != '' && price != null) ? 'Rp'+price.toLocaleString('ID') : '';
   $("#selected-test tr:last").after(`
     <tr class="`+(isEven == true ? 'even':'odd')+`">
       <td>`+name+`</td>
