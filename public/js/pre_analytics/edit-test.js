@@ -34,10 +34,12 @@ var addEditTestList = function(unique_id, type, name, price, roomClass, event) {
     success: function(res) {
       event.target.closest('tr').remove();
       $("#selected-edit-test-ids").val(selectedEditTestIds.join(','));
+      transactionTestTable.ajax.reload();
+      transactionSpecimenTable.ajax.reload();
       DatatableEditTestServerSide.refreshTable();
       populateSelectedTest(res.data);
 
-      toastr.success(res.message, "Add test successfull!");
+      toastr.success(res.message, "Add test successful!");
     }
   })
  
@@ -50,6 +52,8 @@ var removeEditTestList = function(transaction_test_id, event) {
     success: function(res) {
       event.target.closest('tr').remove();
       DatatableEditTestServerSide.refreshTable();
+      transactionTestTable.ajax.reload();
+      transactionSpecimenTable.ajax.reload();
     }
   })
 }

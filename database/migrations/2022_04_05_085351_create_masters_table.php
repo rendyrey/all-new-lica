@@ -21,8 +21,8 @@ class CreateMastersTable extends Migration
             $table->enum('gender', ['M', 'F']);
             $table->date('birthdate');
             $table->text('address');
-            $table->string('phone', 17);
-            $table->string('email');
+            $table->string('phone', 17)->nullable();
+            $table->string('email')->nullable();
             $table->timestamps();
         });
 

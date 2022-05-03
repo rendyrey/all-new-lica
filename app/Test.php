@@ -14,7 +14,7 @@ class Test extends Model
         'free_formatted_text' => 'Free Formatted Text'
     ];
 
-    protected $with = ['Group','Specimen'];
+    protected $with = ['group','specimen'];
 
     protected $fillable = [
         'specimen_id',

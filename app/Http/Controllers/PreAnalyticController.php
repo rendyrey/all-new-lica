@@ -236,7 +236,7 @@ class PreAnalyticController extends Controller
             $this->createTransactionTests($transactionId, $requestData);
 
             DB::commit();
-            return response()->json(['message' => $requestData]);
+            return response()->json(['message' => 'Create transaction success!']);
         } catch (\Exception $e) {
             DB::rollback();
             return response()->json(['message' => $e->getMessage()], 400);
@@ -317,7 +317,7 @@ class PreAnalyticController extends Controller
             \App\TransactionTest::where('id',$transactionTestId)->update(['analyzer_id' => $request->analyzer_id]);
             return response()->json(['message' => 'Success update analyzer']);
         } catch (\Exception $e) {
-            return respoinse()->json(['message' => $e->getMessage(), 404]);
+            return response()->json(['message' => $e->getMessage(), 404]);
         }
         
     }

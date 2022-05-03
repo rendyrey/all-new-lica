@@ -840,6 +840,8 @@ var automaticFillPatientForm = function() {
       });
     } else {
       $(".patient-form input.req-input").val('');
+      $(".patient-form input[name='email']").val('');
+      $(".patient-form input[name='phone']").val('');
       $(".patient-form textarea").val('');
       areAllFilled();
     }
@@ -1133,9 +1135,17 @@ $(document).on('click', function(e) {
   var target = $(e.target);
   if (target.is('.swal2-confirm')) {
   }
+ 
+});
+
+$(document).on('select2:unselecting', function(e) {
+  var target = $(e.target);
+  if (target.is('select')) {
+    $(target).val('').trigger('change');
+    e.preventDefault();
+  }
 });
 // end for document dynamically binding element event handlers
-
 
 // On document ready
 document.addEventListener('DOMContentLoaded', function () {
