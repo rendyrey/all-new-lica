@@ -6,8 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class TransactionTest extends Model
 {
-    protected $with = ['test'];
+    protected $with = ['test','transaction'];
     protected $fillable = [
+        'draw',
+        'draw_time',
         'transaction_id',
         'test_id',
         'package_id',
@@ -19,5 +21,10 @@ class TransactionTest extends Model
     public function test()
     {
         return $this->belongsTo('App\Test', 'test_id', 'id');
+    }
+
+    public function transaction()
+    {
+        return $this->belongsTo('App\Transaction', 'transaction_id', 'id');
     }
 }

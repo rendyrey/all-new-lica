@@ -61,6 +61,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('specimen-test/update-draw', 'PreAnalyticController@updateDraw');
         Route::post('specimen-test/draw-all/{value}', 'PreAnalyticController@drawAll');
         Route::get('specimen-test/is-all-drawn/{transactionId}', 'PreAnalyticController@isAllDrawn');
+        Route::post('check-in/{isManual?}', 'PreAnalyticController@checkIn');
     });
     // END Pre Analytics
 

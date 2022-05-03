@@ -32,6 +32,7 @@ var columnsDataTable = [
 ];
 
 // Datatable Component
+var selectedTransactionId;
 var DatatablesServerSide = function () {
   // Shared variables
   var table;
@@ -107,6 +108,7 @@ var DatatablesServerSide = function () {
 
       dt.on('select', function(e, data, type, indexes) {
         const selectedData = data.rows().data()[indexes];
+        selectedTransactionId = selectedData.id;
         onSelectTransaction(selectedData);
       });
   }
@@ -367,9 +369,10 @@ var transactionTestTable;
 var transactionSpecimenTable;
 var onSelectTransaction = function (selectedData) {
   const patient = selectedData.patient;
+  const room = selectedData.room;
   const transactionId = selectedData.id;
-
   checkSpecimenDrawStatus(transactionId);
+  console.log(transactionId);
 
   $("#draw-all-btn").prop('disabled', false);
   $("#undraw-all-btn").prop('disabled', false);
@@ -382,7 +385,23 @@ var onSelectTransaction = function (selectedData) {
   $(".phone-detail").html(patient.phone);
   $(".age-detail").html(getAge(patient.birthdate));
   $(".insurance-detail").html(selectedData.insurance.name);
-  let patientType = '';
+  // for check in button
+  const autoCheckin = (room.auto_checkin == 1 || room.auto_checkin == '1' || room.auto_checkin == true);
+  const hasCheckedIn = (selectedData.checkin_time != null && selectedData.checkin_time != '');
+  if (hasCheckedIn) {
+    $("#check-in-btn").html('No. Lab: ' + selectedData.no_lab);
+    $("#check-in-btn").data('has-checked-in', true);
+  } else {
+    $("#check-in-btn").html('Check in');
+    $("#check-in-btn").data('has-checked-in', false);
+    $("#draw-all-btn").prop('disabled', true);
+    $("#undraw-all-btn").prop('disabled', true);
+  }
+  $("#check-in-btn").data('transaction-id', transactionId);
+  $("#check-in-btn").prop('disabled', false);
+  $("#check-in-btn").data('auto-checkin', autoCheckin);
+  // end for check in button
+
   switch (selectedData.type) {
     case 'rawat_jalan':
        patientType = 'Rawat Jalan';
@@ -472,8 +491,9 @@ var onSelectTransaction = function (selectedData) {
         },
         { data: 'test_ids', render: function(data, type, row) {
             const checked = row.draw.includes('1') ? 'checked' :'';
+            const disabled = ((row.no_lab != null && row.no_lab != '') ? '' : 'disabled');
             const checkboxComponent = `
-              <input class="specimen-checkbox" id="specimen-test-`+row.transaction_id+`-`+row.specimen_id+`" type="checkbox" value="`+row.test_ids+`" onChange="drawSpecimenChange(`+row.transaction_id+`,`+row.specimen_id+`,event)" `+checked+`>
+              <input class="specimen-checkbox" id="specimen-test-`+row.transaction_id+`-`+row.specimen_id+`" type="checkbox" value="`+row.test_ids+`" onChange="drawSpecimenChange(`+row.transaction_id+`,`+row.specimen_id+`,event)" `+checked+` `+disabled+`>
             `;
             return checkboxComponent;
           }, sortable: false, searchable: false
@@ -1006,6 +1026,78 @@ var createNewData = function() {
   })
 }
 
+var checkInBtn = function () {
+  $("#check-in-btn").on('click', function(e) {
+    if ($(this).data('has-checked-in')) {
+      return;
+    }
+    const transactionId = $(this).data('transaction-id');
+
+    if ($(this).data('auto-checkin')) {
+      $.ajax({
+        url: baseUrl('pre-analytics/check-in/0'),
+        type: 'POST',
+        data: {
+          transaction_id: transactionId
+        },
+        success: function(res) {
+          toastr.success(res.message, 'Patient successfully checked-in!');
+          $("#check-in-btn").html('No. Lab: ' + res.no_lab);
+
+          DatatablesServerSide.refreshTable();
+          transactionSpecimenTable.ajax.reload();
+          transactionTestTable.ajax.reload();
+          $(".draw-btn").prop('disabled', false);
+          
+        }
+      })
+    } else {
+      Swal.fire({
+        title: 'Set No. Lab',
+        html: `<input type="text" id="no-lab" class="swal2-input" placeholder="No. Lab" minLength="3" maxLength="3">`,
+        buttonsStyling: false,
+        confirmButtonText: 'Check In',
+        allowEnterKey: true,
+        focusConfirm: false,
+        preConfirm: () => {
+          const noLab = Swal.getPopup().querySelector('#no-lab').value;
+          if (!noLab) {
+            Swal.showValidationMessage(`Please enter No. Lab`)
+          }
+          let isnum = /^\d+$/.test(noLab);
+          if (!isnum) {
+            Swal.showValidationMessage(`Please enter a Valid No. Lab`)
+          }
+          return { noLab: noLab }
+        },
+        customClass: {
+            confirmButton: "btn btn-primary",
+            title: "font-weight-bold"
+        }
+      }).then((result) => {
+        $.ajax({
+          url: baseUrl('pre-analytics/check-in/1'),
+          type: 'POST',
+          data: {
+            transaction_id: transactionId,
+            no_lab: result.value.noLab
+          },
+          success: function(res) {
+            toastr.success(res.message, 'Patient successfully checked-in!');
+            $("#check-in-btn").html('No. Lab: ' + res.no_lab);
+            DatatablesServerSide.refreshTable();
+            transactionSpecimenTable.ajax.reload();
+            transactionTestTable.ajax.reload();
+            $(".draw-btn").prop('disabled', false);
+          },
+          error: function (request, status, error) {
+            toastr.error(request.responseJSON.message);
+          }
+        })
+      });
+    }
+  });
+}
 
 
 $.ajaxSetup({
@@ -1013,6 +1105,24 @@ $.ajaxSetup({
       'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
   }
 });
+
+// this is for document dynamically binding element event handlers
+$(document).on('keyup', function (e) {
+  var target = $(e.target);
+  if (target.is('#no-lab')) {
+    if (e.key === 'Enter') {
+      $(".swal2-confirm").trigger('click');
+    }
+  }
+});
+
+$(document).on('click', function(e) {
+  var target = $(e.target);
+  if (target.is('.swal2-confirm')) {
+  }
+});
+// end for document dynamically binding element event handlers
+
 
 // On document ready
 document.addEventListener('DOMContentLoaded', function () {
@@ -1029,6 +1139,7 @@ document.addEventListener('DOMContentLoaded', function () {
   Stepper();
   birthdate();
   drawAllBtnComponent();
+  checkInBtn();
 
   $("#select-type").on('change', function () {
     if ($(this).val()) {

@@ -166,9 +166,9 @@
                             <div class="col-6 d-flex justify-content-between">
                                 <span class="text-dark">Specimen</span>
                                 <div>
-                                    <button class="btn btn-light-primary btn-sm">No. Lab</button>
-                                    <button class="btn btn-light-info btn-sm" id="draw-all-btn" value="" disabled>Draw all</button>
-                                    <button class="btn btn-light-info btn-sm" id="undraw-all-btn" value="" disabled>Undraw all</button>
+                                    <button class="btn btn-light-primary btn-sm" id="check-in-btn" data-auto="false" disabled="disabled" data-transaction-id="" data-has-checked-in="false">Check in</button>
+                                    <button class="btn btn-light-info btn-sm draw-btn" id="draw-all-btn" value="">Draw all</button>
+                                    <button class="btn btn-light-info btn-sm draw-btn" id="undraw-all-btn" value="">Undraw all</button>
                                 </div>
                             </div>
                         </div>

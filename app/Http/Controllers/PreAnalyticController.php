@@ -79,10 +79,11 @@ class PreAnalyticController extends Controller
         }
         
         // get all specimen depend on the test
-        $model = \App\Test::selectRaw('transaction_tests.transaction_id as transaction_id, GROUP_CONCAT(tests.id SEPARATOR ",") as test_ids, IFNULL(GROUP_CONCAT(transaction_tests.draw SEPARATOR ","),0) as draw, specimen_id, SUM(volume) as volume, unit')
+        $model = \App\Test::selectRaw('transaction_tests.transaction_id as transaction_id, GROUP_CONCAT(tests.id SEPARATOR ",") as test_ids, IFNULL(GROUP_CONCAT(transaction_tests.draw SEPARATOR ","),0) as draw, specimen_id, SUM(volume) as volume, unit, transactions.no_lab')
             ->leftJoin('transaction_tests','tests.id','=','transaction_tests.test_id')
+            ->leftJoin('transactions','transaction_tests.transaction_id','=','transactions.id')
             ->where('transaction_tests.transaction_id', $transactionId)
-            ->whereIn('tests.id', $testIds)->groupBy('specimen_id','unit','transaction_id');
+            ->whereIn('tests.id', $testIds)->groupBy('specimen_id','unit','transaction_id','no_lab');
 
         return DataTables::of($model)
             ->addIndexColumn()
@@ -148,6 +149,46 @@ class PreAnalyticController extends Controller
         }
     }
 
+    public function checkIn($isManual = false, Request $request)
+    {
+        try {
+            $transactionId = $request->transaction_id;
+            $no_lab = $request->no_lab;
+            $prefixDate = date('Ymd');
+            $transaction = \App\Transaction::findOrFail($transactionId);
+            $transaction->checkin_time = Carbon::now();
+
+            if ($isManual) {
+                $check = \App\Transaction::where('no_lab', $prefixDate.$no_lab)->exists();
+                if ($check) {
+                    return response()->json(['message' => 'No Lab has been used!'], 400);
+                }
+
+                $transaction->no_lab = $prefixDate.$no_lab;
+                
+            } else {
+                $countExistingData = \App\Transaction::where('no_lab', 'like', $prefixDate.'%')->count();
+                $trxId = str_pad($countExistingData, 3, '0', STR_PAD_LEFT);
+                $check =  \App\Transaction::where('no_lab', $prefixDate.$trxId)->exists();
+
+                while($check) {
+                    $countExistingData += 1;
+                    $trxId = str_pad($countExistingData, 3, '0', STR_PAD_LEFT);
+                    $check =  \App\Transaction::where('no_lab', $prefixDate.$trxId)->exists();
+                }
+                $transaction->no_lab = $prefixDate.$trxId;
+            }
+
+            $transaction->save();
+
+            return response()->json(['message' => 'Patient successfully checked in with No. Lab: ' . $transaction->no_lab, 'no_lab' => $transaction->no_lab]);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
+        }
+      
+        
+    }
+
     public function analyzerTest($testId)
     {
         $interfacings = \App\Interfacing::where('test_id', $testId)->get();
@@ -176,7 +217,7 @@ class PreAnalyticController extends Controller
             $test_ids = explode(',', $request->test_ids);
             \App\TransactionTest::where('transaction_id', $request->transaction_id)->whereIn('test_id', $test_ids)
             ->update([
-                'draw' => DB::raw('1 - draw'),
+                'draw' => DB::raw('(CASE WHEN draw = NULL THEN 1 ELSE (1 - draw) END)'),
                 'draw_time' => DB::raw('CASE WHEN draw = "1" THEN "'.Carbon::now().'" ELSE NULL END')
             ]);
             return response()->json(['message' => 'Success update draw status']);
@@ -190,6 +231,7 @@ class PreAnalyticController extends Controller
         try {
             \App\TransactionTest::where('transaction_id', $request->transaction_id)
             ->where('draw', !$value)
+            ->orWhere('draw', null)
             ->update([
                 'draw' => $value,
                 'draw_time' => ($value) ? Carbon::now() : null
@@ -203,7 +245,9 @@ class PreAnalyticController extends Controller
     public function isAllDrawn($transactionId)
     {
         try {
-            $exists = \App\TransactionTest::where('transaction_id', $transactionId)->where('draw','0')->exists();
+            $exists = \App\TransactionTest::where('transaction_id', $transactionId)->where(function($q) {
+                $q->where('draw', '0')->orWhere('draw', null);
+            })->exists();
             return response()->json(['message' => $transactionId, 'all_drawn' => !$exists]);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], 404);
@@ -215,10 +259,12 @@ class PreAnalyticController extends Controller
         $testUniqueIds = explode(',', $requestData['selected_test_ids']);
         
         $tests = \App\TestPreAnalyticsView::whereIn('unique_id', $testUniqueIds);
+        $room = \App\Room::findOrFail($requestData['room_id']);
+        $autoDraw = $room->auto_draw;
 
         if ($tests->count() > 0) {
             $inputData = $requestData;
-            
+            $now = Carbon::now();
             foreach($tests->get() as $test) {
                 $inputData['transaction_id'] = $transactionId;
                 $inputData['price_id'] = $test->price_id;
@@ -226,6 +272,10 @@ class PreAnalyticController extends Controller
                 $inputData['type'] = $test->type;
                 $inputData['test_id'] = NULL;
                 $inputData['package_id'] = NULL;
+                if ($autoDraw) {
+                    $inputData['draw'] = true;
+                    $inputData['draw_time'] = $now;
+                }
                 switch($test->type) {
                     case 'single':
                         $inputData['test_id'] = $test->id;
