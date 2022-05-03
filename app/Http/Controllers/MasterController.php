@@ -277,12 +277,17 @@ class MasterController extends Controller
         {
             case 'test':
                 $exists[] = \App\PackageTest::where('test_id', $id)->exists();
+                $exists[] = \App\TransactionTest::where('test_id', $id)->exists();
                 break;
             case 'group':
                 $exists[] = \App\Analyzer::where('group_id', $id)->exists();
                 break;
             case 'package':
                 $exists[] = \App\Price::where('package_id', $id)->exists();
+                break;
+            case 'interfacing':
+                $interfacing = \App\Interfacing::findOrFail($id);
+                $exists[] = \App\TransactionTest::where('test_id', $interfacing->test_id)->exists();
                 break;
             default:
                 $exists[] = false;

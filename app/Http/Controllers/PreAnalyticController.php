@@ -15,8 +15,17 @@ class PreAnalyticController extends Controller
         return view('dashboard.pre_analytics.index', $data);
     }
 
+    /**
+     * This datatable is for showing all the data for transaction on pre analytics
+     * 
+     * @param string $startDate The start date of the transaction was created.
+     * @param string $endDate The end date of the transaction was created.
+     * 
+     * @return collection of transaction that was created between the dates
+     */
     public function datatable($startDate = null, $endDate = null)
     {
+        // if the startDate and the endDate not set, the query will be only for today's transactions
         if ($startDate == null && $endDate == null) {
             $from = Carbon::today()->addHours(0)->addMinutes(0)->addSeconds(0)->toDateTimeString();
             $to = Carbon::today()->addHours(23)->addMinutes(59)->addSeconds(59)->toDateTimeString();
@@ -28,6 +37,7 @@ class PreAnalyticController extends Controller
             ->make(true);
         }
 
+        // if the startDate and endDate is set, the query will be depend on the given date.
         $from = Carbon::parse($startDate)->addHours(0)->addMinutes(0)->addSeconds(0)->toDateTimeString();
         $to = Carbon::parse($endDate)->addHours(23)->addMinutes(59)->addSeconds(59)->toDateTimeString();
         $model = \App\Transaction::where('created_time', '>=', $from)->where('created_time', '<=', $to);
@@ -38,6 +48,12 @@ class PreAnalyticController extends Controller
             ->make(true);
     }
 
+    /**
+     * The datatable function for showing the data of the transaction's tests on the selected transaction
+     * 
+     * @param string $transactionId The transaction id that was selected on the table (on row click)
+     * @return collection of transaction's test on the selected transaction
+     */
     public function datatableTransactionTest($transactionId)
     {
         $model = \App\TransactionTest::where('transaction_id', $transactionId);
@@ -47,33 +63,49 @@ class PreAnalyticController extends Controller
         ->make(true);
     }
 
+    /**
+     * The datatable function for showing the data of the test specimen on the selected transaction
+     * 
+     * @param string $transactionId The transaction id that was selected on the table (on row click)
+     * @return collection of 
+     */
     public function datatableTransactionSpecimen($transactionId)
     {
+        // get all the transaction's tests first to get all the test id(s)
         $transactionTests = \App\TransactionTest::selectRaw('test_id')->where('transaction_id', $transactionId)->get()->toArray();
         $testIds = [];
         foreach($transactionTests as $testId) {
             $testIds[] = $testId['test_id'];
         }
         
+        // get all specimen depend on the test
         $model = \App\Test::selectRaw('transaction_tests.transaction_id as transaction_id, GROUP_CONCAT(tests.id SEPARATOR ",") as test_ids, IFNULL(GROUP_CONCAT(transaction_tests.draw SEPARATOR ","),0) as draw, specimen_id, SUM(volume) as volume, unit')
-        ->leftJoin('transaction_tests','tests.id','=','transaction_tests.test_id')
-        ->where('transaction_tests.transaction_id', $transactionId)
-        ->whereIn('tests.id', $testIds)->groupBy('specimen_id','unit','transaction_id');
+            ->leftJoin('transaction_tests','tests.id','=','transaction_tests.test_id')
+            ->where('transaction_tests.transaction_id', $transactionId)
+            ->whereIn('tests.id', $testIds)->groupBy('specimen_id','unit','transaction_id');
+
         return DataTables::of($model)
-        ->addIndexColumn()
-        ->escapeColumns([])
-        ->make(true);
+            ->addIndexColumn()
+            ->escapeColumns([])
+            ->make(true);
     }
 
+    /**
+     * The datatable function to show all test when adding the patient depend the the room class selected on previous form
+     * 
+     * @param string $roomClass The class of the room E.g. 1 or 2
+     * @return collection of the test analytics view table
+     */
     public function datatableTest($roomClass)
     {
         $model = \App\TestPreAnalyticsView::where('class', $roomClass)
             ->orWhere('class', '0')
             ->orWhereNull('class');
+
         return DataTables::of($model)
-        ->addIndexColumn()
-        ->escapeColumns([])
-        ->make(true);
+            ->addIndexColumn()
+            ->escapeColumns([])
+            ->make(true);
     }
 
     public function datatableSelectTest(Request $request, $roomClass, $withoutIds)
@@ -83,9 +115,9 @@ class PreAnalyticController extends Controller
         })->whereNotIn('unique_id', explode(',', $withoutIds));
 
         return DataTables::of($model)
-        ->addIndexColumn()
-        ->escapeColumns([])
-        ->make(true);
+            ->addIndexColumn()
+            ->escapeColumns([])
+            ->make(true);
     }
 
     public function create(Request $request)
@@ -145,7 +177,7 @@ class PreAnalyticController extends Controller
             \App\TransactionTest::where('transaction_id', $request->transaction_id)->whereIn('test_id', $test_ids)
             ->update([
                 'draw' => DB::raw('1 - draw'),
-                'draw_time' => Carbon::now()
+                'draw_time' => DB::raw('CASE WHEN draw = "1" THEN "'.Carbon::now().'" ELSE NULL END')
             ]);
             return response()->json(['message' => 'Success update draw status']);
         } catch (\Exception $e) {
@@ -157,6 +189,7 @@ class PreAnalyticController extends Controller
     {
         try {
             \App\TransactionTest::where('transaction_id', $request->transaction_id)
+            ->where('draw', !$value)
             ->update([
                 'draw' => $value,
                 'draw_time' => ($value) ? Carbon::now() : null
