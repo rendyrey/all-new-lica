@@ -1142,6 +1142,7 @@ $(document).on('select2:unselecting', function(e) {
   var target = $(e.target);
   if (target.is('select')) {
     $(target).val('').trigger('change');
+    $(target + " option[selected]").removeAttr('selected');
     e.preventDefault();
   }
 });
