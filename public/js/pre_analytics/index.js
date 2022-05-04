@@ -438,7 +438,7 @@ var onSelectTransaction = function (selectedData) {
         { data: 'test.name' },
         { data: 'test_id', render: function(data, type, row) {
             const selectComponent = `
-              <select id="select-analyzer-`+row.id+`" data-control="select2" data-placeholder="Select analyzer" class="select form-select form-select-sm form-select-solid my-0">
+              <select id="select-analyzer-`+row.id+`" data-control="select2" data-placeholder="Select analyzer" class="select form-select form-select-sm form-select-solid my-0 me-4">
               </select>
             `;
            
