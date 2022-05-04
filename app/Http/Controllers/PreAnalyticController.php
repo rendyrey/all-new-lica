@@ -164,6 +164,11 @@ class PreAnalyticController extends Controller
                 'group_id' => $test->group_id,
                 'type' => 'single'
             ]);
+
+            $this->logActivity(
+                "Make an additional test on transaction with ID $request->transaction_id",
+                json_encode($transactionTest)
+            );
         } else {
             $package = \App\Package::findOrFail($test->id);
             foreach($package->package_tests as $testItem) {
@@ -174,6 +179,11 @@ class PreAnalyticController extends Controller
                     'group_id' => $test->group_id,
                     'type' => 'single'
                 ]);
+
+                $this->logActivity(
+                    "Make an additional test on transaction with ID $request->transaction_id",
+                    json_encode($transactionTest)
+                );
             }
 
         }
@@ -198,7 +208,20 @@ class PreAnalyticController extends Controller
 
     public function editTestDelete($transactionTestId)
     {
-        \App\TransactionTest::findOrFail($transactionTestId)->delete();
+        try {
+            $data = \App\TransactionTest::findOrFail($transactionTestId);
+            $data->delete();
+    
+            $this->logActivity(
+                "Make a deletion test on transaction test with ID $transactionTestId",
+                json_encode($data)
+            );
+
+            return response()->json(['message' => 'Delete test successfully!']);
+        } catch (\Exception $e) {
+
+            return response()->json(['message' => $e->getMessage()], 400);
+        }
 
         return response()->json(['message' => 'Test deleted successfully!']);
     }
@@ -232,6 +255,11 @@ class PreAnalyticController extends Controller
             $requestData['transaction_id_label'] = $this->getTransactionIdLabel($request);
             $transaction = \App\Transaction::create($requestData);
             $transactionId = $transaction->id;
+
+            $this->logActivity(
+                "Create a pre analytics data ID $transactionId",
+                json_encode($requestData)
+            );
 
             $this->createTransactionTests($transactionId, $requestData);
 
@@ -292,6 +320,11 @@ class PreAnalyticController extends Controller
 
             $transaction->save();
 
+            $this->logActivity(
+                "Check in Transaction with Label ID $transaction->no_lab",
+                json_encode([])
+            );
+
             return response()->json(['message' => 'Patient successfully checked in with No. Lab: ' . $transaction->no_lab, 'no_lab' => $transaction->no_lab]);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], 400);
@@ -314,7 +347,13 @@ class PreAnalyticController extends Controller
     public function updateAnalyzer($transactionTestId, Request $request)
     {
         try {
-            \App\TransactionTest::where('id',$transactionTestId)->update(['analyzer_id' => $request->analyzer_id]);
+            $data = \App\TransactionTest::where('id',$transactionTestId)->first();
+            $data->update(['analyzer_id' => $request->analyzer_id]);
+
+            $this->logActivity(
+                "Change the analyzer with transaction test ID $transactionTestId",
+                json_encode($request->except(['_method','_token']))
+            );
             return response()->json(['message' => 'Success update analyzer']);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage(), 404]);
@@ -331,6 +370,11 @@ class PreAnalyticController extends Controller
                 'draw' => DB::raw('(CASE WHEN draw = NULL THEN 1 ELSE (1 - draw) END)'),
                 'draw_time' => DB::raw('CASE WHEN draw = "1" THEN "'.Carbon::now().'" ELSE NULL END')
             ]);
+
+            $this->logActivity(
+                "Update the draw status $transactionTestId",
+                json_encode($request->except(['_method','_token']))
+            );
             return response()->json(['message' => 'Success update draw status']);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage(), 404]);
@@ -347,6 +391,12 @@ class PreAnalyticController extends Controller
                 'draw' => $value,
                 'draw_time' => ($value) ? Carbon::now() : null
             ]);
+
+            $this->logActivity(
+                "Change the status of all draw specimen with transaction ID $request->transaction_id to $value",
+                json_encode($request->except(['_method','_token']))
+            );
+
             return response()->json(['message' => 'Success update draw status']);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage(), 404]);
