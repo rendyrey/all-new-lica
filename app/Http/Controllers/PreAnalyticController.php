@@ -109,6 +109,15 @@ class PreAnalyticController extends Controller
             ->make(true);
     }
 
+    /**
+     * The datatable function to retrieve all the test list base on room
+     * the function is only for user do the edit test on created transaction
+     * 
+     * @param string/integer $roomClass The room class, E.g. 1
+     * @param string/integer $transactionId The transaction Id
+     * 
+     * @return json 
+     */
     public function datatableEditTest($roomClass, $transactionId)
     {
         // get all the transaction's tests first to get all the test id(s)
@@ -132,6 +141,15 @@ class PreAnalyticController extends Controller
             ->make(true);
     }
 
+    /**
+     * Function for table on the selected test list on right side when user do the edit test
+     * on the created transaction
+     * 
+     * @param string/integer $roomClass E.g. 1
+     * @param string/integer $transactionId The transaction id
+     * 
+     * @return json
+     */
     public function selectedEditTest($roomClass, $transactionId)
     {
         $transactionTests = \App\TransactionTest::selectRaw('*')->where('transaction_id', $transactionId)->get()->toArray();
@@ -152,10 +170,17 @@ class PreAnalyticController extends Controller
         return response()->json(['selected_test_ids' => implode(",",$testIds), 'data' => $data]);
     }
 
+    /**
+     * Function when user click add test or select test to the selected list
+     * 
+     * @param object $request request data/form data from front end
+     * 
+     * @return json
+     */
     public function editTestAdd(Request $request)
     {
-        $test = \App\TestPreAnalyticsView::where('unique_id', $request->unique_id)->first();
-        $roomClass = $request->room_class;
+        $test = \App\TestPreAnalyticsView::where('unique_id', $request->unique_id)->first(); // get the tests views based on unique id
+        $roomClass = $request->room_class; // get the room class
         if ($test->type == 'single') {
             $transactionTest = \App\TransactionTest::create([
                 'transaction_id' => $request->transaction_id,
@@ -206,6 +231,14 @@ class PreAnalyticController extends Controller
         return response()->json(['message' => 'Test added successfully!','selected_test_ids' => implode(",",$testIds), 'data' => $data]);
     }
 
+    /**
+     * Function when user do the deletion test on the selected test list on the right side when user do the edit test
+     * on the created transction
+     * 
+     * @param integer $transactionTestId The transaction_tests id
+     * 
+     * @return json
+     */
     public function editTestDelete($transactionTestId)
     {
         try {
@@ -226,6 +259,15 @@ class PreAnalyticController extends Controller
         return response()->json(['message' => 'Test deleted successfully!']);
     }
 
+    /**
+     * Function for refresh the test list when user select test when create transaction
+     * 
+     * @param object $request Request data or form data
+     * @param integer $roomClass The room class. E.g. 1 or 2
+     * @param array $withoutIds The selected test id, so the table will not shown the selected test
+     * 
+     * @return json
+     */
     public function datatableSelectTest(Request $request, $roomClass, $withoutIds)
     {
         $model = \App\TestPreAnalyticsView::where(function ($q) use ($roomClass) {
@@ -238,11 +280,18 @@ class PreAnalyticController extends Controller
             ->make(true);
     }
 
+    /**
+     * Function when user create transaction or add patient on pre analytics page
+     * 
+     * @param object $request Request data or form data
+     * 
+     * @return json
+     */
     public function create(Request $request)
     {
         DB::beginTransaction();
         try {
-            $requestData = $request->all();
+            $requestData = $request->except(['_method','_token']);
             $requestData['created_time'] = date('Y-m-d H:i:s');
             
             if (!$request->patient_id) {
@@ -257,7 +306,7 @@ class PreAnalyticController extends Controller
             $transactionId = $transaction->id;
 
             $this->logActivity(
-                "Create a pre analytics data ID $transactionId",
+                "Create a pre analytics data with ID $transactionId",
                 json_encode($requestData)
             );
 
@@ -270,7 +319,14 @@ class PreAnalyticController extends Controller
             return response()->json(['message' => $e->getMessage()], 400);
         }
     }
-
+    
+    /**
+     * Delete transaction function
+     * 
+     * @param integer $id Transaction ID
+     * 
+     * @return json
+     */
     public function deleteTransaction($id)
     {
         try {
@@ -288,6 +344,11 @@ class PreAnalyticController extends Controller
         }
     }
 
+    /**
+     * Check in function
+     * 
+     * @param boolean/integer $isManual The config of room, whether the room config is auto checkin or no.
+     */
     public function checkIn($isManual = false, Request $request)
     {
         try {
@@ -333,6 +394,13 @@ class PreAnalyticController extends Controller
         
     }
 
+    /**
+     * Function for all select option form on the select analyzer 
+     * 
+     * @param integer $testId The test id 
+     * 
+     * @return text $options The html text for select options on the analyzer selection
+     */
     public function analyzerTest($testId)
     {
         $interfacings = \App\Interfacing::where('test_id', $testId)->get();
@@ -344,6 +412,14 @@ class PreAnalyticController extends Controller
         return $options;
     }
 
+    /**
+     * When user change the analyzer, make the update query on transaction test
+     * 
+     * @param integer @transactoinTestId The transaction test id
+     * @param object $request The form data or request data
+     * 
+     * @return json response
+     */
     public function updateAnalyzer($transactionTestId, Request $request)
     {
         try {
@@ -361,6 +437,13 @@ class PreAnalyticController extends Controller
         
     }
 
+    /**
+     * Function when user click the draw checkbox in the pre analytics page
+     * 
+     * @param object $request The form or request data
+     * 
+     * @return json response message
+     */
     public function updateDraw(Request $request)
     {
         try {
@@ -381,6 +464,14 @@ class PreAnalyticController extends Controller
         }
     }
 
+    /**
+     * Function for when user click draw all or undraw all button in pre analytics page in the specimens section
+     * 
+     * @param integer $value 1 or 0 of the draw status
+     * @param object $request The form data or request data
+     * 
+     * @return json response message
+     */
     public function drawAll($value, Request $request)
     {
         try {
@@ -403,6 +494,13 @@ class PreAnalyticController extends Controller
         }
     }
 
+    /**
+     * Function to check status on specimens whether all the specimens has been drawn or not.
+     * 
+     * @param integer $transactionId The transaction id
+     * 
+     * @return json response message
+     */
     public function isAllDrawn($transactionId)
     {
         try {
@@ -415,6 +513,15 @@ class PreAnalyticController extends Controller
         }
     }
 
+    /**
+     * Function for when user create transaction or add patient, it's private function. it will be used only on create function above
+     * it will create bulk test based on the selected test when create the transaction
+     * 
+     * @param integer $transactionId The transaction id
+     * @param object $requestData the form or request data
+     * 
+     * @return void
+     */
     private function createTransactionTests($transactionId, $requestData)
     {
         $testUniqueIds = explode(',', $requestData['selected_test_ids']);
@@ -453,9 +560,15 @@ class PreAnalyticController extends Controller
         
     }
 
+    /**
+     * Private function when user create transaction, it's only use when the user select the package test
+     * 
+     * @param array $inputData the request data or form data
+     * 
+     * @return void
+     */
     private function createTransactionTestsFromPackage($inputData)
     {
-
         $tests = \App\PackageTest::where('package_id', $inputData['package_id'])->get();
 
         foreach($tests as $test) {
@@ -464,6 +577,13 @@ class PreAnalyticController extends Controller
         }
     }
 
+    /**
+     * Private function for set the human readable transaction id
+     * 
+     * @param object $request the form or request data. It's only use type param tho.
+     * 
+     * @return string the generated transaction id label
+     */
     private function getTransactionIdLabel($request)
     {
         $prefix = '';
