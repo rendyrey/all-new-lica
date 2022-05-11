@@ -18,7 +18,8 @@ class Transaction extends Model
         'memo',
         'created_time',
         'cito',
-        'transaction_id_label'
+        'transaction_id_label',
+        'checkin_time'
     ];
 
     public function patient()
