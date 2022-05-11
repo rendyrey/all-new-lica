@@ -14,10 +14,13 @@
           <div class="modal-body row">
             <!--begin::CRUD-->
             <div class="col-sm-6">
-              <h2>Test List</h2>
+              
               <div class="py-5">
                   <!--begin::Wrapper-->
                   <div class="d-flex flex-stack flex-wrap mb-5">
+                    <div class="d-flex align-items-center position-relative my-1 mb-2 mb-md-0">
+                        <h2>Select Test</h2>
+                    </div>
                       <!--begin::Search-->
                       <div class="d-flex align-items-center position-relative my-1 mb-2 mb-md-0">
                           <!--begin::Svg Icon | path: icons/duotune/general/gen021.svg-->
@@ -69,7 +72,7 @@
 
             <!--begin::CRUD-->
             <div class="col-sm-6">
-                <div class="py-5 mt-14">
+                <div class="py-5">
                   <h2>Selected Test</h2>
                     <!--end::Wrapper-->
                     <!--begin::Datatable-->

@@ -66,13 +66,14 @@
                                 <table class="table gy-1 align-middle table-striped px-0 pre-analytics-datatable-ajax">
                                     <thead>
                                         <tr class="text-start text-gray-600 fw-bolder fs-7 text-uppercase gs-0">
-                                            <th class="min-w-100px">Date</th>
+                                            <th class="min-w-70px">Date</th>
                                             <th>Transaction ID</th>
                                             <th class="w-auto">Lab No</th>
                                             <th>Medrec</th>
-                                            <th class="min-w-150px">Name</th>
+                                            <th class="w-auto">Name</th>
                                             <th class="w-auto">Room</th>
-                                            <th class="text-end min-w-100px">Actions</th>
+                                            <th class="min-w-40px text-lowercase"><i class="bi bi-info-circle"></i></th>
+                                            <th class="text-end min-w-50px"></th>
                                         </tr>
                                     </thead>
                                     <tbody class="fw-bold"></tbody>
@@ -101,7 +102,7 @@
                                 <div class="table-responsive">
                                     <table class="table">
                                       <tr>
-                                       <th class="py-1">Name</th>
+                                       <th class="py-1 w-10px">Name</th>
                                        <td class="name-detail py-1 text-gray-600">-</th>
                                       </tr>
                                       <tr>
@@ -157,14 +158,14 @@
                             </div>
                         </div>
 
-                        <div class="separator mb-2"></div>
+                        <div class="separator mb-4" style="border: 1px solid grey;"></div>
                         <div class="row">
                             <div class="col-6 d-flex justify-content-between">
-                                <span class="text-dark">Patient test</span>
+                                <h4 class="text-dark">Patient test</h4>
                                 <button class="btn btn-light-primary btn-sm" data-transaction-id="" id="edit-test-btn" data-room-class="">Edit test</button>
                             </div>
                             <div class="col-6 d-flex justify-content-between">
-                                <span class="text-dark">Specimen</span>
+                                <h4 class="text-dark">Specimen</h4>
                                 <div>
                                     <button class="btn btn-light-primary btn-sm" id="check-in-btn" data-auto="false" disabled="disabled" data-transaction-id="" data-has-checked-in="false">Check in</button>
                                     <button class="btn btn-light-info btn-sm draw-btn" id="draw-all-btn" value="">Draw all</button>

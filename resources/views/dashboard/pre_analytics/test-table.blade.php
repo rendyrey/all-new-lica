@@ -4,6 +4,9 @@
         <div class="py-5">
             <!--begin::Wrapper-->
             <div class="d-flex flex-stack flex-wrap mb-5">
+                <div class="d-flex justify-content-start ms-2">
+                    <h4>Select Test</h4>
+                </div>
                 <!--begin::Search-->
                 <div class="d-flex align-items-center position-relative my-1 mb-2 mb-md-0">
                     <!--begin::Svg Icon | path: icons/duotune/general/gen021.svg-->
@@ -26,11 +29,7 @@
                 </div> --}}
                 <!--end::Toolbar-->
                 <!--begin::Group actions-->
-                <div class="d-flex justify-content-end align-items-center d-none" data-kt-docs-table-toolbar="selected">
-                    <div class="fw-bolder me-5">
-                    <span class="me-2" data-kt-docs-table-select="selected_count"></span>Selected</div>
-                    <button type="button" class="btn btn-danger" data-kt-docs-table-select="delete_selected">Selection Action</button>
-                </div>
+                
                 <!--end::Group actions-->
             </div>
             <!--end::Wrapper-->
@@ -55,8 +54,14 @@
 
     <!--begin::CRUD-->
     <div class="col-sm-6">
-        <div class="py-5 mt-14">
-            <!--end::Wrapper-->
+         <!--begin::Wrapper-->
+         <div class="py-5">
+            <div class="d-flex flex-stack flex-wrap mb-5">
+                <div class="d-flex justify-content-start ms-2">
+                    <h4>Selected Test</h4>
+                </div>
+            </div>
+             
             <!--begin::Datatable-->
             <table class="table gy-1 align-middle table-striped px-0 selected-test-table">
                 <thead>

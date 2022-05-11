@@ -9,16 +9,16 @@ var theFullDate = function(date) {
   ];
   let d = new Date(date);
   let day = d.getDate();
-  let month = d.getMonth();
+  let month = d.getMonth() + 1;
   let year = d.getFullYear();
-  let theDate = day + ' ' + monthNames[month] + ' ' + year;
+  let theDate = day + '/' + ('0'+month).slice(-2)  + '/' + year;
 
   return theDate;
 }
 
 var newFormId = '#new-pre-analytics';
 
-var buttonActionIndex = 6;
+var buttonActionIndex = 7;
 var columnsDataTable = [
   { data: 'created_at', render: function(data, type, row) {
       return theFullDate(data);
@@ -29,6 +29,17 @@ var columnsDataTable = [
   { data: 'patient.medrec' },
   { data: 'patient.name' },
   { data: 'room.room' },
+  { data: null, render: function(data, type, row) {
+    let cito = '';
+    if (row.cito != null && row.cito != 0) {
+      cito = '<i class="bi bi-exclamation-triangle-fill text-warning" data-toggle="tooltip" data-placement="top" title="CITO"></i>';
+    }
+    let analytic = '';
+    if (row.status == 1) {
+      analytic = '<i class="ms-2 bi bi-check-square-fill text-success" data-toggle="tooltip" data-placement="top" title="Moved to analytic"></i>'
+    }
+    return "<div>"+cito+analytic+"</div>";
+  }, defaultContent: '', responsivePriority: 1},
 ];
 
 // Datatable Component
@@ -42,14 +53,17 @@ var DatatablesServerSide = function () {
   // Private functions
   var initDatatable = function () {
       dt = $(selectorName).DataTable({
+          paging: false,
+          scrollY: '400px',
+          scrollX: '100%',
           select: {
             style: 'single'
           },
+          order: [[0, 'desc']],
           responsive: true,
           searchDelay: 500,
           processing: true,
           serverSide: true,
-          order: [],
           stateSave: false,
           ajax: {
               url: baseUrl('pre-analytics/datatable/')
@@ -66,7 +80,7 @@ var DatatablesServerSide = function () {
                   render: function (data, type, row) {
                       return `
                               <button class="btn btn-light-danger btn-sm px-2" data-kt-docs-table-filter="delete_row" onClick="deleteTransaction(`+row.id+`)">
-                                  delete
+                                <i class="bi bi-trash-fill pe-0"></i>
                               </button>
                       `;
                   },
@@ -200,6 +214,8 @@ var DatatableTestServerSide = function () {
     // Private functions
     var initDatatable = function () {
         dt = $(selectorName).DataTable({
+            paging: false,
+            scrollY: '250px',
             responsive: true,
             searchDelay: 500,
             processing: true,
@@ -248,6 +264,7 @@ var DatatableTestServerSide = function () {
             initToggleToolbar();
             toggleToolbars();
             KTMenu.createInstances();
+            dt.columns.adjust().draw();
         });
     }
   
@@ -371,14 +388,15 @@ var onSelectTransaction = function (selectedData) {
   if (hasCheckedIn) {
     $("#check-in-btn").html('No. Lab: ' + selectedData.no_lab);
     $("#check-in-btn").data('has-checked-in', true);
+    $("#check-in-btn").prop('disabled', true);
   } else {
     $("#check-in-btn").html('Check in');
     $("#check-in-btn").data('has-checked-in', false);
     $("#draw-all-btn").prop('disabled', true);
     $("#undraw-all-btn").prop('disabled', true);
+    $("#check-in-btn").prop('disabled', false);
   }
   $("#check-in-btn").data('transaction-id', transactionId);
-  $("#check-in-btn").prop('disabled', false);
   $("#check-in-btn").data('auto-checkin', autoCheckin);
 
   $("#edit-test-btn").data('transaction-id', transactionId);
@@ -410,6 +428,8 @@ var onSelectTransaction = function (selectedData) {
   // Check if #it is a DataTable or not. If not, initialise:, if so, reload with new url
   if ( ! $.fn.DataTable.isDataTable( '.transaction-test-table' ) ) {
     transactionTestTable = $('.transaction-test-table').DataTable({
+      paging: false,
+      scrollY: '230px',
       responsive: true,
       searchDelay: 500,
       processing: true,
@@ -454,6 +474,8 @@ var onSelectTransaction = function (selectedData) {
 
   if ( ! $.fn.DataTable.isDataTable( '.transaction-specimen-table' ) ) {
     transactionSpecimenTable = $('.transaction-specimen-table').DataTable({
+      paging:false,
+      scrollY: '230px',
       responsive: true,
       searchDelay: 500,
       processing: true,
@@ -470,7 +492,7 @@ var onSelectTransaction = function (selectedData) {
         },
         { data: 'volume', render: function(data, type, row) {
             return data + row.unit;
-          }, defaultValue: ''
+          }, defaultContent: ''
         },
         { data: 'test_ids', render: function(data, type, row) {
             const checked = row.draw.includes('1') ? 'checked' :'';
@@ -616,7 +638,8 @@ var DateRangePicker = () => {
       },
       locale:{
         format: 'DD MMMM YYYY'
-      }
+      },
+      alwaysShowCalendars: true
   }, cb);
 
   cb(start, end);
@@ -1058,6 +1081,7 @@ var checkInBtn = function () {
         success: function(res) {
           toastr.success(res.message, 'Patient successfully checked-in!');
           $("#check-in-btn").html('No. Lab: ' + res.no_lab);
+          $("#check-in-btn").prop('disabled',true);
 
           DatatablesServerSide.refreshTable();
           transactionSpecimenTable.ajax.reload();
@@ -1203,5 +1227,10 @@ document.addEventListener('DOMContentLoaded', function () {
     if ($(this).valid()) {
       createNewData();
     }
+  });
+
+  $('body').tooltip({
+    selector: '[data-toggle="tooltip"]',
+    trigger: 'hover'
   });
 });
