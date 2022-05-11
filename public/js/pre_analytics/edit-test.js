@@ -285,6 +285,13 @@ var updateEditTest = function () {
       $("#edit-test-modal").modal('hide');
       transactionTestTable.ajax.reload();
       transactionSpecimenTable.ajax.reload();
+      if (res.auto_draw) {
+        $("#undraw-all-btn").show();
+        $("#draw-all-btn").hide();    
+      } else {
+        $("#draw-all-btn").show();
+        $("#undraw-all-btn").hide();
+      }
       toastr.success(res.message, "Update test successful!");
     },
     error: function(request, status, error){

@@ -21,6 +21,8 @@ class Room extends Model
         'class',
         'auto_checkin',
         'auto_draw',
+        'auto_undraw',
+        'auto_nolab',
         'type',
         'referral_address',
         'referral_no_phone',

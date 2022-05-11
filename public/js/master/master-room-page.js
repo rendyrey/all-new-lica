@@ -3,7 +3,7 @@ var masterData = 'room'; // required for the url
 var withModel = []; // required for the datatable if the model of the datatable has eager load or relationship, set to empty array if not.
 
 // required for the datatable columns
-var buttonActionIndex = 10;
+var buttonActionIndex = 12;
 var columnsDataTable = [
     { data: 'room' },
     { data: 'room_code' },
@@ -20,6 +20,20 @@ var columnsDataTable = [
                 return `<i class="fas fa-check-circle mr-3 text-success small"></i>`;
             }
             return `<ii class="fas fa-times-circle mr-3 text-danger small"></i>`;
+        }
+    },
+    { data: 'auto_undraw', render: function(data, type, row){
+        if (data == true) {
+            return `<i class="fas fa-check-circle mr-3 text-success small"></i>`;
+        }
+        return `<ii class="fas fa-times-circle mr-3 text-danger small"></i>`;
+        }
+    },
+    { data: 'auto_nolab', render: function(data, type, row){
+        if (data == true) {
+            return `<i class="fas fa-check-circle mr-3 text-success small"></i>`;
+        }
+        return `<ii class="fas fa-times-circle mr-3 text-danger small"></i>`;
         }
     },
     { data: 'type', render: function(data, type, row) {
@@ -53,6 +67,8 @@ var setValueModalEditForm = function(data)
     $("#modal_form_horizontal input[name='class']").val(data.class);
     $("#modal_form_horizontal input[name='auto_checkin']").attr('checked', data.auto_checkin == true);
     $("#modal_form_horizontal input[name='auto_draw']").attr('checked', data.auto_draw == true);
+    $("#modal_form_horizontal input[name='auto_undraw']").attr('checked', data.auto_undraw == true);
+    $("#modal_form_horizontal input[name='auto_nolab']").attr('checked', data.auto_nolab == true);
     $("#modal_form_horizontal select[name='type']").val(data.type).trigger('change');
     $("#modal_form_horizontal textarea[name='referral_address']").val(data.referral_address);
     $("#modal_form_horizontal input[name='referral_no_phone']").val(data.referral_no_phone);

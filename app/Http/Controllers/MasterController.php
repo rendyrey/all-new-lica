@@ -383,6 +383,8 @@ class MasterController extends Controller
                 $interfacing = \App\Interfacing::findOrFail($id);
                 $exists[] = \App\TransactionTest::where('test_id', $interfacing->test_id)->exists();
                 break;
+            case 'room':
+                $exists[] = \App\Transaction::where('room_id', $id)->exists();
             default:
                 $exists[] = false;
         }

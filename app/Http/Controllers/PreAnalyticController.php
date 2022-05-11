@@ -309,7 +309,7 @@ class PreAnalyticController extends Controller
                 }
             }
             DB::commit();
-            return response()->json(['message' => 'Success update test']);
+            return response()->json(['message' => 'Success update test', 'auto_draw' => $autoDraw]);
         } catch (\Exception $e) {
             DB::rollback();
             return response()->json(['message' => $e->getMessage()], 400);
@@ -361,6 +361,22 @@ class PreAnalyticController extends Controller
 
             $requestData['memo'] = $request->diagnosis;
             $requestData['transaction_id_label'] = $this->getTransactionIdLabel($request);
+            $room = \App\Room::findOrFail($requestData['room_id']);
+
+            if ($room->auto_checkin) {
+                $prefixDate = date('Ymd');
+                $countExistingData = \App\Transaction::where('no_lab', 'like', $prefixDate.'%')->count();
+                $trxId = str_pad($countExistingData, 3, '0', STR_PAD_LEFT);
+                $check =  \App\Transaction::where('no_lab', $prefixDate.$trxId)->exists();
+
+                while($check) {
+                    $countExistingData += 1;
+                    $trxId = str_pad($countExistingData, 3, '0', STR_PAD_LEFT);
+                    $check =  \App\Transaction::where('no_lab', $prefixDate.$trxId)->exists();
+                }
+                $requestData['no_lab'] = $prefixDate.$trxId;
+                $requestData['checkin_time'] = Carbon::now();
+            }
             $transaction = \App\Transaction::create($requestData);
             $transactionId = $transaction->id;
 

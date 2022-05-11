@@ -66,7 +66,7 @@
                                 <table class="table gy-1 align-middle table-striped px-0 pre-analytics-datatable-ajax">
                                     <thead>
                                         <tr class="text-start text-gray-600 fw-bolder fs-7 text-uppercase gs-0">
-                                            <th class="min-w-70px">Date</th>
+                                            <th class="min-w-150px">Date</th>
                                             <th>Transaction ID</th>
                                             <th class="w-auto">Lab No</th>
                                             <th>Medrec</th>
@@ -162,14 +162,14 @@
                         <div class="row">
                             <div class="col-6 d-flex justify-content-between">
                                 <h4 class="text-dark">Patient test</h4>
-                                <button class="btn btn-light-primary btn-sm" data-transaction-id="" id="edit-test-btn" data-room-class="">Edit test</button>
+                                <button class="btn btn-light-primary btn-sm patient-details-btn d-none" data-transaction-id="" id="edit-test-btn" data-room-class="">Edit test</button>
                             </div>
                             <div class="col-6 d-flex justify-content-between">
                                 <h4 class="text-dark">Specimen</h4>
                                 <div>
-                                    <button class="btn btn-light-primary btn-sm" id="check-in-btn" data-auto="false" disabled="disabled" data-transaction-id="" data-has-checked-in="false">Check in</button>
-                                    <button class="btn btn-light-info btn-sm draw-btn" id="draw-all-btn" value="">Draw all</button>
-                                    <button class="btn btn-light-info btn-sm draw-btn" id="undraw-all-btn" value="">Undraw all</button>
+                                    <button class="btn btn-light-primary btn-sm patient-details-btn d-none" id="check-in-btn" data-auto-nolab="false" disabled="disabled" data-transaction-id="" data-has-checked-in="false">Check in</button>
+                                    <button class="btn btn-light-info btn-sm draw-btn patient-details-btn d-none" id="draw-all-btn" value="">Draw all</button>
+                                    <button class="btn btn-light-info btn-sm draw-btn patient-details-btn d-none" id="undraw-all-btn" value="">Undraw all</button>
                                 </div>
                             </div>
                         </div>

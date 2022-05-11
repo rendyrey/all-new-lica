@@ -264,7 +264,6 @@ var editData = function (id) {
 var updateData = function () {
     let theForm = $("#form-edit");
     let formData = $("#form-edit").serialize();
-
     $.ajax({
         url: baseUrl('master/'+masterData+'/update'),
         data: formData,

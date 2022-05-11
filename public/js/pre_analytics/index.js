@@ -366,6 +366,9 @@ var checkSpecimenDrawStatus = function(transactionId){
 var transactionTestTable;
 var transactionSpecimenTable;
 var onSelectTransaction = function (selectedData) {
+  // show all button on details section
+  $(".patient-details-btn").removeClass('d-none');
+
   const patient = selectedData.patient;
   const room = selectedData.room;
   const transactionId = selectedData.id;
@@ -383,7 +386,7 @@ var onSelectTransaction = function (selectedData) {
   $(".age-detail").html(getAge(patient.birthdate));
   $(".insurance-detail").html(selectedData.insurance.name);
   // for check in button
-  const autoCheckin = (room.auto_checkin == 1 || room.auto_checkin == '1' || room.auto_checkin == true);
+  const autoNolab = (room.auto_nolab == 1 || room.auto_nolab == '1' || room.auto_nolab == true);
   const hasCheckedIn = (selectedData.checkin_time != null && selectedData.checkin_time != '');
   if (hasCheckedIn) {
     $("#check-in-btn").html('No. Lab: ' + selectedData.no_lab);
@@ -397,7 +400,8 @@ var onSelectTransaction = function (selectedData) {
     $("#check-in-btn").prop('disabled', false);
   }
   $("#check-in-btn").data('transaction-id', transactionId);
-  $("#check-in-btn").data('auto-checkin', autoCheckin);
+  $("#check-in-btn").data('auto-nolab', autoNolab);
+  console.log("autonolab", autoNolab);
 
   $("#edit-test-btn").data('transaction-id', transactionId);
   $("#edit-test-btn").data('room-class', room.class);
@@ -1071,7 +1075,7 @@ var checkInBtn = function () {
     }
     const transactionId = $(this).data('transaction-id');
 
-    if ($(this).data('auto-checkin')) {
+    if ($(this).data('auto-nolab')) {
       $.ajax({
         url: baseUrl('pre-analytics/check-in/0'),
         type: 'POST',

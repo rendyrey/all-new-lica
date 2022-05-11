@@ -61,9 +61,11 @@
                                             <th class="min-w-150px">Room</th>
                                             <th class="min-w-150px">Room Code</th>
                                             <th class="min-w-150px">Class</th>
-                                            <th class="min-w-150px">Auto Checkin</th>
-                                            <th class="min-w-150px">Auto Draw</th>
-                                            <th class="min-w-150px">Type</th>
+                                            <th class="">Auto Checkin</th>
+                                            <th class="">Auto Draw</th>
+                                            <th class="">Auto Undraw</th>
+                                            <th class="">Auto No Lab</th>
+                                            <th class="">Type</th>
                                             <th class="none">Referral Address</th>
                                             <th class="none">Referral No Phone</th>
                                             <th class="none">Referral Email</th>
@@ -121,6 +123,24 @@
                                         {{ Form::checkbox('auto_draw', true, false, ['class' => 'form-check-input', 'id' => 'auto-draw']) }}
                                         <label class="form-check-label" for="auto-draw">
                                             Auto Draw
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-8 row">
+                                <div class="col-4">
+                                    <div class="form-check form-check-custom form-check-solid">
+                                        {{ Form::checkbox('auto_undraw', true, false, ['class' => 'form-check-input', 'id' => 'auto-undraw']) }}
+                                        <label class="form-check-label" for="auto-undraw">
+                                            Auto Undraw
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="form-check form-check-custom form-check-solid">
+                                        {{ Form::checkbox('auto_nolab', true, false, ['class' => 'form-check-input', 'id' => 'auto-nolab']) }}
+                                        <label class="form-check-label" for="auto-nolab">
+                                            Auto No Lab
                                         </label>
                                     </div>
                                 </div>
@@ -207,6 +227,24 @@
                         {{ Form::checkbox('auto_draw', true, false, ['class' => 'form-check-input', 'id' => 'auto-draw-edit']) }}
                         <label class="form-check-label" for="auto-draw-edit">
                             Auto Draw
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="mb-8 row">
+                <div class="col-4">
+                    <div class="form-check form-check-custom form-check-solid">
+                        {{ Form::checkbox('auto_undraw', true, false, ['class' => 'form-check-input', 'id' => 'auto-undraw-edit']) }}
+                        <label class="form-check-label" for="auto-undraw-edit">
+                            Auto Undraw
+                        </label>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="form-check form-check-custom form-check-solid">
+                        {{ Form::checkbox('auto_nolab', true, false, ['class' => 'form-check-input', 'id' => 'auto-nolab-edit']) }}
+                        <label class="form-check-label" for="auto-nolab-edit">
+                            Auto No Lab
                         </label>
                     </div>
                 </div>
