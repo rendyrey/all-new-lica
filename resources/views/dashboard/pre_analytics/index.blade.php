@@ -103,7 +103,7 @@
                                     <table class="table">
                                       <tr>
                                        <th class="py-1 w-10px">Name</th>
-                                       <td class="name-detail py-1 text-gray-600">-</th>
+                                       <td class="name-detail py-1 text-gray-600 w-auto">-</th>
                                       </tr>
                                       <tr>
                                         <th class="py-1">Gender</th>

@@ -264,8 +264,8 @@ var DatatableTestServerSide = function () {
             initToggleToolbar();
             toggleToolbars();
             KTMenu.createInstances();
-            dt.columns.adjust().draw();
         });
+        dt.columns.adjust().draw();
     }
   
   

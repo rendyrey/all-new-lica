@@ -167,7 +167,12 @@ class PreAnalyticController extends Controller
         ->where('transaction_tests.transaction_id', $transactionId)
         ->where('test_pre_analytics_view.type','single')->get();
 
-        return response()->json(['selected_test_ids' => implode(",",$testIds), 'data' => $data]);
+        $uniqueIds = [];
+        foreach($data as $theTest) {
+            $uniqueIds[] = $theTest->unique_id;
+        }
+
+        return response()->json(['selected_test_ids' => implode(",",$testIds), 'selected_test_unique_ids' => implode(",",$uniqueIds), 'data' => $data]);
     }
 
     /**
@@ -258,6 +263,60 @@ class PreAnalyticController extends Controller
 
         return response()->json(['message' => 'Test deleted successfully!']);
     }
+
+    public function editTestUpdate(Request $request)
+    {
+        // delete first
+        try {
+            DB::beginTransaction();
+            $transactionId = $request->transaction_id;
+            \App\TransactionTest::where('transaction_id', $transactionId)->where('draw', '<>', 1)->delete();
+            $testUniqueIds = explode(',', $request->unique_ids);
+            
+            $tests = \App\TestPreAnalyticsView::whereIn('unique_id', $testUniqueIds);
+            $transaction = \App\Transaction::findOrFail($transactionId);
+            $autoDraw = $transaction->room->auto_draw;
+    
+            if ($tests->count() > 0) {
+                $inputData = [];
+                $now = Carbon::now();
+                foreach($tests->get() as $test) {
+    
+                    $inputData['transaction_id'] = $transactionId;
+                    $inputData['price_id'] = $test->price_id;
+                    $inputData['group_id'] = $test->group_id;
+                    $inputData['type'] = $test->type;
+                    $inputData['test_id'] = NULL;
+                    $inputData['package_id'] = NULL;
+                    if ($autoDraw) {
+                        $inputData['draw'] = true;
+                        $inputData['draw_time'] = $now;
+                    }
+                    switch($test->type) {
+                        case 'single':
+                            $inputData['test_id'] = $test->id;
+                            $checkExisting = \App\TransactionTest::where('transaction_id', $transactionId)->where('test_id', $test->id)->exists();
+                            if (!$checkExisting) {
+                                \App\TransactionTest::create($inputData);
+                            }
+                            break;
+                        case 'package':
+                            $inputData['package_id'] = $test->id;
+                            $this->createTransactionTestsFromPackage($inputData);
+                            break;
+                        default:
+                    }
+                }
+            }
+            DB::commit();
+            return response()->json(['message' => 'Success update test']);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json(['message' => $e->getMessage()], 400);
+        }
+       
+    }
+
 
     /**
      * Function for refresh the test list when user select test when create transaction

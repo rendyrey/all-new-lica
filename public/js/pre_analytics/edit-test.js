@@ -1,6 +1,7 @@
 var editTestTransactionId = '0';
 var editTestRoomClass = '0';
 var selectedEditTestIds = [];
+var selectedEditTestUniqueId = [];
 var editTestBtn = function() {
   $("#edit-test-btn").on('click', function(){
     editTestTransactionId = $(this).data('transaction-id');
@@ -9,8 +10,10 @@ var editTestBtn = function() {
       url: baseUrl('pre-analytics/edit-test/selected-test/'+editTestRoomClass+'/'+editTestTransactionId),
       type: 'POST',
       success: function(res){
+        $("#selected-edit-test-unique-ids").val(res.selected_test_unique_ids);
         $("#selected-edit-test-ids").val(res.selected_test_ids);
         selectedEditTestIds = res.selected_test_ids.split(',');
+        selectedEditTestUniqueId = res.selected_test_unique_ids.split(',');
         populateSelectedTest(res.data);
       }
     })
@@ -22,40 +25,70 @@ var editTestBtn = function() {
 }
 
 var addEditTestList = function(unique_id, type, name, price, roomClass, event) {
-  $.ajax({
-    url: baseUrl('pre-analytics/edit-test/add'),
-    type: 'POST',
-    data: {
-      unique_id: unique_id,
-      type: type,
-      transaction_id: editTestTransactionId,
-      room_class: roomClass
-    },
-    success: function(res) {
-      event.target.closest('tr').remove();
-      $("#selected-edit-test-ids").val(selectedEditTestIds.join(','));
-      transactionTestTable.ajax.reload();
-      transactionSpecimenTable.ajax.reload();
-      DatatableEditTestServerSide.refreshTable();
-      populateSelectedTest(res.data);
+  selectedTestIds.push(unique_id);
+  const isEven = (selectedTestIds.length % 2 == 0);
+  const priceFormatted = (price != 'null' && price != '' && price != null) ? 'Rp'+price.toLocaleString('ID') : '';
+  $("#selected-edit-test tr:last").after(`
+    <tr class="`+(isEven == true ? 'even':'odd')+`">
+      <td>`+name+`</td>
+      <td>`+priceFormatted+`</td>
+      <td>`+type+`</td>
+      <td class="text-end">
+      <i onClick="removeEditTestList('`+unique_id+`', event)" class="cursor-pointer bi bi-arrow-left-circle text-danger" data-bs-toggle="tooltip" data-bs-custom-class="tooltip-dark" data-bs-placement="top" title="Remove `+name+` to test list"></i>
+      </td>
+    </tr>
+  `);
+  event.target.closest('tr').remove();
+  selectedEditTestUniqueId.push(unique_id);
+  const newUrl = baseUrl('pre-analytics/test/'+roomClass+'/datatable/withoutId/'+selectedEditTestUniqueId.join(','));
+  DatatableEditTestServerSide.refreshNewTable(newUrl);
 
-      toastr.success(res.message, "Add test successful!");
-    }
-  })
+  // $.ajax({
+  //   url: baseUrl('pre-analytics/edit-test/add'),
+  //   type: 'POST',
+  //   data: {
+  //     unique_id: unique_id,
+  //     type: type,
+  //     transaction_id: editTestTransactionId,
+  //     room_class: roomClass
+  //   },
+  //   success: function(res) {
+  //     event.target.closest('tr').remove();
+  //     $("#selected-edit-test-ids").val(selectedEditTestIds.join(','));
+  //     transactionTestTable.ajax.reload();
+  //     transactionSpecimenTable.ajax.reload();
+  //     DatatableEditTestServerSide.refreshTable();
+  //     populateSelectedTest(res.data);
+
+  //     toastr.success(res.message, "Add test successful!");
+  //   }
+  // })
  
 }
 
-var removeEditTestList = function(transaction_test_id, event) {
-  $.ajax({
-    url: baseUrl('pre-analytics/edit-test/'+transaction_test_id+'/delete'),
-    type: 'DELETE',
-    success: function(res) {
-      event.target.closest('tr').remove();
-      DatatableEditTestServerSide.refreshTable();
-      transactionTestTable.ajax.reload();
-      transactionSpecimenTable.ajax.reload();
+var removeEditTestList = function(unique_id, event) {
+    event.target.closest('tr').remove();
+    let indexRemove = selectedEditTestUniqueId.indexOf(unique_id);
+    selectedEditTestUniqueId.splice(indexRemove, 1);
+    $("#selected-edit-test-unique-ids").val(selectedEditTestUniqueId.join(','));
+    if (selectedEditTestUniqueId.length > 0) {
+      const newUrl = baseUrl('pre-analytics/test/'+editTestRoomClass+'/datatable/withoutId/'+selectedEditTestUniqueId.join(','));
+      DatatableEditTestServerSide.refreshNewTable(newUrl);
+    } else {
+      const newUrl = baseUrl('pre-analytics/test/'+editTestRoomClass+'/datatable');
+      DatatableEditTestServerSide.refreshNewTable(newUrl);
     }
-  })
+
+  // $.ajax({
+  //   url: baseUrl('pre-analytics/edit-test/'+transaction_test_id+'/delete'),
+  //   type: 'DELETE',
+  //   success: function(res) {
+  //     event.target.closest('tr').remove();
+  //     DatatableEditTestServerSide.refreshTable();
+  //     transactionTestTable.ajax.reload();
+  //     transactionSpecimenTable.ajax.reload();
+  //   }
+  // })
 }
 
 var populateSelectedTest = function (tests) {
@@ -64,7 +97,7 @@ var populateSelectedTest = function (tests) {
     const isEven = (index % 2 == 0);
     const price = item.price;
     const priceFormatted = (price != null && price != '' && price != 'null') ? 'Rp'+price.toLocaleString('ID') : '';
-    const removeButton = !item.draw ? `<i onClick="removeEditTestList('`+item.transaction_test_id+`', event)" class="cursor-pointer bi bi-arrow-left-circle text-danger" data-bs-toggle="tooltip" data-bs-custom-class="tooltip-dark" data-bs-placement="top" title="Remove `+item.name+` to test list"></i>` : '';
+    const removeButton = !item.draw ? `<i onClick="removeEditTestList('`+item.unique_id+`', event)" class="cursor-pointer bi bi-arrow-left-circle text-danger" data-bs-toggle="tooltip" data-bs-custom-class="tooltip-dark" data-bs-placement="top" title="Remove `+item.name+` to test list"></i>` : '';
     $("#selected-edit-test tr:last").after(`
     <tr class="`+(isEven == true ? 'even':'odd')+`">
       <td>`+item.name+`</td>
@@ -88,6 +121,8 @@ var DatatableEditTestServerSide = function () {
   // Private functions
   var initDatatable = function () {
       dt = $(selectorName).DataTable({
+          paging: false,
+          scrollY: '250px',
           responsive: true,
           searchDelay: 500,
           processing: true,
@@ -137,6 +172,7 @@ var DatatableEditTestServerSide = function () {
           toggleToolbars();
           KTMenu.createInstances();
       });
+      dt.columns.adjust().draw();
   }
 
 
@@ -217,7 +253,49 @@ var DatatableEditTestServerSide = function () {
   }
 }();
 
+var editTestSubmit = function() {
+  $("#edit-test-submit").on('click', function(){
+    if (selectedEditTestUniqueId.length == 0) {
+      Swal.fire({
+        text: "Please select at least 1 test!",
+        icon: "error",
+        buttonsStyling: false,
+        confirmButtonText: "Ok, got it!",
+        customClass: {
+            confirmButton: "btn btn-primary"
+        }
+      });
+      return false;
+    }
+
+    updateEditTest();
+    
+  });
+}
+
+var updateEditTest = function () {
+  $.ajax({
+    url: baseUrl('pre-analytics/edit-test/update'),
+    type: 'POST',
+    data: {
+      transaction_id: editTestTransactionId,
+      unique_ids: selectedEditTestUniqueId.join(',')
+    },
+    success: function(res) {
+      $("#edit-test-modal").modal('hide');
+      transactionTestTable.ajax.reload();
+      transactionSpecimenTable.ajax.reload();
+      toastr.success(res.message, "Update test successful!");
+    },
+    error: function(request, status, error){
+      toastr.error(request.responseJSON.message);
+    }
+  })
+}
+
 document.addEventListener('DOMContentLoaded', function () {
   editTestBtn();
+  editTestSubmit();
   DatatableEditTestServerSide.init();
+
 });

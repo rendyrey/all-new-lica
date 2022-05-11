@@ -53,6 +53,7 @@
                   <!--end::Wrapper-->
                   <!--begin::Datatable-->
                   <input type="hidden" name="selected_test_ids" value="" id="selected-edit-test-ids">
+                  <input type="hidden" name="selected_test_unique_ids" value="" id="selected-edit-test-unique-ids">
                   <table class="table gy-1 align-middle table-striped px-0 edit-test-datatable-ajax">
                       <thead>
                           <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
@@ -93,8 +94,16 @@
                     </table>
                     <!--end::Datatable-->
                 </div>
+               
             </div>
             <!--end::CRUD-->
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-primary" data-kt-stepper-action="submit" id="edit-test-submit">
+                    <span class="indicator-label">
+                        Submit
+                    </span>
+                </button>
+            </div>
           </div>
       </div>
   </div>
