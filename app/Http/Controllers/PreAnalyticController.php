@@ -276,6 +276,9 @@ class PreAnalyticController extends Controller
             $tests = \App\TestPreAnalyticsView::whereIn('unique_id', $testUniqueIds);
             $transaction = \App\Transaction::findOrFail($transactionId);
             $autoDraw = $transaction->room->auto_draw;
+            $isUndrawExists = \App\TransactionTest::where('transaction_id', $transactionId)->where(function($q) {
+                $q->where('draw', '0')->orWhere('draw', null);
+            })->exists();
     
             if ($tests->count() > 0) {
                 $inputData = [];
@@ -309,7 +312,7 @@ class PreAnalyticController extends Controller
                 }
             }
             DB::commit();
-            return response()->json(['message' => 'Success update test', 'auto_draw' => $autoDraw]);
+            return response()->json(['message' => 'Success update test', 'auto_draw' => ($autoDraw || !$isUndrawExists)]);
         } catch (\Exception $e) {
             DB::rollback();
             return response()->json(['message' => $e->getMessage()], 400);
@@ -391,6 +394,19 @@ class PreAnalyticController extends Controller
             return response()->json(['message' => 'Create transaction success!']);
         } catch (\Exception $e) {
             DB::rollback();
+            return response()->json(['message' => $e->getMessage()], 400);
+        }
+    }
+
+    public function updateNote(Request $request)
+    {
+        try{
+            $transaction = \App\Transaction::where('id', $request->transaction_id)->first();
+            $transaction->note = $request->note;
+            $transaction->save();
+
+            return response()->json(['message' => 'Update transaction note successful!']);
+        } catch(\Exception $e) {
             return response()->json(['message' => $e->getMessage()], 400);
         }
     }

@@ -56,6 +56,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('edit-test/selected-test/{roomClass}/{transactionId}', 'PreAnalyticController@selectedEditTest');
         Route::post('edit-test/add','PreAnalyticController@editTestAdd');
         Route::post('edit-test/update', 'PreAnalyticController@editTestUpdate');
+        Route::post('transaction/note/update', 'PreAnalyticController@updateNote');
         Route::delete('edit-test/{transactionTestId}/delete','PreAnalyticController@editTestDelete');
         
         Route::post('test/{roomClass}/datatable/withoutId/{ids}', 'PreAnalyticController@datatableSelectTest');

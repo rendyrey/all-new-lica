@@ -401,7 +401,6 @@ var onSelectTransaction = function (selectedData) {
   }
   $("#check-in-btn").data('transaction-id', transactionId);
   $("#check-in-btn").data('auto-nolab', autoNolab);
-  console.log("autonolab", autoNolab);
 
   $("#edit-test-btn").data('transaction-id', transactionId);
   $("#edit-test-btn").data('room-class', room.class);
@@ -429,6 +428,10 @@ var onSelectTransaction = function (selectedData) {
   $(".medrec-detail").html(patient.medrec);
   $(".doctor-detail").html(selectedData.doctor.name);
 
+  // set the transaction id to note textarea
+  $("#transaction-note").data('transaction-id', transactionId);
+  $("#transaction-note").val(selectedData.note);
+  autosize.update($("#transaction-note"));
   // Check if #it is a DataTable or not. If not, initialise:, if so, reload with new url
   if ( ! $.fn.DataTable.isDataTable( '.transaction-test-table' ) ) {
     transactionTestTable = $('.transaction-test-table').DataTable({
@@ -479,7 +482,7 @@ var onSelectTransaction = function (selectedData) {
   if ( ! $.fn.DataTable.isDataTable( '.transaction-specimen-table' ) ) {
     transactionSpecimenTable = $('.transaction-specimen-table').DataTable({
       paging:false,
-      scrollY: '230px',
+      info: false,
       responsive: true,
       searchDelay: 500,
       processing: true,
@@ -1174,6 +1177,25 @@ $(document).on('select2:unselecting', function(e) {
     e.preventDefault();
   }
 });
+
+var transactionNote = function () {
+  $("#transaction-note").on('blur', function(){
+    const transactionId = $(this).data('transaction-id');
+    const note = $(this).val();
+    $.ajax({
+      url: baseUrl('pre-analytics/transaction/note/update'),
+      method: 'post',
+      data: {
+        transaction_id: transactionId,
+        note: note
+      },
+      success: function(res) {
+        toastr.success(res.message);
+        DatatablesServerSide.refreshTable();
+      }
+    })
+  });
+}
 // end for document dynamically binding element event handlers
 
 // On document ready
@@ -1192,6 +1214,7 @@ document.addEventListener('DOMContentLoaded', function () {
   birthdate();
   drawAllBtnComponent();
   checkInBtn();
+  transactionNote();
 
   $("#select-type").on('change', function () {
     if ($(this).val()) {

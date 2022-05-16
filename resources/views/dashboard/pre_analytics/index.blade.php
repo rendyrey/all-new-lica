@@ -195,6 +195,9 @@
                                         </tr>
                                     </thead>
                                 </table>
+
+                                <label for="" class="mt-4 form-label">Note</label>
+                                <textarea class="form-control" data-kt-autosize="true" id="transaction-note" data-transaction-id=""></textarea>
                             </div>
                         </div>
                         
