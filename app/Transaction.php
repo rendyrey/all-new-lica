@@ -15,7 +15,7 @@ class Transaction extends Model
         'analyzer_id',
         'type',
         'no_lab',
-        'memo',
+        'note',
         'created_time',
         'cito',
         'transaction_id_label',

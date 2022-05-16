@@ -362,7 +362,7 @@ class PreAnalyticController extends Controller
                 $requestData['patient_id'] = $new_patient->id;
             }
 
-            $requestData['memo'] = $request->diagnosis;
+            $requestData['note'] = $request->diagnosis;
             $requestData['transaction_id_label'] = $this->getTransactionIdLabel($request);
             $room = \App\Room::findOrFail($requestData['room_id']);
 
