@@ -116,6 +116,16 @@ class MasterController extends Controller
                         json_encode($request->except(['_method','_token']))
                     );
                     break;
+                case 'patient':
+                    $checkMedRec = \App\Patient::where('medrec', $request->medrec)->exists();
+                    if ($checkMedRec) {
+                        throw new \Exception("Medrec has been used");
+                    }
+                    $createdData = $this->masters[$masterData]::create($this->mapInputs($masterData, $request));
+                    $this->logActivity(
+                        "Create $masterData with ID $createdData->id",
+                        json_encode($createdData)
+                    );
                 default:
                     $createdData = $this->masters[$masterData]::create($this->mapInputs($masterData, $request));
                     $this->logActivity(
@@ -532,6 +542,8 @@ class MasterController extends Controller
                 $data = $request->all();
                 $data['auto_checkin'] = $request->auto_checkin == 1;
                 $data['auto_draw'] = $request->auto_draw == 1;
+                $data['auto_undraw'] = $request->auto_undraw == 1;
+                $data['auto_nolab'] = $request->auto_nolab == 1;
                 break;
             case 'price':
                 $data = $request->all();

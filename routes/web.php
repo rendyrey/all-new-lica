@@ -70,6 +70,10 @@ Route::middleware(['auth'])->group(function () {
         Route::get('specimen-test/is-all-drawn/{transactionId}', 'PreAnalyticController@isAllDrawn');
         Route::post('check-in/{isManual?}', 'PreAnalyticController@checkIn');
         Route::delete('transaction/delete/{id}', 'PreAnalyticController@deleteTransaction');
+
+        Route::get('check-medical-record/{medrec}', 'PreAnalyticController@checkMedRec');
+        Route::get('edit-patient-details/{transactionId}', 'PreAnalyticController@editPatientDetails');
+        Route::put('update-patient-details', 'PreAnalyticController@updatePatientDetails');
     });
     // END Pre Analytics
 

@@ -216,7 +216,7 @@
             <div class="mb-8 row">
                 <div class="col-4">
                     <div class="form-check form-check-custom form-check-solid">
-                        {{ Form::checkbox('auto_checkin', true, false, ['class' => 'form-check-input', 'id' => 'auto-checkin-edit']) }}
+                        {{ Form::checkbox('auto_checkin', 1, false, ['class' => 'form-check-input', 'id' => 'auto-checkin-edit']) }}
                         <label class="form-check-label" for="auto-checkin-edit">
                             Auto Checkin
                         </label>
@@ -224,7 +224,7 @@
                 </div>
                 <div class="col-4">
                     <div class="form-check form-check-custom form-check-solid">
-                        {{ Form::checkbox('auto_draw', true, false, ['class' => 'form-check-input', 'id' => 'auto-draw-edit']) }}
+                        {{ Form::checkbox('auto_draw', 1, false, ['class' => 'form-check-input', 'id' => 'auto-draw-edit']) }}
                         <label class="form-check-label" for="auto-draw-edit">
                             Auto Draw
                         </label>
@@ -234,7 +234,7 @@
             <div class="mb-8 row">
                 <div class="col-4">
                     <div class="form-check form-check-custom form-check-solid">
-                        {{ Form::checkbox('auto_undraw', true, false, ['class' => 'form-check-input', 'id' => 'auto-undraw-edit']) }}
+                        {{ Form::checkbox('auto_undraw', 1, false, ['class' => 'form-check-input', 'id' => 'auto-undraw-edit']) }}
                         <label class="form-check-label" for="auto-undraw-edit">
                             Auto Undraw
                         </label>
@@ -242,7 +242,7 @@
                 </div>
                 <div class="col-4">
                     <div class="form-check form-check-custom form-check-solid">
-                        {{ Form::checkbox('auto_nolab', true, false, ['class' => 'form-check-input', 'id' => 'auto-nolab-edit']) }}
+                        {{ Form::checkbox('auto_nolab', 1, false, ['class' => 'form-check-input', 'id' => 'auto-nolab-edit']) }}
                         <label class="form-check-label" for="auto-nolab-edit">
                             Auto No Lab
                         </label>

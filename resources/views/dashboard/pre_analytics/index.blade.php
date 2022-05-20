@@ -66,12 +66,12 @@
                                 <table class="table gy-1 align-middle table-striped px-0 pre-analytics-datatable-ajax">
                                     <thead>
                                         <tr class="text-start text-gray-600 fw-bolder fs-7 text-uppercase gs-0">
-                                            <th class="min-w-150px">Date</th>
+                                            <th class="text-start min-w-100px">Date</th>
                                             <th>Transaction ID</th>
-                                            <th class="w-auto">Lab No</th>
-                                            <th>Medrec</th>
-                                            <th class="w-auto">Name</th>
-                                            <th class="w-auto">Room</th>
+                                            <th class="text-start">Lab No</th>
+                                            <th class="text-start">Medrec</th>
+                                            <th class="text-start">Name</th>
+                                            <th class="text-start">Room</th>
                                             <th class="min-w-40px text-lowercase"><i class="bi bi-info-circle"></i></th>
                                             <th class="text-end min-w-50px"></th>
                                         </tr>
@@ -94,7 +94,10 @@
                 <div class="card card-docs mb-2">
                     <!--begin::Card Body-->
                     <div class="card-body fs-6 py-15 py-lg-6 px-lg-6 text-gray-700">
-                        <h1>Patient Details</h1>
+                        <div class="d-flex justify-content-between mb-4">
+                            <h1>Patient Details</h1>
+                            <button class="btn btn-light-primary btn-sm patient-details-btn d-none" id="edit-patient-details-btn" data-transaction-id="">Edit patient details</button>
+                        </div>
                         <div class="separator mb-2"></div>
                         <!--begin::Section-->
                         <div class="row">
@@ -169,7 +172,7 @@
                                 <div>
                                     <button class="btn btn-light-primary btn-sm patient-details-btn d-none" id="check-in-btn" data-auto-nolab="false" disabled="disabled" data-transaction-id="" data-has-checked-in="false">Check in</button>
                                     <button class="btn btn-light-info btn-sm draw-btn patient-details-btn d-none" id="draw-all-btn" value="">Draw all</button>
-                                    <button class="btn btn-light-info btn-sm draw-btn patient-details-btn d-none" id="undraw-all-btn" value="">Undraw all</button>
+                                    <button class="btn btn-light-info btn-sm draw-btn patient-details-btn d-none" id="undraw-all-btn" value="" data-auto-undraw="">Undraw all</button>
                                 </div>
                             </div>
                         </div>
@@ -216,6 +219,7 @@
 
 @include('dashboard.pre_analytics.add-patient-modal')
 @include('dashboard.pre_analytics.edit-test-modal')
+@include('dashboard.pre_analytics.edit-patient-details-modal');
 @endsection
 
 @section('scripts')

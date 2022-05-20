@@ -120,7 +120,7 @@
                               <div class="fv-row row mb-4">
                                 <div class="col-md-3"><label class="form-label fs-7">Medical Record</label></div>
                                 <div class="col-md-9">
-                                  {{ Form::text('medrec', null, ['class' => 'form-control form-control-solid form-control-sm req-input', 'disabled', 'readonly']) }}
+                                  {{ Form::text('medrec', null, ['class' => 'form-control form-control-solid form-control-sm req-input', 'disabled', 'readonly', 'id' => 'new-patient-medrec']) }}
                                 </div>
                               </div>
 

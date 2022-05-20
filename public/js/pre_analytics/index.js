@@ -351,7 +351,6 @@ var checkSpecimenDrawStatus = function(transactionId){
     url: baseUrl('pre-analytics/specimen-test/is-all-drawn/'+transactionId),
     method: 'GET',
     success: function(res) {
-      console.log(res);
       if (res.all_drawn) {
         $("#undraw-all-btn").show();
         $("#draw-all-btn").hide();    
@@ -366,6 +365,7 @@ var checkSpecimenDrawStatus = function(transactionId){
 var transactionTestTable;
 var transactionSpecimenTable;
 var onSelectTransaction = function (selectedData) {
+  
   // show all button on details section
   $(".patient-details-btn").removeClass('d-none');
 
@@ -373,6 +373,9 @@ var onSelectTransaction = function (selectedData) {
   const room = selectedData.room;
   const transactionId = selectedData.id;
   checkSpecimenDrawStatus(transactionId);
+
+  // set transaction id for edit patient details
+  $("#edit-patient-details-btn").data('transaction-id', transactionId);
 
   $("#draw-all-btn").prop('disabled', false);
   $("#undraw-all-btn").prop('disabled', false);
@@ -387,6 +390,9 @@ var onSelectTransaction = function (selectedData) {
   $(".insurance-detail").html(selectedData.insurance.name);
   // for check in button
   const autoNolab = (room.auto_nolab == 1 || room.auto_nolab == '1' || room.auto_nolab == true);
+  const autoUndraw = (room.auto_undraw == 1 || room.auto_undraw == '1' || room.auto_undrow == true);
+  $("#undraw-all-btn").data('auto-undraw', autoUndraw);
+
   const hasCheckedIn = (selectedData.checkin_time != null && selectedData.checkin_time != '');
   if (hasCheckedIn) {
     $("#check-in-btn").html('No. Lab: ' + selectedData.no_lab);
@@ -505,7 +511,7 @@ var onSelectTransaction = function (selectedData) {
             const checked = row.draw.includes('1') ? 'checked' :'';
             const disabled = ((row.no_lab != null && row.no_lab != '') ? '' : 'disabled');
             const checkboxComponent = `
-              <input class="specimen-checkbox" id="specimen-test-`+row.transaction_id+`-`+row.specimen_id+`" type="checkbox" value="`+row.test_ids+`" onChange="drawSpecimenChange(`+row.transaction_id+`,`+row.specimen_id+`,event)" `+checked+` `+disabled+`>
+              <input class="specimen-checkbox undraw-btn" id="specimen-test-`+row.transaction_id+`-`+row.specimen_id+`" type="checkbox" value="`+row.test_ids+`" onChange="drawSpecimenChange(`+row.transaction_id+`,`+row.specimen_id+`,event)" `+checked+` `+disabled+`>
             `;
             return checkboxComponent;
           }, sortable: false, searchable: false
@@ -563,21 +569,83 @@ function analyzerChange(transactionTestId, event){
 }
 
 function drawSpecimenChange(transactionId, specimenId, event) {
-  console.log("TRANSACTIONID " + transactionId);
-  $.ajax({
-    url: baseUrl('pre-analytics/specimen-test/update-draw'),
-    type: 'POST',
-    data: {
-      transaction_id: transactionId,
-      specimen_id: specimenId,
-      test_ids: event.target.value
-    },
-    success: function(res) {
-      toastr.success(res.message, "Update draw status success!");
-      transactionSpecimenTable.ajax.url(baseUrl('pre-analytics/transaction-specimen/'+transactionId+'/datatable')).load();
-      checkSpecimenDrawStatus(transactionId);
+  if (!event.target.checked) {
+    if (!$("#undraw-all-btn").data('auto-undraw')) {
+      Swal.fire({
+        title: 'Are you sure you want to undraw?',
+        text: 'Please input undraw causes',
+        input: 'text',
+        inputAttributes: {
+          autocapitalize: 'off'
+        },
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Submit',
+        showLoaderOnConfirm: true,
+        preConfirm: (reason) => {
+          if (reason == '') {
+            Swal.showValidationMessage(`Please enter a reason`)
+          }
+          return { reason: reason }
+        },
+        allowOutsideClick: () => !Swal.isLoading()
+      }).then((result) => {
+        if (result.isConfirmed) {
+          $.ajax({
+            url: baseUrl('pre-analytics/specimen-test/update-draw'),
+            type: 'POST',
+            data: {
+              transaction_id: transactionId,
+              specimen_id: specimenId,
+              test_ids: event.target.value,
+              undraw_reason: result.value.reason
+            },
+            success: function(res) {
+              toastr.success(res.message, "Update draw status success!");
+              transactionSpecimenTable.ajax.url(baseUrl('pre-analytics/transaction-specimen/'+transactionId+'/datatable')).load();
+              checkSpecimenDrawStatus(transactionId);
+            }
+          });
+        }
+      })
+
+      return;
     }
-  })
+    
+    $.ajax({
+      url: baseUrl('pre-analytics/specimen-test/update-draw'),
+      type: 'POST',
+      data: {
+        transaction_id: transactionId,
+        specimen_id: specimenId,
+        test_ids: event.target.value
+      },
+      success: function(res) {
+        toastr.success(res.message, "Update draw status success!");
+        transactionSpecimenTable.ajax.url(baseUrl('pre-analytics/transaction-specimen/'+transactionId+'/datatable')).load();
+        checkSpecimenDrawStatus(transactionId);
+      }
+    });
+
+    return;
+  } else {
+    $.ajax({
+      url: baseUrl('pre-analytics/specimen-test/update-draw'),
+      type: 'POST',
+      data: {
+        transaction_id: transactionId,
+        specimen_id: specimenId,
+        test_ids: event.target.value
+      },
+      success: function(res) {
+        toastr.success(res.message, "Update draw status success!");
+        transactionSpecimenTable.ajax.url(baseUrl('pre-analytics/transaction-specimen/'+transactionId+'/datatable')).load();
+        checkSpecimenDrawStatus(transactionId);
+      }
+    });
+  }
+
+
 }
 
 var drawAllBtnComponent = function() {
@@ -597,6 +665,44 @@ var drawAllBtnComponent = function() {
 
   $("#undraw-all-btn").on('click', function(e) {
     const transactionId = $(this).val();
+
+    if (!$("#undraw-all-btn").data('auto-undraw')) {
+      Swal.fire({
+        title: 'Are you sure you want to undraw?',
+        text: 'Please input undraw causes',
+        input: 'text',
+        inputAttributes: {
+          autocapitalize: 'off'
+        },
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Submit',
+        showLoaderOnConfirm: true,
+        preConfirm: (reason) => {
+          if (reason == '') {
+            Swal.showValidationMessage(`Please enter a reason`)
+          }
+          return { reason: reason }
+        },
+        allowOutsideClick: () => !Swal.isLoading()
+      }).then((result) => {
+        if (result.isConfirmed) {
+          $.ajax({
+            url: baseUrl('pre-analytics/specimen-test/draw-all/0'),
+            type: 'POST',
+            data: { transaction_id: transactionId, undraw_reason: result.value.reason },
+            success: function(res){
+              toastr.success(res.message, 'Success undraw all specimen!');
+              transactionSpecimenTable.ajax.url(baseUrl('pre-analytics/transaction-specimen/'+transactionId+'/datatable/')).load();
+              checkSpecimenDrawStatus(transactionId);
+            }
+          });
+        }
+      })
+
+      return false;
+    }
+
     $.ajax({
       url: baseUrl('pre-analytics/specimen-test/draw-all/0'),
       type: 'POST',
@@ -726,6 +832,73 @@ var Select2ServerSideModal = function (theData, searchKey = 'name', params) {
   }
 }
 
+var Select2ServerSideEditModal = function (theData, searchKey = 'name', params) {
+  var _componentSelect2 = function() {
+      // Initialize
+       $('.select-' + theData + '-edit').select2({
+          allowClear: true,
+          ajax: {
+              url: baseUrl('master/select-options/' + theData + '/' + searchKey + (params ? '/' + params : '')),
+              dataType: 'json',
+              delay: 250,
+              data: function (params) {
+                  return {
+                      query: params.term // search term
+                  };
+              },
+              processResults: function (data, params) {
+
+                  // parse the results into the format expected by Select2
+                  // since we are using custom formatting functions we do not need to
+                  // alter the remote JSON data, except to indicate that infinite
+                  // scrolling can be used
+                  // params.page = params.page || 1;
+
+                return {
+                    results: $.map(data, function(item){
+                        var additionalText = '';
+                        if (theData == 'room') {
+                            additionalText = `<i> Class `+item.class+`</i>`;
+                        }      
+                        return {
+                            text: item.name + additionalText,
+                            id: item.id
+                        }
+                    })
+                };
+              },
+              cache: true
+          },
+          escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+          // minimumInputLength: 0,
+          // tags: true, // for create new tags
+          language: {
+              inputTooShort: function () {
+                  return 'Input is too short';
+              },
+              errorLoading: function () {
+                  return `There's error on our side`;
+              },
+              noResults: function () {
+                  return 'There are no result based on your search';
+              }
+          },
+          dropdownParent: $("#edit-patient-details-modal .modal-body")
+      });
+
+  }
+
+  //
+  // Return objects assigned to module
+  //
+
+  return {
+      init: function() {
+          _componentSelect2();
+      }
+  }
+}
+
 var addNewPatient = () => {
   $(".add-new-patient").addClass('d-none');
   $(".cancel-new-patient").removeClass('d-none');
@@ -839,11 +1012,14 @@ var Stepper = () => {
 
 var datepicker;
 var birthdate = () => {
+  const thisYear = new Date().getFullYear();  // returns the current year
   datepicker = $(".birthdate").flatpickr({
     altInput: true,
     altFormat: 'j F Y',
-    dateFormat: 'Y-m-d'
+    dateFormat: 'Y-m-d',
+    static: true
   });
+  datepicker.jumpToDate(new Date(thisYear-20, 0, 1));
 }
 
 var automaticFillPatientForm = function() {
@@ -1198,6 +1374,163 @@ var transactionNote = function () {
 }
 // end for document dynamically binding element event handlers
 
+var newPatientMedrec = function() {
+  $("#new-patient-medrec").on('blur', function() {
+    const value = $(this).val();
+    if (value != '') {
+      $.ajax({
+        url: baseUrl('pre-analytics/check-medical-record/'+value),
+        method: 'get',
+        error: function(request, status, error){
+          toastr.error(request.responseJSON.message);
+          $("#new-patient-medrec").trigger('focus');
+        }
+      })
+    }
+  });
+}
+
+var editPatientDetails = function() {
+  $("#edit-patient-details-btn").on('click', function() {
+    const transactionId = $(this).data('transaction-id');
+    $.ajax({
+      url: baseUrl('pre-analytics/edit-patient-details/'+transactionId),
+      method: 'get',
+      success: function(res) {
+        $("#form-edit-patient-details input[name='id']").val(res.id);
+        $("#form-edit-patient-details select[name='insurance_id']").html(
+            `<option value='`+res.insurance_id+`' selected>`+ res.insurance.name +`</option>`
+        );
+        $("#form-edit-patient-details select[name='type']").val(res.type).trigger('change');
+        $("#form-edit-patient-details select[name='room_id']").html(
+          `<option value='`+res.room_id+`' selected>` + res.room.room + `</option>`
+        );
+        $("#form-edit-patient-details select[name='doctor_id']").html(
+          `<option value='`+res.doctor_id+`' selected>` + res.doctor.name + `</option>`
+        );
+        if (res.cito) {
+          $("#form-edit-patient-details input[name='cito']").prop('checked', true);
+        } else {
+          $("#form-edit-patient-details input[name='cito']").prop('checked', false);
+        }
+        
+        $("#form-edit-patient-details textarea[name='diagnosis']").html(res.note);
+        $("#form-edit-patient-details textarea[name='diagnosis']").val(res.note);
+      }
+    })
+    $("#edit-patient-details-modal").modal('show');
+  });
+
+  // Initialize
+  $('#form-edit-patient-details').validate({
+    ignore: 'input[type=hidden], .select2-search__field, .ignore-this', // ignore hidden fields
+    errorClass: 'fv-plugins-message-container invalid-feedback',
+    successClass: 'validation-valid-label',
+    validClass: 'validation-valid-label',
+    highlight: function(element, errorClass) {
+        $(element).removeClass(errorClass);
+    },
+    unhighlight: function(element, errorClass) {
+        $(element).removeClass(errorClass);
+    },
+    // success: function(label) {
+    //     label.addClass('validation-valid-label').text('Valid'); // remove to hide Success message
+    // },
+
+    // Different components require proper error label placement
+    errorPlacement: function(error, element) {
+
+        // Unstyled checkboxes, radios
+        if (element.parents().hasClass('form-check')) {
+            error.appendTo( element.parents('.form-check').parent() );
+        }
+
+        // Input with icons and Select2
+        else if (element.parents().hasClass('form-group-feedback') || element.hasClass('select2-hidden-accessible')) {
+            error.appendTo( element.parent() );
+        }
+
+        // Input group, styled file input
+        else if (element.parent().is('.uniform-uploader, .uniform-select') || element.parents().hasClass('input-group')) {
+            error.appendTo( element.parent().parent() );
+        }
+
+        // Other elements
+        else {
+            error.insertAfter(element);
+        }
+    },
+    rules: {
+      insurance_id: {
+        required: true
+      },
+      type: {
+        required: true
+      },
+      room_id: {
+        required: true
+      },
+      doctor_id: {
+        required: true
+      }
+    },
+    messages: {
+        custom: {
+            required: 'This is a custom error message'
+        }
+    },
+    // submitHandler: function(form, event) {
+    // }
+});
+
+  $("#form-edit-patient-details").on('submit', function(e) {
+    e.preventDefault();
+    if ($(this).valid()) {
+        let theForm = $("#form-edit-patient-details");
+        let formData = $("#form-edit-patient-details").serialize();
+
+        $.ajax({
+          url: baseUrl('pre-analytics/update-patient-details'),
+          data: formData,
+          type: 'put',
+          success: function(res) {
+            toastr.success(res.message);
+            theForm.trigger('reset'); // reset the edit patient details form
+            $("#edit-patient-details-modal").modal('hide'); // hide the modal
+            DatatablesServerSide.refreshTable(); // refresh the transaction table
+            onSelectTransaction(res.data); // refresh the patient details data
+          },
+          error: function(request, status, error) {
+            toastr.error(request.responseJSON.message);
+          }
+        });
+    }
+    // editData(e);
+});
+}
+
+var selectType = function() {
+  $("#select-type").on('change', function () {
+    if ($(this).val()) {
+      const roomType = $(this).val();
+      $(".select-room").prop('disabled', false);
+      $("#select-room").select2('destroy');
+      $("#select-room").val('').trigger('change');
+      Select2ServerSideModal('room','room', roomType).init();
+    }
+  });
+
+  $("#select-type-edit").on('change', function () {
+    if ($(this).val()) {
+      const roomType = $(this).val();
+      $(".select-room-edit").prop('disabled', false);
+      $("#select-room-edit").select2('destroy');
+      $("#select-room-edit").val('').trigger('change');
+      Select2ServerSideEditModal('room','room', roomType).init();
+    }
+  });
+}
+
 // On document ready
 document.addEventListener('DOMContentLoaded', function () {
   DatatablesServerSide.init();
@@ -1210,21 +1543,19 @@ document.addEventListener('DOMContentLoaded', function () {
   Select2ServerSideModal('insurance').init();
   Select2ServerSideModal('room','room', '').init();
   Select2ServerSideModal('doctor').init();
+
+  Select2ServerSideEditModal('insurance').init();
+  Select2ServerSideEditModal('room','room', '').init();
+  Select2ServerSideEditModal('doctor').init();
   Stepper();
   birthdate();
   drawAllBtnComponent();
   checkInBtn();
   transactionNote();
+  newPatientMedrec();
+  editPatientDetails();
+  selectType();
 
-  $("#select-type").on('change', function () {
-    if ($(this).val()) {
-      const roomType = $(this).val();
-      $(".select-room").prop('disabled', false);
-      $("#select-room").select2('destroy');
-      $("#select-room").val('').trigger('change');
-      Select2ServerSideModal('room','room', roomType).init();
-    }
-  });
 
   $(".patient-form label").addClass('text-muted');
 

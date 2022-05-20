@@ -23,7 +23,6 @@ class Patient extends Model
         return Validator::make($request->all(),
         [
             'name' => 'required',
-            'medrec' => 'required',
             'gender' => 'required',
             'birthdate' => 'required',
             'address' => 'required',

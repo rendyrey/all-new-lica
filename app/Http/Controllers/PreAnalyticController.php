@@ -358,6 +358,11 @@ class PreAnalyticController extends Controller
             
             if (!$request->patient_id) {
                 // create new patient if user choose the add new patient
+                $medrec = $request->medrec;
+                $checkMedrec = \App\Patient::where('medrec', $medrec)->exists();
+                if ($checkMedrec) { 
+                    throw new \Exception("Medrec has been used");
+                }
                 $new_patient = \App\Patient::create($request->all());
                 $requestData['patient_id'] = $new_patient->id;
             }
@@ -542,7 +547,8 @@ class PreAnalyticController extends Controller
             \App\TransactionTest::where('transaction_id', $request->transaction_id)->whereIn('test_id', $test_ids)
             ->update([
                 'draw' => DB::raw('(CASE WHEN draw = NULL THEN 1 ELSE (1 - draw) END)'),
-                'draw_time' => DB::raw('CASE WHEN draw = "1" THEN "'.Carbon::now().'" ELSE NULL END')
+                'draw_time' => DB::raw('CASE WHEN draw = "1" THEN "'.Carbon::now().'" ELSE NULL END'),
+                'undraw_memo' => DB::raw('CASE WHEN draw = "0" THEN "'. $request->undraw_reason . '" ELSE "" END')
             ]);
 
             $this->logActivity(
@@ -571,7 +577,8 @@ class PreAnalyticController extends Controller
             ->orWhere('draw', null)
             ->update([
                 'draw' => $value,
-                'draw_time' => ($value) ? Carbon::now() : null
+                'draw_time' => ($value) ? Carbon::now() : null,
+                'undraw_memo' => (!$value) ? $request->undraw_reason : ''
             ]);
 
             $this->logActivity(
@@ -701,5 +708,48 @@ class PreAnalyticController extends Controller
 
         $trxId = str_pad($countExistingData, 7, '0', STR_PAD_LEFT);
         return $prefix.$year.$trxId;
+    }
+
+    /**
+     * 
+     */
+    public function checkMedRec($medrec)
+    {
+        try {
+            $checkMedRec = \App\Patient::where('medrec', $medrec)->exists();
+            if ($checkMedRec) {
+                throw new \Exception("Medical Record has been used");
+            }
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
+        }
+    }
+
+    /**
+     * 
+     */
+    public function editPatientDetails($transactionId)
+    {
+        try{
+            $transaction = \App\Transaction::findOrFail($transactionId);
+            return $transaction;
+        } catch (\Exception $e) {
+            return response()->json($e->getMessage(), 400);
+        }
+        
+    }
+
+    /**
+     * 
+     */
+    public function updatePatientDetails(Request $request)
+    {
+        try {
+            \App\Transaction::findOrFail($request->id)->update($request->all());
+            $transaction = \App\Transaction::findOrFail($request->id);
+            return response()->json(['message' => 'Success update patient details', 'data' => $transaction]);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
+        }
     }
 }
