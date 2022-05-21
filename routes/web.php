@@ -74,8 +74,17 @@ Route::middleware(['auth'])->group(function () {
         Route::get('check-medical-record/{medrec}', 'PreAnalyticController@checkMedRec');
         Route::get('edit-patient-details/{transactionId}', 'PreAnalyticController@editPatientDetails');
         Route::put('update-patient-details', 'PreAnalyticController@updatePatientDetails');
+
+        Route::get('go-to-analytics-btn/{transactionId}', 'PreAnalyticController@goToAnalyticBtn');
+        Route::put('go-to-analytics','PreAnalyticController@goToAnalytic');
     });
     // END Pre Analytics
+
+    // BEGIN Analytics
+    Route::prefix('analytics')->group(function(){
+        Route::get('/', 'AnalyticController@index')->name('analytics');
+    });
+    // END Analytics
 
     // BEGIN all route for master data
     Route::get('master/{masterData}', 'MasterController@index');

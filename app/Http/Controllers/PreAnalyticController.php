@@ -519,7 +519,7 @@ class PreAnalyticController extends Controller
     public function updateAnalyzer($transactionTestId, Request $request)
     {
         try {
-            $data = \App\TransactionTest::where('id',$transactionTestId)->first();
+            $data = \App\TransactionTest::where('id', $transactionTestId)->first();
             $data->update(['analyzer_id' => $request->analyzer_id]);
 
             $this->logActivity(
@@ -750,6 +750,55 @@ class PreAnalyticController extends Controller
             return response()->json(['message' => 'Success update patient details', 'data' => $transaction]);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], 400);
+        }
+    }
+
+    /**
+     * 
+     */
+    public function goToAnalyticBtn($transactionId)
+    {
+        try {
+            $transaction = \App\Transaction::findOrFail($transactionId);
+
+            if ($transaction->status == '1') {
+                throw new \Exception("Transaction has been moved to analytic");
+            }
+
+            if ($transaction->no_lab == '' || $transaction->no_lab == null) {
+                throw new \Exception("No Lab has not been set");
+            }
+
+            $allAnalzerSet = false;
+            $transactionTest = \App\TransactionTest::where('transaction_id', $transactionId)->get();
+
+            foreach($transactionTest as $test) {
+                if ($test->analyzer_id == null || $test->analyzer_id == '') {
+                    throw new \Exception('Analyzer hasn\'t been set for all');
+                }
+
+                if ($test->draw == null || $test->draw == '0') {
+                    throw new \Exception('Draw hasn\'t set for all specimen');
+                }
+            }
+
+            return response()->json(['message' => 'Valid', 'valid' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage(), 'valid' => false]);
+        }
+    }
+
+    /**
+     * 
+     */
+    public function goToAnalytic(Request $request)
+    {
+        try {
+            \App\Transaction::where('id', $request->transaction_id)->update(['status' => 1]);
+
+            return response()->json(['message' => 'Success move to analytics']);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessag()], 400);
         }
     }
 }

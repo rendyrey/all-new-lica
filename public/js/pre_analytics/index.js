@@ -372,6 +372,8 @@ var onSelectTransaction = function (selectedData) {
   const patient = selectedData.patient;
   const room = selectedData.room;
   const transactionId = selectedData.id;
+  goToAnalyticsBtn(transactionId);
+
   checkSpecimenDrawStatus(transactionId);
 
   // set transaction id for edit patient details
@@ -461,7 +463,7 @@ var onSelectTransaction = function (selectedData) {
                   $("#select-analyzer-"+item.id).html(res);
                   $("#select-analyzer-"+item.id).select2({allowClear:true});
                   $("#select-analyzer-"+item.id).val(item.analyzer_id).trigger('change');
-                  $("#select-analyzer-"+item.id).attr('onChange',"analyzerChange("+item.id+", event)");
+                  $("#select-analyzer-"+item.id).attr('onChange',"analyzerChange("+item.id+","+item.transaction_id+",event)");
                 }
               })
             });
@@ -554,8 +556,9 @@ var deleteTransaction = function (id) {
   });
 }
 
-function analyzerChange(transactionTestId, event){
+function analyzerChange(transactionTestId, transactionId, event){
   const analyzerId = event.target.value;
+  console.log(transactionId);
   $.ajax({
     url: baseUrl('pre-analytics/transaction-test/update-analyzer/'+transactionTestId),
     data: {
@@ -564,11 +567,13 @@ function analyzerChange(transactionTestId, event){
     type: 'POST',
     success: function(res) {
       toastr.success(res.message, "Update analyzer success!");
+      goToAnalyticsBtn(transactionId);
     }
   })
 }
 
 function drawSpecimenChange(transactionId, specimenId, event) {
+  
   if (!event.target.checked) {
     if (!$("#undraw-all-btn").data('auto-undraw')) {
       Swal.fire({
@@ -588,7 +593,7 @@ function drawSpecimenChange(transactionId, specimenId, event) {
           }
           return { reason: reason }
         },
-        allowOutsideClick: () => !Swal.isLoading()
+        allowOutsideClick: false
       }).then((result) => {
         if (result.isConfirmed) {
           $.ajax({
@@ -604,8 +609,11 @@ function drawSpecimenChange(transactionId, specimenId, event) {
               toastr.success(res.message, "Update draw status success!");
               transactionSpecimenTable.ajax.url(baseUrl('pre-analytics/transaction-specimen/'+transactionId+'/datatable')).load();
               checkSpecimenDrawStatus(transactionId);
+              goToAnalyticsBtn(transactionId);
             }
           });
+        } else {
+          event.target.checked = true;
         }
       })
 
@@ -624,6 +632,7 @@ function drawSpecimenChange(transactionId, specimenId, event) {
         toastr.success(res.message, "Update draw status success!");
         transactionSpecimenTable.ajax.url(baseUrl('pre-analytics/transaction-specimen/'+transactionId+'/datatable')).load();
         checkSpecimenDrawStatus(transactionId);
+        goToAnalyticsBtn(transactionId);
       }
     });
 
@@ -641,6 +650,7 @@ function drawSpecimenChange(transactionId, specimenId, event) {
         toastr.success(res.message, "Update draw status success!");
         transactionSpecimenTable.ajax.url(baseUrl('pre-analytics/transaction-specimen/'+transactionId+'/datatable')).load();
         checkSpecimenDrawStatus(transactionId);
+        goToAnalyticsBtn(transactionId);
       }
     });
   }
@@ -659,6 +669,7 @@ var drawAllBtnComponent = function() {
         toastr.success(res.message, 'Success draw all specimen!');
         transactionSpecimenTable.ajax.url(baseUrl('pre-analytics/transaction-specimen/'+transactionId+'/datatable')).load();
         checkSpecimenDrawStatus(transactionId);
+        goToAnalyticsBtn(transactionId);
       }
     });
   });
@@ -695,11 +706,12 @@ var drawAllBtnComponent = function() {
               toastr.success(res.message, 'Success undraw all specimen!');
               transactionSpecimenTable.ajax.url(baseUrl('pre-analytics/transaction-specimen/'+transactionId+'/datatable/')).load();
               checkSpecimenDrawStatus(transactionId);
+              goToAnalyticsBtn(transactionId);
+
             }
           });
         }
       })
-
       return false;
     }
 
@@ -711,6 +723,7 @@ var drawAllBtnComponent = function() {
         toastr.success(res.message, 'Success undraw all specimen!');
         transactionSpecimenTable.ajax.url(baseUrl('pre-analytics/transaction-specimen/'+transactionId+'/datatable/')).load();
         checkSpecimenDrawStatus(transactionId);
+        goToAnalyticsBtn(transactionId);
       }
     });
   });
@@ -1527,6 +1540,36 @@ var selectType = function() {
       $("#select-room-edit").select2('destroy');
       $("#select-room-edit").val('').trigger('change');
       Select2ServerSideEditModal('room','room', roomType).init();
+    }
+  });
+}
+
+var goToAnalyticsBtn = function(transactionId) {
+  $.ajax({
+    url: baseUrl('pre-analytics/go-to-analytics-btn/'+transactionId),
+    type: 'get',
+    success: function(res) {
+      $("#go-to-analytics-btn").off();
+      console.log(res.message);
+      if (res.valid) {
+        $("#go-to-analytics-btn").prop('disabled', false);
+        $("#go-to-analytics-btn").on('click', function() {
+          $.ajax({
+            url: baseUrl('pre-analytics/go-to-analytics'),
+            type: 'put',
+            data: { transaction_id: transactionId },
+            success: function(result) {
+              toastr.success(result.message);
+              goToAnalyticsBtn(transactionId);
+            },
+            error: function(request, status, error) {
+              toastr.error(request.responseJSON.message);
+            }
+          })
+        });
+      } else {
+        $("#go-to-analytics-btn").prop('disabled', true);
+      }
     }
   });
 }

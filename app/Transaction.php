@@ -19,7 +19,8 @@ class Transaction extends Model
         'created_time',
         'cito',
         'transaction_id_label',
-        'checkin_time'
+        'checkin_time',
+        'status'
     ];
 
     public function patient()

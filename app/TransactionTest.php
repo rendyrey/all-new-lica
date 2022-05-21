@@ -11,6 +11,7 @@ class TransactionTest extends Model
         'draw',
         'draw_time',
         'transaction_id',
+        'analyzer_id',
         'test_id',
         'package_id',
         'price_id',

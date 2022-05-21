@@ -200,7 +200,12 @@
                                 </table>
 
                                 <label for="" class="mt-4 form-label">Note</label>
-                                <textarea class="form-control" data-kt-autosize="true" id="transaction-note" data-transaction-id=""></textarea>
+                                <textarea class="form-control mb-4" data-kt-autosize="true" id="transaction-note" data-transaction-id=""></textarea>
+                                <div class="d-flex justify-content-between">
+                                    <button class="btn btn-light-primary btn-sm">Print nota</button>
+                                    <button class="btn btn-light-primary btn-sm">Print barcode</button>
+                                    <button class="btn btn-light-success btn-sm" id="go-to-analytics-btn">Go to analytics</button>
+                                </div>
                             </div>
                         </div>
                         
