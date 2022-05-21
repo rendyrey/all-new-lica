@@ -83,6 +83,12 @@ Route::middleware(['auth'])->group(function () {
     // BEGIN Analytics
     Route::prefix('analytics')->group(function(){
         Route::get('/', 'AnalyticController@index')->name('analytics');
+
+        // Datatable
+        Route::get('datatable/{startDate?}/{endDate?}', 'AnalyticController@datatable');
+        // End datatable
+
+        Route::get('transaction/{transactionId}', 'AnalyticController@transaction');
     });
     // END Analytics
 

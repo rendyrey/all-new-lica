@@ -1561,6 +1561,7 @@ var goToAnalyticsBtn = function(transactionId) {
             success: function(result) {
               toastr.success(result.message);
               goToAnalyticsBtn(transactionId);
+              DatatablesServerSide.refreshTable();
             },
             error: function(request, status, error) {
               toastr.error(request.responseJSON.message);
