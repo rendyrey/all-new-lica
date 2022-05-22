@@ -9,13 +9,13 @@ use Illuminate\Support\Carbon;
 
 class AnalyticController extends Controller
 {
-    const ANALYTIC_STATUS = 1;
+    const STATUS = 1;
     /**
      * 
      */
     public function index()
     {
-        $data['title'] = 'LICA - Analytics';
+        $data['title'] = 'Analytics';
         return view('dashboard.analytics.index', $data);
     }
 
@@ -28,7 +28,7 @@ class AnalyticController extends Controller
         if ($startDate == null && $endDate == null) {
             $from = Carbon::today()->addHours(0)->addMinutes(0)->addSeconds(0)->toDateTimeString();
             $to = Carbon::today()->addHours(23)->addMinutes(59)->addSeconds(59)->toDateTimeString();
-            $model = \App\Transaction::where('created_time', '>=', $from)->where('created_time', '<=', $to)->where('status', AnalyticController::ANALYTIC_STATUS)->orderBy('cito','desc');
+            $model = \App\Transaction::where('created_time', '>=', $from)->where('created_time', '<=', $to)->where('status', AnalyticController::STATUS)->orderBy('cito','desc');
             
             return DataTables::of($model)
             ->addIndexColumn()
@@ -39,9 +39,22 @@ class AnalyticController extends Controller
         // if the startDate and endDate is set, the query will be depend on the given date.
         $from = Carbon::parse($startDate)->addHours(0)->addMinutes(0)->addSeconds(0)->toDateTimeString();
         $to = Carbon::parse($endDate)->addHours(23)->addMinutes(59)->addSeconds(59)->toDateTimeString();
-        $model = \App\Transaction::where('created_time', '>=', $from)->where('created_time', '<=', $to)->where('status', AnalyticController::ANALYTIC_STATUS)->orderBy('cito','desc');;
+        $model = \App\Transaction::where('created_time', '>=', $from)->where('created_time', '<=', $to)->where('status', AnalyticController::STATUS)->orderBy('cito','desc');;
 
         return DataTables::of($model)
+            ->addIndexColumn()
+            ->escapeColumns([])
+            ->make(true);
+    }
+
+    /**
+     * 
+     */
+    public function datatableTest(Request $request)
+    {
+        $model = \App\TransactionTest::where('transaction_id', $request->transaction_id);
+
+        return Datatables::of($model)
             ->addIndexColumn()
             ->escapeColumns([])
             ->make(true);

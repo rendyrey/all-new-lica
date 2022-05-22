@@ -30,7 +30,8 @@ class Controller extends BaseController
     public function badgeInfo()
     {
         $today = date('Y-m-d');
-        $data['pre_analytics'] = \App\Transaction::where('created_at', '>', $today)->count();
+        $data['pre_analytics'] = \App\Transaction::where('created_at', '>', $today)->where('status', PreAnalyticController::STATUS)->count();
+        $data['analytics'] = \App\Transaction::where('created_at', '>', $today)->where('status', AnalyticController::STATUS)->count();
 
         return response()->json($data);
     }

@@ -24,7 +24,8 @@ class MasterController extends Controller
         'room' => 'App\Room',
         'range' => 'App\Range',
         'interfacing' => 'App\Interfacing',
-        'general_code_test' => 'App\GeneralCodeTest'
+        'general_code_test' => 'App\GeneralCodeTest',
+        'result' => 'App\Result'
     ];
 
     protected $masterId = null;
@@ -54,10 +55,10 @@ class MasterController extends Controller
 
     /**
      * The create function for all master data
-     * 
+     *
      * @param string $masterData The model of the master
      * @param array $request The array of input method
-     * 
+     *
      * @return json response JSON from created master data.
      */
     public function create($masterData, Request $request)
@@ -126,6 +127,7 @@ class MasterController extends Controller
                         "Create $masterData with ID $createdData->id",
                         json_encode($createdData)
                     );
+                    // no break
                 default:
                     $createdData = $this->masters[$masterData]::create($this->mapInputs($masterData, $request));
                     $this->logActivity(
@@ -146,11 +148,11 @@ class MasterController extends Controller
     /**
      * Function for package master
      * it will create a lot of test based test input form.
-     * 
+     *
      * @param object $createdData The created package data
      * @param string $masterData Data that want to be created
      * @param object $request The request data or form data
-     * 
+     *
      * @return void
      */
     private function createPackageTest($createdData, $masterData, $request)
@@ -159,7 +161,7 @@ class MasterController extends Controller
             return; // cancel the operation if the masterdata is not package.
         }
         $data = [];
-        if($request->test_ids != null) {
+        if ($request->test_ids != null) {
             $currentTime = date('Y-m-d H:i:s');
             foreach ($request->test_ids as $test_id) {
                 // collect the test data before insert into package_tests table
@@ -178,7 +180,7 @@ class MasterController extends Controller
     /**
      * Function for master data Price
      * it will be called if the master data that want to be created is price
-     * 
+     *
      * @param object $request Form data or request data
      * @return void
      */
@@ -203,7 +205,7 @@ class MasterController extends Controller
             // collect all data on bulk input for test/package
             $data[] = [
                 'class' => $class_price['class'],
-                'price' => str_replace(',','',$class_price['price']),
+                'price' => str_replace(',', '', $class_price['price']),
                 'test_id' => $request->type == 'test' ? $request->test_id : null,
                 'type' => $request->type,
                 'package_id' => $request->type == 'package' ? $request->package_id : null,
@@ -218,7 +220,7 @@ class MasterController extends Controller
     /**
      * Function for master data Interfacing
      * it will be called if the master data that want to be created is interfacing
-     * 
+     *
      * @param object $request The form data or request data which user given.
      * @return void
      */
@@ -250,10 +252,10 @@ class MasterController extends Controller
 
     /**
      * Function for all master data edit function
-     * 
+     *
      * @param string $masterData The master data
      * @param integer/string $id The master data id
-     * 
+     *
      * @return json The master data based on id given or error message if the operation failed
      */
     public function edit($masterData, $id)
@@ -269,10 +271,10 @@ class MasterController extends Controller
 
     /**
      * Function for all master data update function
-     * 
+     *
      * @param string $masterData The master data
      * @param object $request The form data or request data given.
-     * 
+     *
      * @return json message of success or failed
      */
     public function update($masterData, Request $request)
@@ -306,10 +308,10 @@ class MasterController extends Controller
 
     /**
      * Function for update package test only
-     * 
+     *
      * @param string $masterData the masterdata model name
      * @param object $request Form data or requet data given.
-     * 
+     *
      * @return void
      */
     private function updatePackageTest($masterData, $request)
@@ -319,7 +321,7 @@ class MasterController extends Controller
         }
 
         $data = [];
-        if($request->test_ids != null) {
+        if ($request->test_ids != null) {
             \App\PackageTest::where('package_id', $request->id)->delete(); // delete previous data because we will be doing update for all data
 
             $currentTime = date('Y-m-d H:i:s');
@@ -339,10 +341,10 @@ class MasterController extends Controller
 
     /**
      * Function for deletion for all master data
-     * 
+     *
      * @param string $masterData The master data model name
      * @param integer/string $id The id of master data
-     * 
+     *
      * @return json The message of success or failed
      */
     public function delete($masterData, $id)
@@ -365,17 +367,16 @@ class MasterController extends Controller
 
     /**
      * Function to check data has been used or no before deletion
-     * 
+     *
      * @param string $masterData the master data model name
      * @param integer/string $id the master data model id
-     * 
+     *
      * @return void
      */
     private function validateDelete($masterData, $id)
     {
         $exists = [];
-        switch($masterData)
-        {
+        switch ($masterData) {
             /**
              * using $exists array to collect the utilization of the master model.
              */
@@ -395,6 +396,7 @@ class MasterController extends Controller
                 break;
             case 'room':
                 $exists[] = \App\Transaction::where('room_id', $id)->exists();
+                // no break
             default:
                 $exists[] = false;
         }
@@ -415,7 +417,7 @@ class MasterController extends Controller
         /**
          * STORING COUNT CACHE IF THE ROWS COUNT MORE THAN THE LIMIT SETTINGS (20.000 rows) for all master data
          * it super necessary because it improves performance significantly
-         * 
+         *
          * it will execute query for only once in 10 minutes interval.
          * So, if user open the page or going to next/prev page for the second and more times below 10 minutes interval, it will just use the cache instead of execute the same query again
          * COUNT query is expensive command and too resource demanding, this is super necessary to implement.
@@ -446,12 +448,12 @@ class MasterController extends Controller
 
     /**
      * The datatable for range master data
-     * 
+     *
      * @param string/integer $testId the test_id of range
      */
     public function rangeDatatable($testId)
     {
-         if (Cache::has('range_count')) {
+        if (Cache::has('range_count')) {
             $count = Cache::get('range_count');
         } else {
             $count = \App\Range::where('test_id', $testId)->count();
@@ -469,13 +471,58 @@ class MasterController extends Controller
     }
 
     /**
-     * Function for select option form on the server side rendering.
      * 
+     */
+    public function resultRangeDatatable($testId)
+    {
+        if (Cache::has('result_range_count')) {
+            $count = Cache::get('result_range_count');
+        } else {
+            $count = \App\Result::where('test_id', $testId)->count();
+            if ($count > MasterController::COUNT_LIMIT_FOR_DATATABLE) {
+                Cache::put('result_range_count', $count, 600);
+            }
+        }
+
+        $model = \App\Result::where('test_id', $testId);
+        return DataTables::of($model)
+        ->setTotalRecords($count)
+        ->addIndexColumn()
+        ->escapeColumns([])
+        ->make(true);
+    }
+
+    /**
+     *
+     */
+    public function testLabelDatatable()
+    {
+        if (Cache::has('test_label_count')) {
+            $count = Cache::get('test_label_count');
+        } else {
+            $count = \App\Test::where('range_type', 'label')->count();
+            if ($count > MasterController::COUNT_LIMIT_FOR_DATATABLE) {
+                Cache::put('test_label_count', $count, 600);
+            }
+        }
+
+        $model = \App\Test::where('range_type', 'label');
+        return Datatables::of($model)
+        ->setTotalRecords($count)
+        ->addIndexColumn()
+        ->escapeColumns([])
+        ->make(true);
+        
+    }
+
+    /**
+     * Function for select option form on the server side rendering.
+     *
      * @param string $masterData the master data modmel name
      * @param string $searchKey the searchKey that will be used on search query param.
      * @param string @params the extended params that perhaps needed on the special occasion.
      * @param object $request the request data ['query'] param
-     * 
+     *
      * @return json the master data that was collected based on query param search
      */
     public function selectOptions($masterData, $searchKey, $params = null, Request $request)
@@ -490,9 +537,9 @@ class MasterController extends Controller
                     break;
                 case 'test':
                     $data = $this->masters[$masterData]::selectRaw("tests.id as id, tests.name as name, GROUP_CONCAT(class SEPARATOR ', ') as classes")
-                        ->leftJoin('prices','tests.id','=','prices.test_id')
+                        ->leftJoin('prices', 'tests.id', '=', 'prices.test_id')
                         ->where($searchKey, 'LIKE', '%' . $request->input('query') . '%')
-                        ->where(function($q) {
+                        ->where(function ($q) {
                             $q->where('prices.class', '<>', 0)->orWhereNull('prices.class');
                         })
                         ->groupBy(['tests.id','tests.name'])
@@ -500,9 +547,9 @@ class MasterController extends Controller
                     break;
                 case 'package':
                     $data = $this->masters[$masterData]::selectRaw("packages.id as id, packages.name as name, GROUP_CONCAT(class SEPARATOR ', ') as classes")
-                        ->leftJoin('prices','packages.id','=','prices.test_id')
+                        ->leftJoin('prices', 'packages.id', '=', 'prices.test_id')
                         ->where($searchKey, 'LIKE', '%' . $request->input('query') . '%')
-                        ->where(function($q) {
+                        ->where(function ($q) {
                             $q->where('prices.class', '<>', 0)->orWhereNull('prices.class');
                         })
                         ->groupBy(['packages.id','packages.name'])
@@ -511,7 +558,7 @@ class MasterController extends Controller
                 default:
                     $data = $this->masters[$masterData]::selectRaw('id, '.$searchKey.' as name')
                         ->where($searchKey, 'LIKE', '%' . $request->input('query') . '%')
-                        ->take(150)->get();    
+                        ->take(150)->get();
             }
             
             return response()->json($data);
@@ -522,11 +569,11 @@ class MasterController extends Controller
 
     /**
      * Function for input mapping for all master data inputs before insert/update method.
-     * 
+     *
      * the particular mapping method for now is only for master data: test, room, price, & package. for others will use request as it is.
      * @param string $masterData the master data model name
      * @param object $request the form/request data given.
-     * 
+     *
      * @return array the mapped data
      */
     private function mapInputs($masterData, $request)
@@ -564,12 +611,13 @@ class MasterController extends Controller
 
     /**
      * Function for get test package on master package page
-     * 
-     * @param string $packageIds 
-     * 
+     *
+     * @param string $packageIds
+     *
      * @return json the data of package test
      */
-    public function getTestPackage($packageIds) {
+    public function getTestPackage($packageIds)
+    {
         $pIds = explode(',', $packageIds);
         $data = \App\PackageTest::whereIn('package_id', $pIds)->get();
         return response()->json($data);

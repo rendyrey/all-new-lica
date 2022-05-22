@@ -14,16 +14,7 @@ var getAge = function(dateString) {
   return age;
 }
 
-var buttonActionIndex = 4;
-var analyticsColumnDatatable = [
-  { data: 'no_lab' },
-  { data: 'patient.medrec' },
-  { data: 'room.room' },
-  { data: 'patient.name' },
-  { data: null, render: function(data, type, row) {
-    return "action";
-  }, defaultContent: '', responsivePriority: 1},
-];
+
 
 var DateRangePicker = () => {
   var start = moment();
@@ -62,7 +53,7 @@ var DateRangePicker = () => {
   });
 }
 
-var refreshPatientDetails = (data) => {
+var refreshPatientDetails = (data, transactionId) => {
   $(".name-detail").html(data.patient.name);
   $(".gender-detail").html(data.patient.gender);
   $(".email-detail").html(data.patient.email);
@@ -89,6 +80,12 @@ var refreshPatientDetails = (data) => {
   $(".type-detail").html(patientType);
   $(".doctor-detail").html(data.doctor.name);
   $(".note-detail").html(data.note);
+
+  refreshPatientDatatables(transactionId);
+}
+
+var refreshPatientDatatables = (transactionId) => {
+  alert(transactionId);
 }
 
 var onSelectTransaction = (transactionId) => {
@@ -96,13 +93,23 @@ var onSelectTransaction = (transactionId) => {
     url: baseUrl('analytics/transaction/'+transactionId),
     type: 'get',
     success: function(res) {
-      refreshPatientDetails(res.data);
+      refreshPatientDetails(res.data, transactionId);
     }
-  })
+  });
+
+  DatatableTest.init(transactionId);
 }
+
+$.ajaxSetup({
+  headers: {
+    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+  }
+});
 
 // On document ready
 document.addEventListener('DOMContentLoaded', function () {
   DateRangePicker();
   DatatableAnalytics.init();
+
+  
 });

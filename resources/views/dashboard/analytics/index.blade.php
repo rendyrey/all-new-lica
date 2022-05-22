@@ -139,7 +139,43 @@
                                 </div>
                             </div>
 
-                            <div class="separator mb-4"></div>
+                            <div class="separator"></div>
+
+                            <div class="row mt-2">
+                              <div class="col-8">
+                                  <table class="table table-striped transaction-test-table">
+                                      <thead>
+                                          <tr class="px-0 text-uppercase text-gray-600 fw-bolder fs-7">
+                                              <td class="px-0">Test</td>
+                                              <td class="px-0">Result</td>
+                                              <td class="px-0">Norm</td>
+                                              <td class="px-0">Info</td>
+                                              <td class="px-0">Verf</td>
+                                              <td class="px-0">Val</td>
+                                          </tr>
+                                      </thead>
+                                  </table>
+                              </div>
+                              <div class="col-4">
+                                  <table class="table table-striped transaction-specimen-table">
+                                      <thead>
+                                          <tr class="px-0 text-uppercase text-gray-600 fw-bolder fs-7">
+                                              <td class="px-0">Specimen</td>
+                                              <td class="px-0">Vol.</td>
+                                              <td class="px-0">Draw</td>
+                                          </tr>
+                                      </thead>
+                                  </table>
+  
+                                  <label for="" class="mt-4 form-label">Note</label>
+                                  <textarea class="form-control mb-4" data-kt-autosize="true" id="transaction-note" data-transaction-id=""></textarea>
+                                  <div class="d-flex justify-content-between">
+                                      <button class="btn btn-light-primary btn-sm">Print nota</button>
+                                      <button class="btn btn-light-primary btn-sm">Print barcode</button>
+                                      <button class="btn btn-light-success btn-sm" id="go-to-analytics-btn">Go to analytics</button>
+                                  </div>
+                              </div>
+                          </div>
                         </div>
                     </div>
                 </div>

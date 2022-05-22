@@ -64,14 +64,13 @@ License: For each use you must have a valid license purchased only from above li
 											<div data-kt-menu-trigger="click" data-kt-menu-placement="bottom-start" class="menu-item menu-lg-down-accordion me-lg-1">
                                                 <a class="btn btn-md btn-icon-muted btn-active-light btn-active-color-primary position-relative me-5" href="{{ url('pre-analytics') }}">
                                                     <i class="las la-file-medical fs-1"></i>
-                                                    Pre Analytics
-													<span class="badge badge-circle badge-danger ms-2" id="pre-analytics-badge">{{ Helper::badgeInfo('pre-analytics') }}</span>
+                                                    Pre Analytics	<span class="badge badge-circle badge-danger ms-2" id="pre-analytics-badge"></span>
                                                 </a>
 											</div>
                                             <div data-kt-menu-trigger="click" data-kt-menu-placement="bottom-start" class="menu-item menu-lg-down-accordion me-lg-1">
                                                 <a class="btn btn-md btn-icon-muted btn-active-light btn-active-color-primary" href="{{ url('analytics') }}">
                                                     <i class="las la-microscope fs-1"></i>
-                                                    Analytics <span class="badge badge-circle badge-primary ms-2">0</span>
+                                                    Analytics <span class="badge badge-circle badge-primary ms-2" id="analytics-badge"></span>
                                                 </a>
 											</div>
                                             <div data-kt-menu-trigger="click" data-kt-menu-placement="bottom-start" class="menu-item menu-lg-down-accordion me-lg-1">
@@ -205,6 +204,14 @@ License: For each use you must have a valid license purchased only from above li
 																			<span class="bullet bullet-dot"></span>
 																		</span>
 																		<span class="menu-title">Master Doctor</span>
+																	</a>
+																</div>
+																<div class="menu-item">
+																	<a href="{{ url('master/result') }}" class="menu-link">
+																		<span class="menu-bullet">
+																			<span class="bullet bullet-dot"></span>
+																		</span>
+																		<span class="menu-title">Master Result Label</span>
 																	</a>
 																</div>
 															</div>

@@ -5,6 +5,7 @@ var loadAllAnalyticsBadgeInfo = function () {
     method: 'GET',
     success: function(res) {
       $("#pre-analytics-badge").html(res.pre_analytics);
+      $("#analytics-badge").html(res.analytics);
     },
     error: function (request, status, error) {
     

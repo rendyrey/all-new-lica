@@ -9,6 +9,7 @@ use Illuminate\Support\Carbon;
 
 class PreAnalyticController extends Controller
 {
+    const STATUS = 0;
     public function index()
     {
         $data['title'] = 'Pre Analytics';
@@ -745,7 +746,9 @@ class PreAnalyticController extends Controller
     public function updatePatientDetails(Request $request)
     {
         try {
-            \App\Transaction::findOrFail($request->id)->update($request->all());
+            $data = $request->all();
+            $data['cito'] = $request->cito == true;
+            \App\Transaction::findOrFail($request->id)->update($data);
             $transaction = \App\Transaction::findOrFail($request->id);
             return response()->json(['message' => 'Success update patient details', 'data' => $transaction]);
         } catch (\Exception $e) {
