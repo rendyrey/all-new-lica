@@ -42,4 +42,10 @@ class Transaction extends Model
     {
         return $this->belongsTo('App\Doctor','doctor_id','id');
     }
+
+    // public function transaction_tests()
+    // {
+    //     // return 
+    //     return $this->hasMany('App\TransactionTest', 'transaction_id', 'id');
+    // }
 }

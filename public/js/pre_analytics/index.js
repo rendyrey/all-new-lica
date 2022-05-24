@@ -79,9 +79,9 @@ var DatatablesServerSide = function () {
                   searchable: false,
                   render: function (data, type, row) {
                       return `
-                              <button class="btn btn-light-danger btn-sm px-2" data-kt-docs-table-filter="delete_row" onClick="deleteTransaction(`+row.id+`)">
-                                <i class="bi bi-trash-fill pe-0"></i>
-                              </button>
+                        <button class="btn btn-light-danger btn-sm px-2" data-kt-docs-table-filter="delete_row" onClick="deleteTransaction(`+row.id+`)">
+                          <i class="bi bi-trash-fill pe-0"></i>
+                        </button>
                       `;
                   },
               },

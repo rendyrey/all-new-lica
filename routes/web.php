@@ -86,10 +86,13 @@ Route::middleware(['auth'])->group(function () {
 
         // Datatable
         Route::get('datatable/{startDate?}/{endDate?}', 'AnalyticController@datatable');
-        Route::post('datatable/test', 'AnalyticController@datatableTest');
+        Route::get('datatable-test/{transactionId}', 'AnalyticController@datatableTest');
+        Route::get('result-label/{testId}', 'AnalyticController@resultlabel');
         // End datatable
 
         Route::get('transaction/{transactionId}', 'AnalyticController@transaction');
+        Route::put('update-result-number/{transactionTestId}', 'AnalyticController@updateResultNumber');
+        Route::put('update-result-label/{transactionTestId}', 'AnalyticController@updateResultLabel');
     });
     // END Analytics
 

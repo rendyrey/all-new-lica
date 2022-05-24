@@ -539,9 +539,9 @@ class MasterController extends Controller
                     $data = $this->masters[$masterData]::selectRaw("tests.id as id, tests.name as name, GROUP_CONCAT(class SEPARATOR ', ') as classes")
                         ->leftJoin('prices', 'tests.id', '=', 'prices.test_id')
                         ->where($searchKey, 'LIKE', '%' . $request->input('query') . '%')
-                        ->where(function ($q) {
-                            $q->where('prices.class', '<>', 0)->orWhereNull('prices.class');
-                        })
+                        // ->where(function ($q) {
+                        //     $q->where('prices.class', '=', 0)->orWhere('prices.class', '=' , 0);
+                        // })
                         ->groupBy(['tests.id','tests.name'])
                         ->take(150)->get();
                     break;
@@ -549,9 +549,9 @@ class MasterController extends Controller
                     $data = $this->masters[$masterData]::selectRaw("packages.id as id, packages.name as name, GROUP_CONCAT(class SEPARATOR ', ') as classes")
                         ->leftJoin('prices', 'packages.id', '=', 'prices.test_id')
                         ->where($searchKey, 'LIKE', '%' . $request->input('query') . '%')
-                        ->where(function ($q) {
-                            $q->where('prices.class', '<>', 0)->orWhereNull('prices.class');
-                        })
+                        // ->where(function ($q) {
+                        //     $q->where('prices.class', '=', 0)->orWhereNull('prices.class');
+                        // })
                         ->groupBy(['packages.id','packages.name'])
                         ->take(150)->get();
                     break;

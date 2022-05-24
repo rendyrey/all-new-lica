@@ -143,18 +143,21 @@
 
                             <div class="row mt-2">
                               <div class="col-8">
-                                  <table class="table table-striped transaction-test-table">
-                                      <thead>
-                                          <tr class="px-0 text-uppercase text-gray-600 fw-bolder fs-7">
-                                              <td class="px-0">Test</td>
-                                              <td class="px-0">Result</td>
-                                              <td class="px-0">Norm</td>
-                                              <td class="px-0">Info</td>
-                                              <td class="px-0">Verf</td>
-                                              <td class="px-0">Val</td>
-                                          </tr>
-                                      </thead>
-                                  </table>
+                                <table class="table table-striped transaction-test-table" style="table-layout: fixed">
+                                    <thead>
+                                        <tr class="px-0 text-uppercase text-gray-600 fw-bolder fs-7">
+                                            <td class="px-0">Test</td>
+                                            <td class="px-0">Result</td>
+                                            <td class="px-0">Norm</td>
+                                            <td class="px-0"><i class="bi bi-info-circle"></i></td>
+                                            <td class="px-0">Verf</td>
+                                            <td class="px-0">Val</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="transaction-test-table-body">
+                                        
+                                    </tbody>
+                                </table>
                               </div>
                               <div class="col-4">
                                   <table class="table table-striped transaction-specimen-table">

@@ -36,10 +36,10 @@ var rulesFormValidation = {
         required: true
     },
     analyzer_id: {
-        required: true,
+        required: true
     },
     code: {
-        required: true,
+        required: true
     }
 };
 

@@ -85,7 +85,39 @@ var refreshPatientDetails = (data, transactionId) => {
 }
 
 var refreshPatientDatatables = (transactionId) => {
-  alert(transactionId);
+  $.ajax({
+    url: baseUrl('analytics/datatable-test/'+transactionId),
+    type: 'get',
+    success: function(data) {
+        $("#transaction-test-table-body").html(data.html);
+        data.data.forEach(function(item) {
+          // $(".select-result-label").select2({allowClear: true});
+          $("#select-result-label-"+item.id).select2({allowClear: true});
+          $("#select-result-label-"+item.id).val(item.result_label).trigger('change');
+          $("#select-result-label-"+item.id).attr('onChange',"resultLabelChange("+item.id+",event)");
+        });
+    }
+  });
+  // alert(transactionId);
+}
+
+function resultLabelChange(transactionTestId, e) {
+  const component = e.target;
+  const value = e.target.value;
+  // alert(value)
+  // const transactionTestId = component.data('transaction-test-id');
+  $.ajax({
+      url: baseUrl('analytics/update-result-label/'+transactionTestId),
+      type: 'put',
+      data: { result: value },
+      success: function(res) {
+          toastr.success("Success update result label");
+      },
+      error: function(request, status, error) {
+          toastr.error(request.responseJSON.message);
+          component.focus();
+      }
+  })
 }
 
 var onSelectTransaction = (transactionId) => {
@@ -97,7 +129,9 @@ var onSelectTransaction = (transactionId) => {
     }
   });
 
-  DatatableTest.init(transactionId);
+  // DatatableTest.init(transactionId);
+  // const newUrl = baseUrl('analytics/datatable-test/'+transactionId);
+  // DatatableTest.refreshTableAjax(newUrl);
 }
 
 $.ajaxSetup({
@@ -110,6 +144,6 @@ $.ajaxSetup({
 document.addEventListener('DOMContentLoaded', function () {
   DateRangePicker();
   DatatableAnalytics.init();
-
-  
+  // $(".select").select2();
+  // DatatableTest.init();
 });
