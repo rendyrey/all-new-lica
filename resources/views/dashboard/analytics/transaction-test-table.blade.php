@@ -136,8 +136,8 @@
                 @endif
             </td>
             <td style="border-right: 1px solid grey">{!! normalRef($transaction->patient, $value, $key) !!}</td>
-            <td style="border-right: 1px solid grey" id="label-info-{{$value->id}}">{!! labelInfo($value->result_status) !!}</td>
-            <td style="border-right: 1px solid grey">{!! verifyCheckbox($value) !!}</td>
+            <td class="text-center" style="border-right: 1px solid grey" id="label-info-{{$value->id}}">{!! labelInfo($value->result_status) !!}</td>
+            <td class="text-center" style="border-right: 1px solid grey">{!! verifyCheckbox($value) !!}</td>
             <td>{!! validateCheckbox($value) !!}</td>
         </tr>
    @endforeach

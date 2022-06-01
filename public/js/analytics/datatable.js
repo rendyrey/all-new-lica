@@ -134,7 +134,7 @@ var DatatableAnalytics = function () {
 
       dt.on('select', function(e, data, type, indexes) {
         const selectedData = data.rows().data()[indexes];
-        selectedTransactionId = selectedData.id;
+        selectedTransactionId = selectedData.t_id;
         onSelectTransaction(selectedTransactionId);
       });
   }

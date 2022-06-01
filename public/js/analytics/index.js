@@ -299,6 +299,20 @@ document.addEventListener('DOMContentLoaded', function () {
   verifyAllBtn();
   validateAllBtn();
   DatatableAnalytics.init();
+
+  $(".transaction-test-table").DataTable({
+    "scrollY": "500px",
+    "scrollCollapse": true,
+    "paging": false,
+    // "dom": "<'table-responsive'tr>",
+    "sort": false,
+    autoWidth: false,
+    "columnDefs": [
+      { "width": "220px", "targets": 0 },
+      { "width": "42px", "targets": -1},
+      { "width": "42px", "targets": -2}
+    ]
+  });
   // $(".select").select2();
   // DatatableTest.init();
 });

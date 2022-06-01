@@ -34,7 +34,7 @@ class AnalyticController extends Controller
         if ($startDate == null && $endDate == null) {
             $from = Carbon::today()->addHours(0)->addMinutes(0)->addSeconds(0)->toDateTimeString();
             $to = Carbon::today()->addHours(23)->addMinutes(59)->addSeconds(59)->toDateTimeString();
-            $model = \App\Transaction::where('created_time', '>=', $from)
+            $model = \App\Transaction::selectRaw('transactions.*, transactions.id as t_id')->where('created_time', '>=', $from)
                 ->where('created_time', '<=', $to)
                 ->where('status', AnalyticController::STATUS)
                 ->orderBy('cito','desc');
@@ -48,7 +48,7 @@ class AnalyticController extends Controller
         // if the startDate and endDate is set, the query will be depend on the given date.
         $from = Carbon::parse($startDate)->addHours(0)->addMinutes(0)->addSeconds(0)->toDateTimeString();
         $to = Carbon::parse($endDate)->addHours(23)->addMinutes(59)->addSeconds(59)->toDateTimeString();
-        $model = \App\Transaction::where('created_time', '>=', $from)
+        $model = \App\Transaction::selectRaw('transactions.*, transactions.id as t_id')->where('created_time', '>=', $from)
             ->where('created_time', '<=', $to)
             ->where('status', AnalyticController::STATUS)
             ->orderBy('cito','desc');
@@ -115,7 +115,7 @@ class AnalyticController extends Controller
             
             return response()->json(['message' => 'SUCCESS', 'data' => $transaction]);
         } catch (\Exception $e) {
-            return response()->json(['message' => $e->getMesage()], 400);
+            return response()->json(['message' => $e->getMessage()], 400);
         }
     }
 
