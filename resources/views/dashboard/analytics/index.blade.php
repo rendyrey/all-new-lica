@@ -153,8 +153,8 @@
                                         <button class="btn btn-light-danger btn-sm mb-1" id="unvalidate-all-btn" data-transaction-id="">Unval All</button>
                                     </div>
                                 </div>
-                                <table class="table table-striped transaction-test-table" style="">
-                                    <thead>
+                                <table class="table table-striped transaction-test-table" style="display:block;height:400px;overflow-y:scroll">
+                                    <thead style="position:sticky;top:0;z-index:1;background:#fff">
                                         <tr class="px-0 text-uppercase text-gray-600 fw-bolder fs-7">
                                             <td class="px-0">Test</td>
                                             <td class="px-0">Result</td>
@@ -202,6 +202,8 @@
 
 </div>
 <!--end::Content-->
+
+@include('dashboard.analytics.critical-modal')
 
 @endsection
 

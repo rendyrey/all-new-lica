@@ -156,7 +156,7 @@ var DatatableRefRange = function () {
           order: [],
           stateSave: false,
           ajax: {
-              url: baseUrl('master/datatable/test')
+              url: baseUrl('master/ref-range/datatable')
           },
           columns: [
             { data: 'name' }

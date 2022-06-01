@@ -5,14 +5,8 @@ var withModel = ['test','analyzer']; // required for the datatable if the model 
 // required for the datatable columns
 var buttonActionIndex = 3;
 var columnsDataTable = [
-    { data: null, render: function(data, type, row) {
-        return row.test.name;
-      } 
-    },
-    { data: null, render: function(data, type, row) {
-        return row.analyzer.name;
-      } 
-    },
+    { data: 'test.name' },
+    { data: 'analyzer.name' },
     { data: 'code' }
 ];
 

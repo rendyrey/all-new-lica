@@ -113,6 +113,26 @@ function resultLabelChange(transactionTestId, e) {
       data: { result: value },
       success: function(res) {
           toastr.success("Success update result label");
+          switch (res.label) {
+            case 1: // normal
+                label = '<span class="badge badge-sm badge-circle badge-success">N</span>';
+                break;
+            case 2: // low
+                label = '<span class="badge badge-sm badge-circle badge-warning">L</span>';
+                break;
+            case 3: // high
+                label = '<span class="badge badge-sm badge-circle badge-warning">H</span>';
+                break;
+            case 4: // abnormal
+                label = '<span class="badge badge-sm badge-circle badge-warning">A</span>';
+                break;
+            case 5: // critical
+                label = '<span class="badge badge-sm badge-circle badge-danger">C</span>';
+                break;
+            default:
+                label = '';
+          }
+        $("#label-info-"+transactionTestId).html(label);
       },
       error: function(request, status, error) {
           toastr.error(request.responseJSON.message);
@@ -136,15 +156,80 @@ var onSelectTransaction = (transactionId) => {
 }
 
 var verifyAllBtn = () => {
-  $("#verify-all-btn").on('click', function() {
-    const transactionId = $(this).data('transaction-id');
+  $("#cancel-modal-btn").on('click', function() {
+    $("#critical-modal").modal('hide');
+  });
+
+  $("#report-modal-btn").on('click', function(e) {
+    const reportTo = $("#critical-modal input[name='report_to']").val();
+    const reportBy = $("#critical-modal input[name='report_by']").val();
+    const criticalTestIds = $("#critical-modal input[name='transaction_test_ids']").val();
+    const transactionId = $("#critical-modal input[name='transaction_id']").val();
+    
+    $.ajax({
+      url: baseUrl('analytics/report-critical-tests'),
+      type: 'put',
+      data: {
+        report_to: reportTo,
+        report_by: reportBy,
+        transaction_test_ids: criticalTestIds,
+        transaction_id: transactionId
+      },
+      success: function(res) {
+        toastr.success("Success reporting critical tests");
+        $("#critical-modal").modal('hide');
+      }
+    });
+
     $.ajax({
       url: baseUrl('analytics/verify-all/'+transactionId),
       type: 'put',
       success: function(res) {
         onSelectTransaction(transactionId);
       }
-    })
+    });
+
+    e.preventDefault();
+  });
+
+  $("#verify-all-btn").on('click', function() {
+    const transactionId = $(this).data('transaction-id');
+    $.ajax({
+      url: baseUrl('analytics/check-critical-test/'+transactionId),
+      type: 'get',
+      success: function(res) {
+        // console.log(res.exists);
+        if (res.exists) {
+          let criticalTests = '';
+          let criticalTestIds = [];
+          res.data.forEach((item) => {
+            criticalTests += '<li>'+item.test.name+'  <i>value: </i>'+item.result_number+'</li>';
+            criticalTestIds.push(item.id);
+          });
+
+          $("#critical-tests").html(criticalTests);
+          $("#critical-modal input[name='transaction_test_ids']").val(criticalTestIds.join(','));
+          $("#critical-modal input[name='transaction_id']").val(transactionId);
+          $("#critical-modal").modal('show');
+        } else {
+           $.ajax({
+            url: baseUrl('analytics/verify-all/'+transactionId),
+            type: 'put',
+            success: function(res) {
+              onSelectTransaction(transactionId);
+            }
+          });
+        }
+      }
+    });
+
+    // $.ajax({
+    //   url: baseUrl('analytics/verify-all/'+transactionId),
+    //   type: 'put',
+    //   success: function(res) {
+    //     onSelectTransaction(transactionId);
+    //   }
+    // })
   });
 }
 
@@ -159,6 +244,47 @@ var validateAllBtn = () => {
       }
     })
   });
+}
+
+var memoTestModal = (transactionTestId, transactionId, text) => {
+  Swal.fire({
+    title: 'Test Memo',
+    text: 'Please input a memo',
+    input: 'text',
+    customClass: 'w-600px',
+    inputAttributes: {
+      autocapitalize: 'off'
+    },
+    inputValue: text,
+    showCancelButton: true,
+    confirmButtonText: 'Submit',
+    showLoaderOnConfirm: true,
+    preConfirm: (reason) => {
+      if (reason == '') {
+        Swal.showValidationMessage(`Please enter a memo`)
+      }
+      return { reason: reason }
+    },
+    allowOutsideClick: false
+  }).then((result) => {
+    if (result.isConfirmed) {
+      $.ajax({
+        url: baseUrl('analytics/update-test-memo'),
+        type: 'put',
+        data: {
+          transaction_test_id: transactionTestId,
+          memo: result.value.reason
+        },
+        success: function(res) {
+          toastr.success(res.message, "Update test memo success!");
+          onSelectTransaction(transactionId);
+        }
+      });
+    } else {
+      // event.target.checked = true;
+    }
+  })
+
 }
 
 $.ajaxSetup({

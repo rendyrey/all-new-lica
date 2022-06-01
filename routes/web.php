@@ -99,6 +99,10 @@ Route::middleware(['auth'])->group(function () {
         Route::put('verify-test/{transactionTestId}', 'AnalyticController@verifyTest');
         Route::put('validate-all/{transactionId}', 'AnalyticController@validateAll');
         Route::put('validate-test/{transactionTestId}', 'AnalyticController@validateTest');
+        Route::put('update-test-memo', 'AnalyticController@updateTestMemo');
+
+        Route::get('check-critical-test/{transactionId}', 'AnalyticController@checkCriticalTest');
+        Route::put('report-critical-tests', 'AnalyticController@reportCriticalTest');
     });
     // END Analytics
 
@@ -110,6 +114,7 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('master/{masterData}/delete/{id}', 'MasterController@delete');
     // datatable route for master data
     Route::get('master/datatable/{masterData}/{with?}', 'MasterController@datatable');
+    Route::get('master/ref-range/datatable', 'MasterController@testRangeDatatable');
     Route::get('master/test-label/datatable', 'MasterController@testLabelDatatable');
     Route::get('master/range/{testId}', 'MasterController@rangeDatatable');
     Route::get('master/result-range/{testId}', 'MasterController@resultRangeDatatable');

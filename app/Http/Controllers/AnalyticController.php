@@ -14,7 +14,8 @@ class AnalyticController extends Controller
     const RESULT_STATUS_NORMAL = 1;
     const RESULT_STATUS_LOW = 2;
     const RESULT_STATUS_HIGH = 3;
-    const RESULT_STATUS_CRITICAL = 4;
+    const RESULT_STATUS_ABNORMAL = 4;
+    const RESULT_STATUS_CRITICAL = 5;
     /**
      * 
      */
@@ -223,13 +224,29 @@ class AnalyticController extends Controller
     public function updateResultLabel($transactionTestId, Request $request)
     {
         try {
-            // $result = \App\Result::where('id', $request->input('result'))->first();
             $transactionTest = \App\TransactionTest::where('id', $transactionTestId)->first();
             $transactionTest->result_label = $request->input('result');
-            // $transactionTest->result_text = $result ? $result->result : '';
+
+            if ($request->input('result')) {
+                $result = \App\Result::where('id', $request->input('result'))->first();
+                // $transactionTest->result_text = $result ? $result->result : '';
+                switch ($result->status) {
+                    case 'normal':
+                        $transactionTest->result_status = AnalyticController::RESULT_STATUS_NORMAL;
+                        break;
+                    case 'abnormal':
+                        $transactionTest->result_status = AnalyticController::RESULT_STATUS_ABNORMAL;
+                        break;
+                    case 'critical':
+                        $transactionTest->result_status = AnalyticController::RESULT_STATUS_CRITICAL;
+                        break;
+                }
+            } else {
+                $transactionTest->result_status = null;
+            }
             $transactionTest->save();
 
-            return response()->json(['message' => 'success']);
+            return response()->json(['message' => 'success', 'label' => $transactionTest->result_status]);
 
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], 400);
@@ -281,7 +298,7 @@ class AnalyticController extends Controller
             if (!$transactionTest->result_text && !$transactionTest->result_number && !$transactionTest->result_label && $request->value == 1) {
                 throw new \Exception("Unable to verify because result has not been set");
             }
-            
+
             $transactionTest->verify = $request->value;
             $transactionTest->verify_by = $user->id;
             $transactionTest->verify_time = Carbon::now();
@@ -340,8 +357,55 @@ class AnalyticController extends Controller
             $transactionTest->validate_time = Carbon::now();
             
             $transactionTest->save();
+            
+            return response()->json(['message' => 'success']);
         } catch (\Exception $e) {
-
+            return response()->json(['message' => $e->getMessage()], 400);
         }
+    }
+
+    public function updateTestMemo(Request $request)
+    {
+        try {
+            $transactionTestId = $request->transaction_test_id;
+            $memo = $request->memo;
+
+            $transactionTest = \App\TransactionTest::where('id', $transactionTestId)->first();
+
+            $transactionTest->memo_test = $memo;
+            $transactionTest->save();
+
+            return response()->json(['message' => 'success']);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
+        }
+    }
+
+    public function checkCriticalTest($transactionId)
+    {
+        $transactionTests = \App\TransactionTest::where('transaction_id', $transactionId)
+            ->where('result_status', AnalyticController::RESULT_STATUS_CRITICAL)
+            ->whereIn('verify', [0, null])->get();
+
+        if (count($transactionTests) > 0) {
+            return response()->json(['data' => $transactionTests, 'exists' => true]);
+        } else {
+            return response()->json(['data' => $transactionTests, 'exists' => false]);
+        }
+        
+    }
+
+    public function reportCriticalTest(Request $request)
+    {
+        $criticalTestIds = explode(',', $request->transaction_test_ids);
+        $reportTo = $request->report_to;
+        $reportBy = $request->report_by;
+
+        $tests = \App\TransactionTest::whereIn('id', $criticalTestIds)->update([
+            'report_status' => 1,
+            'report_by' => $reportBy,
+            'report_to' => $reportTo
+        ]);
+        return response()->json(['data' => $request->all()]);
     }
 }

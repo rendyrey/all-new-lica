@@ -1,4 +1,10 @@
 @php
+    function testMemo($value) {
+        $fill = $value->memo_test ? '-fill' : '';
+        $icon = '<i class="bi bi-pencil'.$fill.'" style="cursor:pointer" onClick="memoTestModal('.$value->id.','.$value->transaction_id.',`'.$value->memo_test.'`)"></i>';
+
+        return $icon;
+    }
     
     function labelType($value, $transactionTestId, $testId, $tabIndex) {
         $results = \App\Result::where('test_id', $testId)->get();
@@ -62,13 +68,15 @@
     function labelInfo($result_status) {
         switch ($result_status) {
             case 1: // normal
-                return '<span class="badge badge-circle badge-success">N</span>';
+                return '<span class="badge badge-sm badge-circle badge-success">N</span>';
             case 2: // low
-                return '<span class="badge badge-circle badge-warning">L</span>';
+                return '<span class="badge badge-sm badge-circle badge-warning">L</span>';
             case 3: // high
-                return '<span class="badge badge-circle badge-warning">H</span>';
-            case 4: // critical
-                return '<span class="badge badge-circle badge-danger">C</span>';
+                return '<span class="badge badge-sm badge-circle badge-warning">H</span>';
+            case 4: // abnormal
+                return '<span class="badge badge-sm badge-circle badge-warning">A</span>';
+            case 5: // critical
+                return '<span class="badge badge-sm badge-circle badge-danger">C</span>';
         }
     }
 
@@ -113,7 +121,11 @@
         @endif
         <tr>
             
-            <td style="border-right: 1px solid grey">{{$value->test->name}}</td>
+            <td style="border-right: 1px solid grey">
+                <div class="d-flex justify-content-between">
+                    <span>{{$value->test->name}}</span><span>{!! testMemo($value) !!}</span>
+                </div>
+            </td>
             <td style="border-right: 1px solid grey">
                 @if ($value->test->range_type == 'label')
                     {!! labelType($value, $value->id, $value->test_id, $key) !!}
@@ -156,7 +168,10 @@
                     case 3: // high
                         label = '<span class="badge badge-sm badge-circle badge-warning">H</span>';
                         break;
-                    case 4: // critical
+                    case 4: // abnormal
+                        label = '<span class="badge badge-sm badge-circle badge-warning">A</span>';
+                        break;
+                    case 5: // critical
                         label = '<span class="badge badge-sm badge-circle badge-danger">C</span>';
                         break;
                 }

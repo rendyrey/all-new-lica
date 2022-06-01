@@ -397,6 +397,10 @@ class MasterController extends Controller
             case 'room':
                 $exists[] = \App\Transaction::where('room_id', $id)->exists();
                 // no break
+                break;
+            case 'result':
+                $exists[] = \App\TransactionTest::where('result_label', $id)->exists();
+                break;
             default:
                 $exists[] = false;
         }
@@ -465,6 +469,16 @@ class MasterController extends Controller
         $model = \App\Range::where('test_id', $testId);
         return DataTables::of($model)
         ->setTotalRecords($count)
+        ->addIndexColumn()
+        ->escapeColumns([])
+        ->make(true);
+    }
+
+    public function testRangeDatatable()
+    {
+        $model = \App\Test::where('range_type', 'number');
+        
+        return DataTables::of($model)
         ->addIndexColumn()
         ->escapeColumns([])
         ->make(true);
