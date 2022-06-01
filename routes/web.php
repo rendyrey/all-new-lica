@@ -93,6 +93,12 @@ Route::middleware(['auth'])->group(function () {
         Route::get('transaction/{transactionId}', 'AnalyticController@transaction');
         Route::put('update-result-number/{transactionTestId}', 'AnalyticController@updateResultNumber');
         Route::put('update-result-label/{transactionTestId}', 'AnalyticController@updateResultLabel');
+        Route::put('update-result-description/{transactionTestId}', 'AnalyticController@updateResultDescription');
+
+        Route::put('verify-all/{transactionId}', 'AnalyticController@verifyAll');
+        Route::put('verify-test/{transactionTestId}', 'AnalyticController@verifyTest');
+        Route::put('validate-all/{transactionId}', 'AnalyticController@validateAll');
+        Route::put('validate-test/{transactionTestId}', 'AnalyticController@validateTest');
     });
     // END Analytics
 

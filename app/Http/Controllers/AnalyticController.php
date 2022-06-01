@@ -6,10 +6,15 @@ use Illuminate\Http\Request;
 use DataTables;
 use DB;
 use Illuminate\Support\Carbon;
+use Auth;
 
 class AnalyticController extends Controller
 {
     const STATUS = 1;
+    const RESULT_STATUS_NORMAL = 1;
+    const RESULT_STATUS_LOW = 2;
+    const RESULT_STATUS_HIGH = 3;
+    const RESULT_STATUS_CRITICAL = 4;
     /**
      * 
      */
@@ -63,6 +68,7 @@ class AnalyticController extends Controller
             ->leftJoin('groups','groups.id','tests.group_id')
             ->where('transaction_id', $transactionId)
             ->orderBy('groups.id','asc')
+            ->orderBy('tests.sequence', 'asc')
             ->get();
 
         $transaction = \App\Transaction::findOrFail($transactionId);
@@ -132,38 +138,30 @@ class AnalyticController extends Controller
                 throw new \Exception("The Range ref. doesn't exist");
             }
 
-            if ($patient->gender == 'M') {
-                if ($request->result >= $range->min_male_ref && $request->result <= $range->max_male_ref) {
-                    $status = 'normal';
-                } else if ($request->result < $range->min_crit_male || $request->result > $range->max_crit_male) {
-                    $status = 'critical';
-                } else if ($request->result < $range->min_male_ref || $request->result > $range->max_male_ref) {
-                    $status = 'abnormal';
-                }
-            } else {
-                if ($patient->gender == 'F') {
-                    if ($request->result >= $range->min_female_ref && $request->result <= $range->max_female_ref) {
-                        $status = 'normal';
-                    } else if ($request->result < $range->min_crit_female || $request->result > $range->max_crit_male) {
-                        $status = 'critical';
-                    } else if ($request->result < $range->min_female_ref || $request->result > $range->max_female_ref) {
-                        $status = 'abnormal';
-                    }
-                }
-            }
+            $status = $this->checkResultStatus($patient, $range, $request);
 
-            if ($status == 'normal') {
-                $transactionTest->result_status = 1;
-            } else if ($status == 'abnormal') {
-                $transactionTest->result_status = 2;
-            } else {
-                $transactionTest->result_status = 3;
+            switch ($status) {
+                case 'normal':
+                    $transactionTest->result_status = AnalyticController::RESULT_STATUS_NORMAL;
+                    break;
+                case 'low':
+                    $transactionTest->result_status = AnalyticController::RESULT_STATUS_LOW;
+                    break;
+                case 'high':
+                    $transactionTest->result_status = AnalyticController::RESULT_STATUS_HIGH;
+                    break;
+                case 'critical':
+                    $transactionTest->result_status = AnalyticController::RESULT_STATUS_CRITICAL;
+                    break;
+                default:
+                    $transactionTest->result_status = 0;
             }
 
             $transactionTest->save();
+            $this->updateIsCriticalStatus($transactionTest->transaction_id);
             DB::commit();
 
-            return response()->json(['age' => $ageInDays]);
+            return response()->json(['age' => $ageInDays, 'label' => $transactionTest->result_status]);
             // $range = \App\Range::where('test_id')
         } catch (\Exception $e) {
 
@@ -172,19 +170,178 @@ class AnalyticController extends Controller
         }
     }
 
+    private function checkResultStatus($patient, $range, $request)
+    {
+        $status = '';
+        if ($patient->gender == 'M') {
+            if ($request->result >= $range->min_male_ref && $request->result <= $range->max_male_ref) {
+                $status = 'normal';
+            } else if ($request->result < $range->min_crit_male || $request->result > $range->max_crit_male) {
+                $status = 'critical';
+            } else if ($request->result < $range->min_male_ref) {
+                $status = 'low';
+            } else if ($request->result > $range->max_male_ref) {
+                $status = 'high';
+            }
+        } else {
+            if ($request->result >= $range->min_female_ref && $request->result <= $range->max_female_ref) {
+                $status = 'normal';
+            } else if ($request->result < $range->min_crit_female || $request->result > $range->max_crit_male) {
+                $status = 'critical';
+            } else if ($request->result < $range->min_female_ref) {
+                $status = 'abnormal';
+            } else if ($request->result > $range->max_female_ref) {
+                $status = 'high';
+            }
+        }
+
+        return $status;
+    }
+
+    private function updateIsCriticalStatus($transactionId)
+    {
+        $transaction = \App\Transaction::findOrFail($transactionId);
+        $transactionTest = \App\TransactionTest::where('transaction_id', $transactionId)->get();
+
+        $isCriticalExists = 0;
+        foreach($transactionTest as $value) {
+            if ($value->result_status == AnalyticController::RESULT_STATUS_CRITICAL) {
+                $isCriticalExists = 1;
+                break;
+            }
+        }
+
+        if ($isCriticalExists) {
+            $transaction->is_critical = true;
+        } else {
+            $transaction->is_critical = false;
+        }
+
+        $transaction->save();
+    }
+
     public function updateResultLabel($transactionTestId, Request $request)
     {
         try {
-            $result = \App\Result::where('id', $request->input('result'))->first();
+            // $result = \App\Result::where('id', $request->input('result'))->first();
             $transactionTest = \App\TransactionTest::where('id', $transactionTestId)->first();
             $transactionTest->result_label = $request->input('result');
-            $transactionTest->result_text = $result ? $result->result : '';
+            // $transactionTest->result_text = $result ? $result->result : '';
             $transactionTest->save();
 
             return response()->json(['message' => 'success']);
 
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], 400);
+        }
+    }
+
+    public function updateResultDescription($transactionTestId, Request $request)
+    {
+        try {
+            // $result = \App\Result::where('id')
+            $transactionTest = \App\TransactionTest::where('id', $transactionTestId)->first();
+            $transactionTest->result_text = $request->input('result');
+            $transactionTest->save();
+
+            return response()->json(['message' => 'success']);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
+        }
+    }
+
+    public function verifyAll($transactionId)
+    {
+        try {
+            $user = Auth::user();
+            $now = Carbon::now();
+            $transactionTests = \App\TransactionTest::where('transaction_id', $transactionId)->get();
+
+            foreach($transactionTests as $value) {
+                if ($value->result_number || $value->result_label || $value->result_text) {
+                    $value->verify = true;
+                    $value->verify_by = $user->id;
+                    $value->verify_time = $now;
+                    $value->save();
+                }
+            }
+
+            return response()->json(['message' => 'success']);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
+        }
+    }
+
+    public function verifyTest(Request $request, $transactionTestId)
+    {
+        try {
+            $user = Auth::user();
+
+            $transactionTest = \App\TransactionTest::findOrFail($transactionTestId);
+            if (!$transactionTest->result_text && !$transactionTest->result_number && !$transactionTest->result_label && $request->value == 1) {
+                throw new \Exception("Unable to verify because result has not been set");
+            }
+            
+            $transactionTest->verify = $request->value;
+            $transactionTest->verify_by = $user->id;
+            $transactionTest->verify_time = Carbon::now();
+
+            if ($request->value == 0) {
+                $transactionTest->validate = 0;
+                $transactionTest->verify_by = null;
+                $transactionTest->verify_time = null;
+                $transactionTest->validate_by = null;
+                $transactionTest->validate_time = null;
+            }
+            
+            $transactionTest->save();
+
+            return response()->json(['message' => 'Success']);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
+        }
+    }
+
+    public function validateAll($transactionId)
+    {
+        try {
+            $user = Auth::user();
+            $now = Carbon::now();
+            $transactionTests = \App\TransactionTest::where('transaction_id', $transactionId)->get();
+
+            foreach($transactionTests as $value){
+                if ($value->verify) {
+                    $value->validate = true;
+                    $value->validate_by = $user->id;
+                    $value->validate_time = $now;
+                    $value->save();
+                }
+            }
+            
+            return response()->json(['message' => 'success']);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
+        }
+    }
+
+    public function validateTest(Request $request, $transactionTestId)
+    {
+        try {
+            $user = Auth::user();
+
+            $transactionTest = \App\TransactionTest::findOrFail($transactionTestId);
+            $transactionTest->validate = $request->value;
+            if ($request->value == 0) {
+                $transactionTest->validate_by = null;
+                $transactionTest->validate_time = null;
+            }
+
+            $transactionTest->validate_by = $user->id;
+            $transactionTest->validate_time = Carbon::now();
+            
+            $transactionTest->save();
+        } catch (\Exception $e) {
+
         }
     }
 }

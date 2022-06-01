@@ -57,7 +57,7 @@ class PreAnalyticController extends Controller
      */
     public function datatableTransactionTest($transactionId)
     {
-        $model = \App\TransactionTest::where('transaction_id', $transactionId);
+        $model = \App\TransactionTest::selectRaw('transaction_tests.*, transaction_tests.id as tt_id')->where('transaction_id', $transactionId)->leftJoin('tests','tests.id','transaction_tests.test_id')->orderBy('tests.sequence','asc');
         return DataTables::of($model)
         ->addIndexColumn()
         ->escapeColumns([])

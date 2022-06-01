@@ -1283,7 +1283,7 @@ var checkInBtn = function () {
           transactionSpecimenTable.ajax.reload();
           transactionTestTable.ajax.reload();
           $(".draw-btn").prop('disabled', false);
-          
+          goToAnalyticsBtn(transactionId);
         }
       })
     } else {
@@ -1324,6 +1324,7 @@ var checkInBtn = function () {
             transactionSpecimenTable.ajax.reload();
             transactionTestTable.ajax.reload();
             $(".draw-btn").prop('disabled', false);
+            goToAnalyticsBtn(transactionId);
           },
           error: function (request, status, error) {
             toastr.error(request.responseJSON.message);
@@ -1333,7 +1334,6 @@ var checkInBtn = function () {
     }
   });
 }
-
 
 $.ajaxSetup({
   headers: {

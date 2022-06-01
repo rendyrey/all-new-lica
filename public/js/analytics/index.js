@@ -14,8 +14,6 @@ var getAge = function(dateString) {
   return age;
 }
 
-
-
 var DateRangePicker = () => {
   var start = moment();
   var end = moment();
@@ -59,6 +57,9 @@ var refreshPatientDetails = (data, transactionId) => {
   $(".email-detail").html(data.patient.email);
   $(".age-detail").html(getAge(data.patient.birthdate));
   $(".insurance-detail").html(data.insurance.name);
+  
+  $('#verify-all-btn').data('transaction-id', transactionId);
+  $('#validate-all-btn').data('transaction-id', transactionId);
 
   let patientType = '-';
   switch (data.type) {
@@ -134,6 +135,32 @@ var onSelectTransaction = (transactionId) => {
   // DatatableTest.refreshTableAjax(newUrl);
 }
 
+var verifyAllBtn = () => {
+  $("#verify-all-btn").on('click', function() {
+    const transactionId = $(this).data('transaction-id');
+    $.ajax({
+      url: baseUrl('analytics/verify-all/'+transactionId),
+      type: 'put',
+      success: function(res) {
+        onSelectTransaction(transactionId);
+      }
+    })
+  });
+}
+
+var validateAllBtn = () => {
+  $("#validate-all-btn").on('click', function() {
+    const transactionId = $(this).data('transaction-id');
+    $.ajax({
+      url: baseUrl('analytics/validate-all/'+transactionId),
+      type: 'put',
+      success: function(res) {
+        onSelectTransaction(transactionId);
+      }
+    })
+  });
+}
+
 $.ajaxSetup({
   headers: {
     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -143,6 +170,8 @@ $.ajaxSetup({
 // On document ready
 document.addEventListener('DOMContentLoaded', function () {
   DateRangePicker();
+  verifyAllBtn();
+  validateAllBtn();
   DatatableAnalytics.init();
   // $(".select").select2();
   // DatatableTest.init();

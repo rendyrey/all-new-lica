@@ -143,7 +143,17 @@
 
                             <div class="row mt-2">
                               <div class="col-8">
-                                <table class="table table-striped transaction-test-table" style="table-layout: fixed">
+                                <div class="d-flex justify-content-between">
+                                    <p>Parameter Data</p>
+                                    <div>
+                                        <button class="btn btn-light-primary btn-sm mb-1" id="verify-all-btn" data-transaction-id="">Ver All</button>
+                                        <button class="btn btn-light-danger btn-sm mb-1" id="unverify-all-btn" data-transaction-id="">Unver All</button>
+                                        {{-- <br> --}}
+                                        <button class="btn btn-light-primary btn-sm" id="validate-all-btn" data-transaction-id="">Val All</button>
+                                        <button class="btn btn-light-danger btn-sm mb-1" id="unvalidate-all-btn" data-transaction-id="">Unval All</button>
+                                    </div>
+                                </div>
+                                <table class="table table-striped transaction-test-table" style="">
                                     <thead>
                                         <tr class="px-0 text-uppercase text-gray-600 fw-bolder fs-7">
                                             <td class="px-0">Test</td>

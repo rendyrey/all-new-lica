@@ -76,10 +76,10 @@ var DatatableAnalytics = function () {
   var initDatatable = function () {
       dt = $(selectorName).DataTable({
           "createdRow": function( row, data, dataIndex){
-            console.log(data);
-            if( row.id ==  125){
+            console.log("ANJAY", data);
+            if(data.is_critical){
+              $(row).addClass('bg-danger');
             }
-            $(row).addClass('text-danger');
           },
           paging: false,
           scrollY: '400px',
@@ -105,7 +105,7 @@ var DatatableAnalytics = function () {
                   orderable: false,
                   className: 'text-end',
                   searchable: false,
-                  render: function (data, type, row) {
+                  render: function(data, type, row) {
                       return `
                               <button class="btn btn-light-danger btn-sm px-2" data-kt-docs-table-filter="delete_row" onClick="deleteTransaction(`+row.id+`)">
                                 <i class="bi bi-trash-fill pe-0"></i>
@@ -123,7 +123,10 @@ var DatatableAnalytics = function () {
       table = dt.$;
 
       // Re-init functions on every table re-draw -- more info: https://datatables.net/reference/event/draw
-      dt.on('draw', function () {
+      dt.on('draw', function (e, data, type, indexes) {
+          // debugger;
+          console.log(dt.rows().data().toArray());
+          console.log(dt.rows().data());
           initToggleToolbar();
           toggleToolbars();
           KTMenu.createInstances();
