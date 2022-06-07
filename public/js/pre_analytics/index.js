@@ -362,6 +362,35 @@ var checkSpecimenDrawStatus = function(transactionId){
   });
 }
 
+var checkVerifiedTest = function(transactionId) {
+  $.ajax({
+    url: baseUrl('pre-analytics/is-verified-test-exists/'+transactionId),
+    type: 'get',
+    success: function(res) {
+      if (res.exists) {
+        $("#edit-patient-details-btn").attr('disabled', 'disabled');
+        $("#edit-test-btn").attr('disabled', 'disabled');
+        $("#transaction-note").attr('disabled', 'disabled');
+        $("#undraw-all-btn").attr('disabled', 'disabled');
+        $("#draw-all-btn").attr('disabled', 'disabled');
+        $("#draw-all-btn").unbind();
+        $("#undraw-all-btn").unbind();
+        $("#edit-test-btn").unbind();
+        $("#edit-patient-details-btn").unbind();
+      } else {
+        $("#edit-patient-details-btn").removeAttr('disabled');
+        $("#edit-test-btn").removeAttr('disabled');
+        $("#transaction-note").removeAttr('disabled');
+        $("#undraw-all-btn").removeAttr('disabled');
+        $("#draw-all-btn").removeAttr('disabled');
+        drawAllBtnComponent();
+        editPatientDetails();
+        editTestBtn();
+      }
+    }
+  })
+}
+
 var transactionTestTable;
 var transactionSpecimenTable;
 var onSelectTransaction = function (selectedData) {
@@ -372,6 +401,7 @@ var onSelectTransaction = function (selectedData) {
   const patient = selectedData.patient;
   const room = selectedData.room;
   const transactionId = selectedData.id;
+  
   goToAnalyticsBtn(transactionId);
 
   checkSpecimenDrawStatus(transactionId);
@@ -439,6 +469,9 @@ var onSelectTransaction = function (selectedData) {
   // set the transaction id to note textarea
   $("#transaction-note").data('transaction-id', transactionId);
   $("#transaction-note").val(selectedData.note);
+  
+  checkVerifiedTest(transactionId);
+
   autosize.update($("#transaction-note"));
   // Check if #it is a DataTable or not. If not, initialise:, if so, reload with new url
   if ( ! $.fn.DataTable.isDataTable( '.transaction-test-table' ) ) {
@@ -449,7 +482,8 @@ var onSelectTransaction = function (selectedData) {
       searchDelay: 500,
       processing: true,
       serverSide: true,
-      order: [],
+      // order: [],
+      sort: false,
       stateSave: false,
       ajax: {
           url: baseUrl('pre-analytics/transaction-test/'+transactionId+'/datatable/'),
@@ -495,10 +529,24 @@ var onSelectTransaction = function (selectedData) {
       searchDelay: 500,
       processing: true,
       serverSide: true,
-      order: [],
+      // order: [],
+      sort: false,
       stateSave: false,
       ajax: {
-          url: baseUrl('pre-analytics/transaction-specimen/'+transactionId+'/datatable/')
+          url: baseUrl('pre-analytics/transaction-specimen/'+transactionId+'/datatable/'),
+          complete: function(data) {
+            // $.ajax({
+            //   url: baseUrl('pre-analytics/is-verified-test-exists/'+transactionId),
+            //   type: 'get',
+            //   success: function(res) {
+            //     if (res.exists) {
+            //       $(".specimen-checkbox").attr('disabled', 'disabled');
+            //     } else {
+            //       $(".specimen-checkbox").removeAttr('disabled');
+            //     }
+            //   }
+            // })
+          }
       },
       columns: [
         { data: 'specimen.name', render: function(data, type, row){
@@ -558,7 +606,6 @@ var deleteTransaction = function (id) {
 
 function analyzerChange(transactionTestId, transactionId, event){
   const analyzerId = event.target.value;
-  console.log(transactionId);
   $.ajax({
     url: baseUrl('pre-analytics/transaction-test/update-analyzer/'+transactionTestId),
     data: {
@@ -568,12 +615,15 @@ function analyzerChange(transactionTestId, transactionId, event){
     success: function(res) {
       toastr.success(res.message, "Update analyzer success!");
       goToAnalyticsBtn(transactionId);
+    },
+    error: function(request, status, error) {
+      toastr.error(request.responseJSON.message);
+      transactionTestTable.ajax.url(baseUrl('pre-analytics/transaction-test/'+transactionId+'/datatable/')).load();
     }
   })
 }
 
 function drawSpecimenChange(transactionId, specimenId, event) {
-  
   if (!event.target.checked) {
     if (!$("#undraw-all-btn").data('auto-undraw')) {
       Swal.fire({
@@ -610,13 +660,16 @@ function drawSpecimenChange(transactionId, specimenId, event) {
               transactionSpecimenTable.ajax.url(baseUrl('pre-analytics/transaction-specimen/'+transactionId+'/datatable')).load();
               checkSpecimenDrawStatus(transactionId);
               goToAnalyticsBtn(transactionId);
+            },
+            error: function(request, status, error) {
+              toastr.error(request.responseJSON.message);
+              transactionSpecimenTable.ajax.url(baseUrl('pre-analytics/transaction-specimen/'+transactionId+'/datatable')).load();
             }
           });
         } else {
           event.target.checked = true;
         }
       })
-
       return;
     }
     
@@ -633,6 +686,10 @@ function drawSpecimenChange(transactionId, specimenId, event) {
         transactionSpecimenTable.ajax.url(baseUrl('pre-analytics/transaction-specimen/'+transactionId+'/datatable')).load();
         checkSpecimenDrawStatus(transactionId);
         goToAnalyticsBtn(transactionId);
+      },
+      error: function(request, status, error) {
+        toastr.error(request.responseJSON.message);
+        transactionSpecimenTable.ajax.url(baseUrl('pre-analytics/transaction-specimen/'+transactionId+'/datatable')).load();
       }
     });
 
@@ -651,6 +708,10 @@ function drawSpecimenChange(transactionId, specimenId, event) {
         transactionSpecimenTable.ajax.url(baseUrl('pre-analytics/transaction-specimen/'+transactionId+'/datatable')).load();
         checkSpecimenDrawStatus(transactionId);
         goToAnalyticsBtn(transactionId);
+      },
+      error: function(request, status, error) {
+        toastr.error(request.responseJSON.message);
+        transactionSpecimenTable.ajax.url(baseUrl('pre-analytics/transaction-specimen/'+transactionId+'/datatable')).load();
       }
     });
   }

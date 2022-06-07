@@ -89,7 +89,8 @@
                 data-transaction-id="'.$value->transaction_id.'" 
                 data-test-name="'.$value->test->name.'"
                 data-result="'.($value->result_number ? $value->result_number : $value->res_label).'"
-                class="form-check-input verify-checkbox" 
+                class="form-check-input verify-checkbox"
+                id="verify-checkbox-id-'.$value->id.'" 
                 type="checkbox" value="" '.$checked.'/>
                 </div>';
     }
@@ -183,11 +184,14 @@
                         label = '<span class="badge badge-sm badge-circle badge-danger">C</span>';
                         break;
                 }
+                $("#verify-checkbox-id-"+transactionTestId+"").data('result-status', res.label);
                 $("#label-info-"+transactionTestId).html(label);
+                
             },
             error: function(request, status, error) {
                 toastr.error(request.responseJSON.message);
                 component.focus();
+                onSelectTransaction(transactionId);
             }
         });
     });

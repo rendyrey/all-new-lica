@@ -158,6 +158,7 @@ function resultLabelChange(transactionTestId, e) {
             default:
                 label = '';
           }
+        $("#verify-checkbox-id-"+transactionTestId+"").data('result-status', res.label);
         $("#label-info-"+transactionTestId).html(label);
       },
       error: function(request, status, error) {
@@ -248,6 +249,7 @@ var verifyAllBtn = () => {
             url: baseUrl('analytics/verify-all/'+transactionId),
             type: 'put',
             success: function(res) {
+              toastr.success("Success verify all test");
               onSelectTransaction(transactionId);
             }
           });

@@ -127,6 +127,9 @@ class AnalyticController extends Controller
 
             DB::beginTransaction();
             $transactionTest = \App\TransactionTest::where('id', $transactionTestId)->first();
+            if ($transactionTest->verify) {
+                throw new \Exception("Can't update data because it's been verified");
+            }
             $transactionTest->result_number = $request->result;
 
             $patient = $transactionTest->transaction->patient;
@@ -226,6 +229,9 @@ class AnalyticController extends Controller
     {
         try {
             $transactionTest = \App\TransactionTest::where('id', $transactionTestId)->first();
+            if ($transactionTest->verify) {
+                throw new \Exception("Can't update data because it's been verified");
+            }
             $transactionTest->result_label = $request->input('result');
 
             if ($request->input('result')) {
@@ -259,6 +265,9 @@ class AnalyticController extends Controller
         try {
             // $result = \App\Result::where('id')
             $transactionTest = \App\TransactionTest::where('id', $transactionTestId)->first();
+            if ($transactionTest->verify) {
+                throw new \Exception("Can't update data because it's been verified");
+            }
             $transactionTest->result_text = $request->input('result');
             $transactionTest->save();
 

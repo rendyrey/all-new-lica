@@ -77,6 +77,7 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('go-to-analytics-btn/{transactionId}', 'PreAnalyticController@goToAnalyticBtn');
         Route::put('go-to-analytics','PreAnalyticController@goToAnalytic');
+        Route::get('is-verified-test-exists/{transactionId}', 'PreAnalyticController@isVerifiedTestExist');
     });
     // END Pre Analytics
 

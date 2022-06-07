@@ -84,7 +84,9 @@ class PreAnalyticController extends Controller
             ->leftJoin('transaction_tests','tests.id','=','transaction_tests.test_id')
             ->leftJoin('transactions','transaction_tests.transaction_id','=','transactions.id')
             ->where('transaction_tests.transaction_id', $transactionId)
-            ->whereIn('tests.id', $testIds)->groupBy('specimen_id','unit','transaction_id','no_lab');
+            ->whereIn('tests.id', $testIds)
+            ->groupBy('specimen_id','unit','transaction_id','no_lab')
+            ->orderBy('tests.sequence', 'asc');
 
         return DataTables::of($model)
             ->addIndexColumn()
@@ -368,6 +370,7 @@ class PreAnalyticController extends Controller
                 $requestData['patient_id'] = $new_patient->id;
             }
 
+            $requestData['status'] = 0;
             $requestData['note'] = $request->diagnosis;
             $requestData['transaction_id_label'] = $this->getTransactionIdLabel($request);
             $room = \App\Room::findOrFail($requestData['room_id']);
@@ -521,6 +524,12 @@ class PreAnalyticController extends Controller
     {
         try {
             $data = \App\TransactionTest::where('id', $transactionTestId)->first();
+            $transactionId = $data->transaction_id;
+            $transactionTest = \App\TransactionTest::where('transaction_id', $transactionId)->where('verify', 1)->exists();
+            if($transactionTest) {
+                throw new \Exception("You can't edit because one of the test is verified");
+            }
+
             $data->update(['analyzer_id' => $request->analyzer_id]);
 
             $this->logActivity(
@@ -529,7 +538,7 @@ class PreAnalyticController extends Controller
             );
             return response()->json(['message' => 'Success update analyzer']);
         } catch (\Exception $e) {
-            return response()->json(['message' => $e->getMessage(), 404]);
+            return response()->json(['message' => $e->getMessage()], 400);
         }
         
     }
@@ -545,6 +554,10 @@ class PreAnalyticController extends Controller
     {
         try {
             $test_ids = explode(',', $request->test_ids);
+            $transactionTest = \App\TransactionTest::where('transaction_id', $request->transaction_id)->where('verify', 1)->exists();
+            if($transactionTest) {
+                throw new \Exception("You can't edit because one of the test is verified");
+            }
             \App\TransactionTest::where('transaction_id', $request->transaction_id)->whereIn('test_id', $test_ids)
             ->update([
                 'draw' => DB::raw('(CASE WHEN draw = NULL THEN 1 ELSE (1 - draw) END)'),
@@ -552,13 +565,9 @@ class PreAnalyticController extends Controller
                 'undraw_memo' => DB::raw('CASE WHEN draw = "0" THEN "'. $request->undraw_reason . '" ELSE "" END')
             ]);
 
-            $this->logActivity(
-                "Update the draw status $transactionTestId",
-                json_encode($request->except(['_method','_token']))
-            );
             return response()->json(['message' => 'Success update draw status']);
         } catch (\Exception $e) {
-            return response()->json(['message' => $e->getMessage(), 404]);
+            return response()->json(['message' => $e->getMessage()], 400);
         }
     }
 
@@ -802,6 +811,17 @@ class PreAnalyticController extends Controller
             return response()->json(['message' => 'Success move to analytics']);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessag()], 400);
+        }
+    }
+
+    public function isVerifiedTestExist($transactionId)
+    {
+        try {
+            $exists = \App\TransactionTest::where('transaction_id', $transactionId)->where('verify', 1)->exists();
+
+            return response()->json(['exists' => $exists]);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
         }
     }
 }

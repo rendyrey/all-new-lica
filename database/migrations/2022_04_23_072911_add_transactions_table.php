@@ -23,7 +23,7 @@ class AddTransactionsTable extends Migration
             $table->enum('type',['rawat_inap', 'rawat_jalan', 'igd', 'rujukan']);
             $table->string('no_lab')->nullable();
             $table->text('note')->nullable();
-            $table->integer('status')->nullable();
+            $table->integer('status')->nullable()->default(0);
             $table->boolean('cito')->nullable();
             $table->integer('check')->nullable();
             $table->integer('draw')->nullable();
