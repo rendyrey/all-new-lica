@@ -96,13 +96,18 @@ Route::middleware(['auth'])->group(function () {
         Route::put('update-result-description/{transactionTestId}', 'AnalyticController@updateResultDescription');
 
         Route::put('verify-all/{transactionId}', 'AnalyticController@verifyAll');
+        Route::put('unverify-all/{transactionId}', 'AnalyticController@unverifyAll');
+        Route::put('unvalidate-all/{transactionId}', 'AnalyticController@unvalidateAll');
         Route::put('verify-test/{transactionTestId}', 'AnalyticController@verifyTest');
         Route::put('validate-all/{transactionId}', 'AnalyticController@validateAll');
         Route::put('validate-test/{transactionTestId}', 'AnalyticController@validateTest');
         Route::put('update-test-memo', 'AnalyticController@updateTestMemo');
+        Route::put('update-memo-result', 'AnalyticController@updateMemoResult');
 
         Route::get('check-critical-test/{transactionId}', 'AnalyticController@checkCriticalTest');
         Route::put('report-critical-tests', 'AnalyticController@reportCriticalTest');
+        Route::get('check-action-btn-test-status/{transactionId}', 'AnalyticController@checkActionBtnTestStatus');
+        Route::put('go-to-post-analytics/{transactionId}', 'AnalyticController@goToPostAnalytics');
     });
     // END Analytics
 

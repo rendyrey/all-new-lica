@@ -64,9 +64,10 @@ class AnalyticController extends Controller
      */
     public function datatableTest($transactionId)
     {
-        $model = \App\TransactionTest::selectRaw('transaction_tests.*, transaction_tests.id as tt_id')
+        $model = \App\TransactionTest::selectRaw('transaction_tests.*, transaction_tests.id as tt_id, results.result as res_label')
             ->leftJoin('tests','tests.id','transaction_tests.test_id')
             ->leftJoin('groups','groups.id','tests.group_id')
+            ->leftJoin('results','results.id', 'result_label')
             ->where('transaction_id', $transactionId)
             ->orderBy('groups.id','asc')
             ->orderBy('tests.sequence', 'asc')
@@ -319,6 +320,26 @@ class AnalyticController extends Controller
         }
     }
 
+    public function unverifyAll($transactionId)
+    {
+        try {
+            $user = Auth::user();
+            $now = Carbon::now();
+            $transactionTests = \App\TransactionTest::where('transaction_id', $transactionId)->update([
+                'verify' => false,
+                'verify_by' => null,
+                'verify_time' => null,
+                'validate' => 0,
+                'validate_by' => null,
+                'validate_time' => null
+            ]);
+
+            return response()->json(['message' => 'success']);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
+        }
+    }
+
     public function validateAll($transactionId)
     {
         try {
@@ -364,6 +385,24 @@ class AnalyticController extends Controller
         }
     }
 
+    public function unvalidateAll($transactionId)
+    {
+        try {
+            $user = Auth::user();
+            $now = Carbon::now();
+            $transactionTests = \App\TransactionTest::where('transaction_id', $transactionId)
+                ->where('verify', 1)->update([
+                    'validate' => false,
+                    'validate_by' => null,
+                    'validate_time' => null
+                ]);
+            
+            return response()->json(['message' => 'success']);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
+        }
+    }
+
     public function updateTestMemo(Request $request)
     {
         try {
@@ -381,9 +420,26 @@ class AnalyticController extends Controller
         }
     }
 
+    public function updateMemoResult(Request $request)
+    {
+        try {
+            $transactionId = $request->transaction_id;
+            $memoResult = $request->memo_result;
+
+            $transaction = \App\Transaction::where('id', $transactionId)->first();
+            $transaction->memo_result = $memoResult;
+            $transaction->save();
+
+            return response()->json(['message' => 'success']);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
+        }
+    }
+
     public function checkCriticalTest($transactionId)
     {
-        $transactionTests = \App\TransactionTest::where('transaction_id', $transactionId)
+        $transactionTests = \App\TransactionTest::selectRaw('transaction_tests.*, results.result as res_label')
+            ->leftJoin('results','results.id','transaction_tests.result_label')->where('transaction_id', $transactionId)
             ->where('result_status', AnalyticController::RESULT_STATUS_CRITICAL)
             ->whereIn('verify', [0, null])->get();
 
@@ -407,5 +463,45 @@ class AnalyticController extends Controller
             'report_to' => $reportTo
         ]);
         return response()->json(['data' => $request->all()]);
+    }
+
+    public function checkActionBtnTestStatus($transactionId)
+    {
+        $unverAndValAll = \App\TransactionTest::where('transaction_id', $transactionId)->where('verify', 1)->exists();
+        $unvalAll = \App\TransactionTest::where('transaction_id', $transactionId)->where('validate', 1)->exists();
+
+        return response()->json(['unver_and_val_all' => $unverAndValAll, 'unval_all' => $unvalAll]);
+    }
+
+    public function goToPostAnalytics($transactionId)
+    {
+        try {
+            $transaction = \App\Transaction::findOrFail($transactionId);
+
+            if ($transaction->status == '2') {
+                throw new \Exception("Transaction has been moved to analytic");
+            }
+
+            if ($transaction->no_lab == '' || $transaction->no_lab == null) {
+                throw new \Exception("No Lab has not been set");
+            }
+
+            $allAnalzerSet = false;
+            $transactionTest = \App\TransactionTest::where('transaction_id', $transactionId)->get();
+
+            foreach($transactionTest as $test) {
+                if ($test->analyzer_id == null || $test->analyzer_id == '') {
+                    throw new \Exception('Analyzer hasn\'t been set for all');
+                }
+
+                if ($test->draw == null || $test->draw == '0') {
+                    throw new \Exception('Draw hasn\'t set for all specimen');
+                }
+            }
+
+            return response()->json(['message' => 'Valid', 'valid' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage(), 'valid' => false], 400);
+        }
     }
 }

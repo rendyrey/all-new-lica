@@ -58,8 +58,34 @@ var refreshPatientDetails = (data, transactionId) => {
   $(".age-detail").html(getAge(data.patient.birthdate));
   $(".insurance-detail").html(data.insurance.name);
   
-  $('#verify-all-btn').data('transaction-id', transactionId);
-  $('#validate-all-btn').data('transaction-id', transactionId);
+  // $('#verify-all-btn').data('transaction-id', transactionId);
+  // $('#unverify-all-btn').data('transaction-id', transactionId);
+  // $('#validate-all-btn').data('transaction-id', transactionId);
+  // $('#unvalidate-all-btn').data('transaction-id', transactionId);
+  $(".test-data-action").removeClass('d-none');
+  $(".test-data-action").data('transaction-id', transactionId);
+  $("#memo-result-btn").data('text', data.memo_result);
+  $("#go-to-post-analytics-btn").data('transaction-id', transactionId);
+
+  $.ajax({
+    url: baseUrl('analytics/check-action-btn-test-status/'+transactionId),
+    type: 'get',
+    success: function(res) {
+      if (res.unver_and_val_all) {
+        $('#unverify-all-btn').removeAttr('disabled');
+        $('#validate-all-btn').removeAttr('disabled');
+      } else {
+        $('#unverify-all-btn').attr('disabled', 'disabled');
+        $('#validate-all-btn').attr('disabled', 'disabled');
+      }
+
+      if (res.unval_all) {
+        $('#unvalidate-all-btn').removeAttr('disabled');
+      } else {
+        $('#unvalidate-all-btn').attr('disabled', 'disabled');
+      }
+    }
+  });
 
   let patientType = '-';
   switch (data.type) {
@@ -162,6 +188,11 @@ var verifyAllBtn = () => {
 
   $("#report-modal-btn").on('click', function(e) {
     const reportTo = $("#critical-modal input[name='report_to']").val();
+    if (reportTo == '') {
+      alert("You need to insert report to field");
+      return;
+    }
+  
     const reportBy = $("#critical-modal input[name='report_by']").val();
     const criticalTestIds = $("#critical-modal input[name='transaction_test_ids']").val();
     const transactionId = $("#critical-modal input[name='transaction_id']").val();
@@ -178,6 +209,7 @@ var verifyAllBtn = () => {
       success: function(res) {
         toastr.success("Success reporting critical tests");
         $("#critical-modal").modal('hide');
+        $("#critical-modal input[name='report_to']").val('');
       }
     });
 
@@ -203,7 +235,7 @@ var verifyAllBtn = () => {
           let criticalTests = '';
           let criticalTestIds = [];
           res.data.forEach((item) => {
-            criticalTests += '<li>'+item.test.name+'  <i>value: </i>'+item.result_number+'</li>';
+            criticalTests += '<li>'+item.test.name+'  <i>value: </i>'+(item.result_number || item.res_label)+'</li>';
             criticalTestIds.push(item.id);
           });
 
@@ -240,7 +272,36 @@ var validateAllBtn = () => {
       url: baseUrl('analytics/validate-all/'+transactionId),
       type: 'put',
       success: function(res) {
+        toastr.success("Success validate all test");
         onSelectTransaction(transactionId);
+      }
+    })
+  });
+}
+
+var unverifyAllBtn = () => {
+  $("#unverify-all-btn").on('click', function() {
+    const transationId = $(this).data('transaction-id');
+    $.ajax({
+      url: baseUrl('analytics/unverify-all/'+transationId),
+      type: 'put',
+      success: function(res) {
+        toastr.success("Success unverify all test");
+        onSelectTransaction(transationId);
+      }
+    });
+  });
+}
+
+var unvalidateAllBtn = () => {
+  $("#unvalidate-all-btn").on('click', function() {
+    const transationId = $(this).data('transaction-id');
+    $.ajax({
+      url: baseUrl('analytics/unvalidate-all/'+transationId),
+      type: 'put',
+      success: function(res) {
+        toastr.success("Success unvalidate all test");
+        onSelectTransaction(transationId);
       }
     })
   });
@@ -276,15 +337,78 @@ var memoTestModal = (transactionTestId, transactionId, text) => {
           memo: result.value.reason
         },
         success: function(res) {
-          toastr.success(res.message, "Update test memo success!");
+          toastr.success("Update test memo success!");
           onSelectTransaction(transactionId);
         }
       });
     } else {
       // event.target.checked = true;
     }
-  })
+  });
+}
 
+var parameterDataModal = (transactionId, text) => {
+  Swal.fire({
+    title: 'Add patient memo result',
+    text: 'Please input a memo',
+    input: 'textarea',
+    customClass: 'w-600px',
+    inputAttributes: {
+      autocapitalize: 'off'
+    },
+    inputValue: text,
+    showCancelButton: true,
+    confirmButtonText: 'Submit',
+    showLoaderOnConfirm: true,
+    preConfirm: (reason) => {
+      if (reason == '') {
+        Swal.showValidationMessage(`Please enter a memo`)
+      }
+      return { reason: reason }
+    },
+    allowOutsideClick: false
+  }).then((result) => {
+    if (result.isConfirmed) {
+      $.ajax({
+        url: baseUrl('analytics/update-memo-result'),
+        type: 'put',
+        data: {
+          transaction_id: transactionId,
+          memo_result: result.value.reason
+        },
+        success: function(res) {
+          toastr.success("Update memo result success!");
+          onSelectTransaction(transactionId);
+        }
+      });
+    } else {
+      // event.target.checked = true;
+    }
+  });
+}
+
+var memoResultBtn = () => {
+  $("#memo-result-btn").on('click', function() {
+    const transactionId = $(this).data('transaction-id');
+    const text = $(this).data('text');
+    parameterDataModal(transactionId, text);
+  });
+}
+
+var goToPostAnalyticBtn = () => {
+  $("#go-to-post-analytics-btn").on('click', function() {
+    const transactionId = $(this).data('transaction-id');
+    $.ajax({
+      url: baseUrl('analytics/go-to-post-analytics/'+transactionId),
+      type: 'put',
+      success: function(res) {
+        alert();
+      },
+      error: function(request, status, error) {
+        alert(request.responseJSON.message);       
+      }
+    })
+  });
 }
 
 $.ajaxSetup({
@@ -297,7 +421,11 @@ $.ajaxSetup({
 document.addEventListener('DOMContentLoaded', function () {
   DateRangePicker();
   verifyAllBtn();
+  unverifyAllBtn();
   validateAllBtn();
+  unvalidateAllBtn();
+  memoResultBtn();
+  goToPostAnalyticBtn();
   DatatableAnalytics.init();
 
   $(".transaction-test-table").DataTable({

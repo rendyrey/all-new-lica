@@ -83,14 +83,22 @@
     function verifyCheckbox($value) {
         $checked = $value->verify ? 'checked' : '';
         return '<div class="form-check form-check-sm form-check-custom form-check-solid">
-                <input data-transaction-test-id="'.$value->id.'" data-transaction-id="'.$value->transaction_id.'" class="form-check-input verify-checkbox" type="checkbox" value="" '.$checked.'/>
+                <input 
+                data-result-status="'.$value->result_status.'" 
+                data-transaction-test-id="'.$value->id.'" 
+                data-transaction-id="'.$value->transaction_id.'" 
+                data-test-name="'.$value->test->name.'"
+                data-result="'.($value->result_number ? $value->result_number : $value->res_label).'"
+                class="form-check-input verify-checkbox" 
+                type="checkbox" value="" '.$checked.'/>
                 </div>';
     }
 
     function validateCheckbox($value) {
         $checked = $value->validate ? 'checked' : '';
         $disabled = $value->verify ? '' : 'disabled';
-        return '<div class="form-check form-check-sm form-check-custom form-check-solid">
+        $checkboxDisabled = $value->verify ? '' : 'style="cursor: not-allowed"';
+        return '<div class="form-check form-check-sm form-check-custom form-check-solid '.$checkboxDisabled.'" '.$checkboxDisabled.'>
                     <input '.$disabled.' data-transaction-test-id="'.$value->id.'" data-transaction-id="'.$value->transaction_id.'" class="form-check-input validate-checkbox" type="checkbox" value="" '.$checked.'/>
                 </div>';
     }
@@ -207,6 +215,21 @@
     $(".verify-checkbox").on('change', function(e) {
         const transactionTestId = $(this).data('transaction-test-id');
         const transactionId = $(this).data('transaction-id');
+        const resultStatus = $(this).data('result-status');
+        const testName = $(this).data('test-name');
+        const result = $(this).data('result');
+        
+        if (resultStatus == 5 && e.target.checked) {
+            let criticalTest = '';
+            criticalTest += '<li>'+testName+'  <i>value: </i>'+result+'</li>';
+            $("#critical-tests").html(criticalTest);
+            $("#critical-modal input[name='transaction_test_ids']").val(transactionTestId);
+            $("#critical-modal input[name='transaction_id']").val(transactionId);
+            $("#critical-modal").modal('show');
+            e.target.checked = false;
+            return;
+        }
+
         const value = e.target.checked ? 1 : 0;
         const msg = value ? 'verify' : 'unverify';
         $.ajax({
@@ -226,6 +249,7 @@
 
     $(".validate-checkbox").on('change', function(e) {
         const transactionTestId = $(this).data('transaction-test-id');
+        const transactionId = $(this).data('transaction-id');
         const value = e.target.checked ? 1 : 0;
         const msg = value ? 'validate' : 'unvalidate';
         $.ajax({
@@ -234,6 +258,7 @@
             data: { value: value },
             success: function(res) {
                 toastr.success("Success "+msg+" test result");
+                onSelectTransaction(transactionId);
             }
         })
     });

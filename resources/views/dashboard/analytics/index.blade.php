@@ -2,6 +2,7 @@
 
 @section('styles')
 <link href="{{asset('metronic_assets/plugins/custom/datatables/datatables.bundle.css')}}" rel="stylesheet" type="text/css"/>
+
 @endsection
 @section('content')
 <!--begin::Content-->
@@ -142,15 +143,18 @@
                             <div class="separator"></div>
 
                             <div class="row mt-2">
-                              <div class="col-8">
+                              <div class="col-7">
                                 <div class="d-flex justify-content-between">
-                                    <p>Parameter Data</p>
+                                    @php
+                                        $icon = '<i class="bi bi-pencil test-data-action d-none" style="cursor:pointer" data-transaction-id="" data-text="" id="memo-result-btn"></i>';
+                                    @endphp
+                                    <p>Parameter Data &nbsp;&nbsp; {!! $icon !!}</p>
                                     <div>
-                                        <button class="btn btn-light-primary btn-sm mb-1" id="verify-all-btn" data-transaction-id="">Ver All</button>
-                                        <button class="btn btn-light-danger btn-sm mb-1" id="unverify-all-btn" data-transaction-id="">Unver All</button>
+                                        <button class="btn btn-light-primary btn-sm mb-1 test-data-action d-none" id="verify-all-btn" data-transaction-id="">Ver All</button>
+                                        <button class="btn btn-light-danger btn-sm mb-1 test-data-action d-none" id="unverify-all-btn" data-transaction-id="">Unver All</button>
                                         {{-- <br> --}}
-                                        <button class="btn btn-light-primary btn-sm" id="validate-all-btn" data-transaction-id="">Val All</button>
-                                        <button class="btn btn-light-danger btn-sm mb-1" id="unvalidate-all-btn" data-transaction-id="">Unval All</button>
+                                        <button class="btn btn-light-primary btn-sm test-data-action d-none" id="validate-all-btn" data-transaction-id="">Val All</button>
+                                        <button class="btn btn-light-danger btn-sm mb-1 test-data-action d-none" id="unvalidate-all-btn" data-transaction-id="">Unval All</button>
                                     </div>
                                 </div>
                                 <table class="table table-striped transaction-test-table">
@@ -171,24 +175,8 @@
                                     </tbody>
                                 </table>
                               </div>
-                              <div class="col-4">
-                                  <table class="table table-striped transaction-specimen-table">
-                                      <thead>
-                                          <tr class="px-0 text-uppercase text-gray-600 fw-bolder fs-7">
-                                              <td class="px-0">Specimen</td>
-                                              <td class="px-0">Vol.</td>
-                                              <td class="px-0">Draw</td>
-                                          </tr>
-                                      </thead>
-                                  </table>
-  
-                                  <label for="" class="mt-4 form-label">Note</label>
-                                  <textarea class="form-control mb-4" data-kt-autosize="true" id="transaction-note" data-transaction-id=""></textarea>
-                                  <div class="d-flex justify-content-between">
-                                      <button class="btn btn-light-primary btn-sm">Print nota</button>
-                                      <button class="btn btn-light-primary btn-sm">Print barcode</button>
-                                      <button class="btn btn-light-success btn-sm" id="go-to-analytics-btn">Go to analytics</button>
-                                  </div>
+                              <div class="col-5">
+                                <button class="btn btn-light-success btn-sm test-data-action d-none" id="go-to-post-analytics-btn" data-transaction-id="">Finish Transaction</button>
                               </div>
                           </div>
                         </div>
