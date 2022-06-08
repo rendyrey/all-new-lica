@@ -179,7 +179,7 @@ var Select2ServerSide = function (theData, searchKey = 'name') {
                     return {
                         results: $.map(data, function(item){
                             var additionalText = ''
-                            if ((theData == 'test' || theData == 'package') && masterData == 'price') {
+                            if ((theData == 'test') && masterData == 'price') {
                                 additionalText = item.classes ? `<i> set for classes (`+item.classes+`)</i>` : '';
                             }
                             

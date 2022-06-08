@@ -74,7 +74,7 @@ License: For each use you must have a valid license purchased only from above li
                                                 </a>
 											</div>
                                             <div data-kt-menu-trigger="click" data-kt-menu-placement="bottom-start" class="menu-item menu-lg-down-accordion me-lg-1">
-                                                <a class="btn btn-md btn-icon-muted btn-active-light btn-active-color-primary" href="../../demo1/dist/documentation/getting-started/dark-mode.html">
+                                                <a class="btn btn-md btn-icon-muted btn-active-light btn-active-color-primary" href="{{ url('post-analytics') }}">
                                                     <i class="las la-file-medical-alt fs-1"></i>
                                                     Post Analytics <span class="badge badge-circle badge-success ms-2">0</span>
                                                 </a>

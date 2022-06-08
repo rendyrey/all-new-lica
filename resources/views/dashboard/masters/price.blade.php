@@ -89,24 +89,24 @@
                             <!--begin::Heading-->
                             <h2 class="anchor fw-bolder mb-5">
                             Add new {{ ucwords($masterData) }}</h2>
-                            {!! Form::open(['class'=>'form form-horizontal form-validate-jquery', 'id' => 'form-create']) !!}
+                            {!! Form::open(['class'=>'form form-horizontal form-validate-jquery', 'id' => 'form-create-price']) !!}
                             <div class="mb-4">
                               <small><label class="form-label fs-6">Add Price For</label></small><br>
                               <!--begin::Radio group-->
                               <div class="btn-group btn-group-sm w-100 w-lg-50" data-kt-buttons="true" data-kt-buttons-target="[data-kt-button]">
                                 <!--begin::Radio-->
-                                <label class="btn btn-outline-secondary text-muted text-hover-white text-active-white btn-outline btn-active-primary active" data-kt-button="true">
+                                <label class="btn btn-outline-secondary type-test text-muted text-hover-white text-active-white btn-outline btn-active-primary active" data-kt-button="true">
                                     <!--begin::Input-->
-                                    <input class="btn-check" type="radio" name="type" value="test" checked="checked" />
+                                    <input class="btn-check type-test" type="radio" name="type" value="test" checked="checked" />
                                     <!--end::Input-->
                                     Test
                                 </label>
                                 <!--end::Radio-->
 
                                 <!--begin::Radio-->
-                                <label class="btn btn-outline-secondary text-muted text-hover-white text-active-white btn-outline btn-active-primary" data-kt-button="true">
+                                <label class="btn btn-outline-secondary type-package text-muted text-hover-white text-active-white btn-outline btn-active-primary" data-kt-button="true">
                                     <!--begin::Input-->
-                                    <input class="btn-check" type="radio" name="type" value="package" />
+                                    <input class="btn-check type-package" type="radio" name="type" value="package" />
                                     <!--end::Input-->
                                     Package
                                 </label>

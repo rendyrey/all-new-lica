@@ -142,6 +142,8 @@
                     {!! numberType($value, $value->id, $value->test_id, $key) !!}
                 @elseif($value->test->range_type == 'description')
                     {!! descriptionType($value, $value->test_id, $key) !!}
+                @elseif($value->test->range_type == 'free_formatted_text')
+                    {!! descriptionType($value, $value->test_id, $key) !!}
                 @endif
             </td>
             <td style="border-right: 1px solid grey">{!! normalRef($transaction->patient, $value, $key) !!}</td>

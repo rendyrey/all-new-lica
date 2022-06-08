@@ -74,19 +74,13 @@ class MasterController extends Controller
                 case 'price':
                     $creates = $this->createPrices($request);
                     
-                    $this->logActivity(
-                        "Create Price data(s)",
-                        json_encode($request->except(['_method','_token']))
-                    );
+                    // $this->logActivity(
+                    //     "Create Price data(s)",
+                    //     json_encode($request->except(['_method','_token']))
+                    // );
                     break;
                 case 'test':
                     $createdData = $this->masters[$masterData]::create($this->mapInputs($masterData, $request));
-                    \App\Price::create([
-                        'test_id' => $createdData->id,
-                        'type' => 'test',
-                        'price' => 0, // set default for price that has no class
-                        'class' => 0 // set default for price class that
-                    ]);
                     
                     $this->logActivity(
                         "Create $masterData with ID $createdData->id",
@@ -188,6 +182,10 @@ class MasterController extends Controller
     {
         $data = [];
         $currentTime = date('Y-m-d H:i:s'); // reserved the exact time for all database insert operation later (it was needed put here to prevent different times among rows)
+        
+        if ($request->test_id == null && $request->package_id == null) {
+            throw new \Exception("Test or package has not been set");
+        }
         foreach ($request->class_price as $class_price) {
             // check if the class of price exist or not
             $checkExistsClass = \App\Price::where('class', $class_price['class'])->where('type', $request->type);
@@ -401,6 +399,8 @@ class MasterController extends Controller
             case 'result':
                 $exists[] = \App\TransactionTest::where('result_label', $id)->exists();
                 break;
+            case 'price':
+                $exists[] = \App\TransactionTest::where('price_id', $id)->exists();
             default:
                 $exists[] = false;
         }

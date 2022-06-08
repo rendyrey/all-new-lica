@@ -443,6 +443,4 @@ document.addEventListener('DOMContentLoaded', function () {
       { "width": "42px", "targets": -2}
     ]
   });
-  // $(".select").select2();
-  // DatatableTest.init();
 });

@@ -37,6 +37,8 @@ class Price extends Model
     {
         return Validator::make($request->all(),
         [
+            'package_id' => 'required_without:test_id',
+            'test_id' => 'required_without:package_id',
             'type' => 'required',
             'class_price.*.class' => 'required|numeric',
             'class_price.*.price' => 'required'

@@ -499,12 +499,12 @@ class AnalyticController extends Controller
             $transactionTest = \App\TransactionTest::where('transaction_id', $transactionId)->get();
 
             foreach($transactionTest as $test) {
-                if ($test->analyzer_id == null || $test->analyzer_id == '') {
-                    throw new \Exception('Analyzer hasn\'t been set for all');
+                if ($test->verify == 0 || $test->verify == NULL) {
+                    throw new \Exception('You need to verify all test');
                 }
 
-                if ($test->draw == null || $test->draw == '0') {
-                    throw new \Exception('Draw hasn\'t set for all specimen');
+                if ($test->validate == 0 || $test->validate == NULL) {
+                    throw new \Exception('You need to validate all test');
                 }
             }
 

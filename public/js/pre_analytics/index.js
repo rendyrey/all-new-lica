@@ -373,19 +373,12 @@ var checkVerifiedTest = function(transactionId) {
         $("#transaction-note").attr('disabled', 'disabled');
         $("#undraw-all-btn").attr('disabled', 'disabled');
         $("#draw-all-btn").attr('disabled', 'disabled');
-        $("#draw-all-btn").unbind();
-        $("#undraw-all-btn").unbind();
-        $("#edit-test-btn").unbind();
-        $("#edit-patient-details-btn").unbind();
       } else {
         $("#edit-patient-details-btn").removeAttr('disabled');
         $("#edit-test-btn").removeAttr('disabled');
         $("#transaction-note").removeAttr('disabled');
         $("#undraw-all-btn").removeAttr('disabled');
         $("#draw-all-btn").removeAttr('disabled');
-        drawAllBtnComponent();
-        editPatientDetails();
-        editTestBtn();
       }
     }
   })

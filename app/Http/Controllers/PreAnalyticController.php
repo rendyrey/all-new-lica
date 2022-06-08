@@ -133,9 +133,9 @@ class PreAnalyticController extends Controller
         }
 
         $model = \App\TestPreAnalyticsView::where(function($q) use($roomClass) {
-            $q->where('class', $roomClass)
-            ->orWhere('class', '0')
-            ->orWhereNull('class');
+            $q->where('class', $roomClass);
+            // ->orWhere('class', '0')
+            // ->orWhereNull('class');
         })->whereNotIn('unique_id', $uniqueIds)->whereNotIn('unique_id', $uniqueZeroClassIds);
 
         return DataTables::of($model)
@@ -162,13 +162,16 @@ class PreAnalyticController extends Controller
         }
         // return response()->json(['a' => $uniqueIds]);
 
-        $data = \App\TransactionTest::selectRaw('test_pre_analytics_view.*,transaction_tests.draw as draw, transaction_tests.id as transaction_test_id')->leftJoin('test_pre_analytics_view','test_pre_analytics_view.id','=','transaction_tests.test_id')->where(function($q) use($roomClass) {
-            $q->where('class', $roomClass)
-            ->orWhere('class', '0')
-            ->orWhereNull('class');
-        })->whereIn('transaction_tests.test_id', $testIds)
-        ->where('transaction_tests.transaction_id', $transactionId)
-        ->where('test_pre_analytics_view.type','single')->get();
+        $data = \App\TransactionTest::selectRaw('test_pre_analytics_view.*,transaction_tests.draw as draw, transaction_tests.id as transaction_test_id')
+            ->leftJoin('test_pre_analytics_view','test_pre_analytics_view.id','=','transaction_tests.test_id')
+            ->where(function($q) use($roomClass) {
+                $q->where('class', $roomClass);
+                //     ->orWhere('class', '0')
+                //     ->orWhereNull('class');
+            })
+            ->whereIn('transaction_tests.test_id', $testIds)
+            ->where('transaction_tests.transaction_id', $transactionId)
+            ->where('test_pre_analytics_view.type','single')->get();
 
         $uniqueIds = [];
         foreach($data as $theTest) {
@@ -229,9 +232,9 @@ class PreAnalyticController extends Controller
 
         $data = \App\TransactionTest::selectRaw('test_pre_analytics_view.*,transaction_tests.draw as draw, transaction_tests.id as transaction_test_id')
             ->leftJoin('test_pre_analytics_view','test_pre_analytics_view.id','=','transaction_tests.test_id')->where(function($q) use($roomClass) {
-                $q->where('class', $roomClass)
-                ->orWhere('class', '0')
-                ->orWhereNull('class');
+                $q->where('class', $roomClass);
+                // ->orWhere('class', '0')
+                // ->orWhereNull('class');
             })->whereIn('transaction_tests.test_id', $testIds)
             ->where('transaction_tests.transaction_id', $request->transaction_id)
             ->where('test_pre_analytics_view.type','single')->get();
@@ -273,21 +276,24 @@ class PreAnalyticController extends Controller
         try {
             DB::beginTransaction();
             $transactionId = $request->transaction_id;
+            $transactionTest = \App\TransactionTest::where('transaction_id', $transactionId)->where('verify', 1)->exists();
+            if ($transactionTest) {
+                throw new \Exception("You can't edit because one of the test is verified");
+            }
             \App\TransactionTest::where('transaction_id', $transactionId)->where('draw', '<>', 1)->delete();
             $testUniqueIds = explode(',', $request->unique_ids);
             
             $tests = \App\TestPreAnalyticsView::whereIn('unique_id', $testUniqueIds);
             $transaction = \App\Transaction::findOrFail($transactionId);
             $autoDraw = $transaction->room->auto_draw;
-            $isUndrawExists = \App\TransactionTest::where('transaction_id', $transactionId)->where(function($q) {
-                $q->where('draw', '0')->orWhere('draw', null);
-            })->exists();
+            // $isUndrawExists = \App\TransactionTest::where('transaction_id', $transactionId)->where(function($q) {
+            //     $q->where('draw', '0')->orWhere('draw', null);
+            // })->exists();
     
             if ($tests->count() > 0) {
                 $inputData = [];
                 $now = Carbon::now();
                 foreach($tests->get() as $test) {
-    
                     $inputData['transaction_id'] = $transactionId;
                     $inputData['price_id'] = $test->price_id;
                     $inputData['group_id'] = $test->group_id;
@@ -308,14 +314,16 @@ class PreAnalyticController extends Controller
                             break;
                         case 'package':
                             $inputData['package_id'] = $test->id;
-                            $this->createTransactionTestsFromPackage($inputData);
+                            $class = $transaction->room->class;
+                            $this->createTransactionTestsFromPackage($inputData, $class);
                             break;
                         default:
                     }
                 }
             }
             DB::commit();
-            return response()->json(['message' => 'Success update test', 'auto_draw' => ($autoDraw || !$isUndrawExists)]);
+            // return response()->json(['message' => 'Success update test', 'auto_draw' => ($autoDraw || !$isUndrawExists)]);
+            return response()->json(['message' => 'Success update test', 'auto_draw' => ($autoDraw)]);
         } catch (\Exception $e) {
             DB::rollback();
             return response()->json(['message' => $e->getMessage()], 400);
@@ -375,7 +383,7 @@ class PreAnalyticController extends Controller
             $requestData['transaction_id_label'] = $this->getTransactionIdLabel($request);
             $room = \App\Room::findOrFail($requestData['room_id']);
 
-            if ($room->auto_checkin) {
+            if ($room->auto_checkin || $room->auto_draw) {
                 $prefixDate = date('Ymd');
                 $countExistingData = \App\Transaction::where('no_lab', 'like', $prefixDate.'%')->count();
                 $trxId = str_pad($countExistingData, 3, '0', STR_PAD_LEFT);
@@ -389,6 +397,7 @@ class PreAnalyticController extends Controller
                 $requestData['no_lab'] = $prefixDate.$trxId;
                 $requestData['checkin_time'] = Carbon::now();
             }
+
             $transaction = \App\Transaction::create($requestData);
             $transactionId = $transaction->id;
 
@@ -582,6 +591,11 @@ class PreAnalyticController extends Controller
     public function drawAll($value, Request $request)
     {
         try {
+            $transactionTest = \App\TransactionTest::where('transaction_id', $request->transaction_id)->where('verify', 1)->exists();
+            if ($transactionTest) {
+                throw new \Exception("You can't edit because one of the test is verified");
+            }
+
             \App\TransactionTest::where('transaction_id', $request->transaction_id)
             ->where('draw', !$value)
             ->orWhere('draw', null)
@@ -655,11 +669,16 @@ class PreAnalyticController extends Controller
                 switch($test->type) {
                     case 'single':
                         $inputData['test_id'] = $test->id;
-                        \App\TransactionTest::create($inputData);
+                        $checkTest = \App\TransactionTest::where('transaction_id', $transactionId)->where('test_id', $test->id)->exists();
+                        
+                        if(!$checkTest) {
+                            \App\TransactionTest::create($inputData);
+                        }
                         break;
                     case 'package':
                         $inputData['package_id'] = $test->id;
-                        $this->createTransactionTestsFromPackage($inputData);
+                        $class = $room->class;
+                        $this->createTransactionTestsFromPackage($inputData, $class);
                         break;
                     default:
                 }
@@ -675,13 +694,17 @@ class PreAnalyticController extends Controller
      * 
      * @return void
      */
-    private function createTransactionTestsFromPackage($inputData)
+    private function createTransactionTestsFromPackage($inputData, $class)
     {
         $tests = \App\PackageTest::where('package_id', $inputData['package_id'])->get();
 
         foreach($tests as $test) {
             $inputData['test_id'] = $test->test_id;
-            \App\TransactionTest::create($inputData);
+            // make sure the test only has one and is in the room
+            $checkTest = \App\TransactionTest::where('transaction_id', $inputData['transaction_id'])->where('test_id', $inputData['test_id'])->exists();
+            if(!$checkTest) {
+                \App\TransactionTest::create($inputData);
+            }
         }
     }
 
@@ -744,9 +767,8 @@ class PreAnalyticController extends Controller
             $transaction = \App\Transaction::findOrFail($transactionId);
             return $transaction;
         } catch (\Exception $e) {
-            return response()->json($e->getMessage(), 400);
+            return response()->json(['message' => $e->getMessage()], 400);
         }
-        
     }
 
     /**
@@ -758,6 +780,10 @@ class PreAnalyticController extends Controller
             $data = $request->all();
             $data['cito'] = $request->cito == true;
             \App\Transaction::findOrFail($request->id)->update($data);
+            $transactionTest = \App\TransactionTest::where('transaction_id', $request->id)->where('verify', 1)->exists();
+            if ($transactionTest) {
+                throw new \Exception("You can't edit because one of the test is verified");
+            }
             $transaction = \App\Transaction::findOrFail($request->id);
             return response()->json(['message' => 'Success update patient details', 'data' => $transaction]);
         } catch (\Exception $e) {

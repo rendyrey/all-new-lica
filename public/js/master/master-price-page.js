@@ -8,6 +8,7 @@ var columnsDataTable = [
     { data: 'package.name', render: function (data, type, row) {
         if (row.package_id != null && row.package_id != '') {
           return row.package.name;
+          
         }
         return '';
       }, defaultContent: ''
@@ -33,7 +34,7 @@ var columnsDataTable = [
             return row.package.group.name;
           }
         }
-      }, defaultContent: ''
+      }, defaultContent: '', searchable: false
     }
 ];
 
@@ -112,6 +113,31 @@ var rulesFormValidation = {
     
 };
 
+var createPrice = function () {
+  $("#submit-btn").prop('disabled', true); // disabled button
+
+  let formData = $("#form-create-price").serialize();
+  let theForm = $("#form-create-price");
+  $.ajax({
+      url: baseUrl('master/'+masterData+'/create'),
+      method: 'POST',
+      data: formData,
+      success: function(res) {
+          toastr.success(res.message, "Create Success!");
+          
+          DatatablesServerSide.refreshTable();
+
+          $("#submit-btn").prop('disabled', false); // re-enable submit button
+          $(".type-test, .type-test[value='test']").trigger('click');
+          $(".select-two").val('').trigger("change"); // unselect all the select form
+      },
+      error: function (request, status, error) {
+          toastr.error(request.responseJSON.message);
+          $("#submit-btn").prop('disabled', false); // re-enable button
+      }
+  })
+}
+
 // On document ready
 document.addEventListener('DOMContentLoaded', function () {
     DatatablesServerSide.init();
@@ -124,19 +150,19 @@ document.addEventListener('DOMContentLoaded', function () {
         trigger: 'hover'
     });
 
-    $('#form-create input[name="type"]').on('change', function(e) {
+    $('#form-create-price input[name="type"]').on('change', function(e) {
       const type = $(this).val();
 
       if (type == 'test') {
         $("#test-list").removeClass('d-none');
         $("#package-list").addClass('d-none');
-        $("#form-create select[name='test_id']").removeClass('ignore-this');
-        $("#form-create select[name='package_id']").addClass('ignore-this');
+        $("#form-create-price select[name='test_id']").removeClass('ignore-this');
+        $("#form-create-price select[name='package_id']").addClass('ignore-this');
       } else {
         $("#test-list").addClass('d-none');
         $("#package-list").removeClass('d-none');
-        $("#form-create select[name='test_id']").addClass('ignore-this');
-        $("#form-create select[name='package_id']").removeClass('ignore-this');
+        $("#form-create-price select[name='test_id']").addClass('ignore-this');
+        $("#form-create-price select[name='package_id']").removeClass('ignore-this');
       }
     });
 
@@ -207,5 +233,12 @@ document.addEventListener('DOMContentLoaded', function () {
     
       $(this).val(val);
     })
+
+    $("#form-create-price").on('submit', function(e) {
+      e.preventDefault();
+      if ($(this).valid()) {
+          createPrice();
+      }
+  });
     
 });

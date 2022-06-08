@@ -112,6 +112,11 @@ Route::middleware(['auth'])->group(function () {
     });
     // END Analytics
 
+    Route::prefix('post-analytics')->group(function(){
+        Route::get('/', 'PostAnalyticController@index')->name('post-analytics');
+        Route::get('datatable/{startDate?}/{endDate?}', 'PostAnalyticController@datatable');
+    });
+
     // BEGIN all route for master data
     Route::get('master/{masterData}', 'MasterController@index');
     Route::post('master/{masterData}/create', 'MasterController@create');
